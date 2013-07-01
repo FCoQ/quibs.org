@@ -9,8 +9,9 @@ html
 
     link(rel='stylesheet', type="text/css", href='/css/style.css')
     link(rel='stylesheet', type="text/css", href='/css/default.css')
-    link(rel='stylesheet', type="text/css", href='/css/nivo-slider.css')
-    link(rel="stylesheet", type="text/css", href="/css/jquery.gritter.js")
+    link(rel='stylesheet', type="text/css", href='/css/nivo-slider.css', media="screen")
+    link(rel="stylesheet", type="text/css", href="/css/jquery.gritter.css")
+    link(rel="stylesheet", type="text/css", href="/css/colorbox.css")
 
     script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js")
     script(type="text/javascript", src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.js")
@@ -24,9 +25,9 @@ html
     script(type="text/javascript", src="/js/jquery.tinycarousel.min.js")
     script(type="text/javascript", src="/js/jquery.colorbox.js")
     script(type="text/javascript", src="/js/jquery.tweet.js")
-    script(type="text/javascript", src="/js/p2.js?r")
+    script(type="text/javascript", src="/js/jquery.history.js")
 
-    block extrascripts
+    script(type="text/javascript", src="/js/p2.js?rr")
 
     style.
       #sun {
@@ -50,8 +51,8 @@ html
     link(rel="shortcut icon", href="/favicon.ico")
   body
     div#content-wrapper
-      div#sun(onclick="window.location='http://quibs.org/panel';")
-      div#rainbow(onclick="window.location='http://quibs.org/admin.php';")
+      div#sun(onclick="getPage('/panel')")
+      div#rainbow(onclick="getPage('/admin')")
       div#container
         div#header.clearfix
           div#logo
@@ -72,6 +73,20 @@ html
                 li: a(href='/gallery') Gallery
                 li: a(href='/quotes') Testimonials
 
+        center
+          div#loadingcontent.loader(style='display:none')
+            span.letter L
+            span.letter O
+            span.letter A
+            span.letter D
+            span.letter I
+            span.letter N
+            span.letter G
+            span.letter .
+            span.letter .
+            span.letter .
+
+        div#ajax-current-page(style='display:none', quib-curpage='#{__REQUEST_URL}')
         div#pagecontent
           block content
 
@@ -103,6 +118,15 @@ html
             div#footer-note.right
               small
                 | &copy;2013 <strong>First Church of Quibs</strong>, building a better community for our children.
+    script.
+      $(document).ready(function() {
+        onPageLoad(false);
+      });
 - } else { // elseif __REQUEST_TYPE ajax
+script.
+  $('#ajax-current-page').attr('quib-curpage', '#{__REQUEST_URL}');
+  window.History.pushState({caused:true}, 'The First Church of Quibs - #{title}', '#{__REQUEST_URL}');
+  onPageLoad(true);
+
 block content
 - }

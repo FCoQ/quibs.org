@@ -5,6 +5,52 @@ Author: Population2
 Version: 1.2
 */
 
+@import url(//fonts.googleapis.com/css?family=Amatic+SC);
+
+
+
+/* Grow */
+@keyframes breathe {
+    50% {
+        transform: scale(0.75, 0.75);
+        color: rgba(0, 0, 0, 0.05);
+    }
+}
+
+/* Loader */
+.loader {
+    display: inline-block;
+    font: 5em "Amatic SC";
+    width: 50%;
+    margin: 0 auto;
+    text-transform: uppercase;
+}
+
+
+
+/* Letters */
+.letter {
+    display: inline-block;
+    animation: infinite breathe 4s;
+    transform: translateZ(0);
+}
+.letter:nth-of-type(1),
+.letter:nth-of-type(10) {
+    animation-delay: 0.3s;
+}
+.letter:nth-of-type(2),
+.letter:nth-of-type(9) {
+    animation-delay: 0.225s;
+}
+.letter:nth-of-type(3),
+.letter:nth-of-type(8) {
+    animation-delay: 0.15s;
+}
+.letter:nth-of-type(4),
+.letter:nth-of-type(7) {
+    animation-delay: 0.075s;
+}
+
 @import url("../css/colorbox.css"); /*  Import Colorbox style */
 
 

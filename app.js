@@ -1,7 +1,9 @@
 var express = require('express')
-  , routes = require('./routes')
   , http = require('http')
-  , path = require('path');
+  , path = require('path')
+  , step = require('step')
+  , routes = require('./routes')
+  , db = require('./db');
 
 var app = express();
 
@@ -20,7 +22,12 @@ app.configure(function(){
 			res.locals.__REQUEST_TYPE = 'ajax';
 		} else {
 			res.locals.__REQUEST_TYPE = 'normal';
+			// not an ajax request, so we'll need to do some db
+			// queries for the main layout
+
+
 		}
+		res.locals.__REQUEST_URL = req.url;
 		next();
 	});
 	app.use(app.router);
@@ -32,11 +39,19 @@ app.configure(function(){
 	}
 });
 
-app.get('/fund', function(req, res) {
-	res.render('fund');
-});
+var pageCore = function(req, res, next) {
+	if (res.locals.__REQUEST_TYPE == 'normal') {
+		// this is a normal request, so we need to perform some db queries for the layout
+		/*step(
+			function () {
+
+			}
+		);*/
+	}
+};
 
 app.get('/', routes.index);
+app.get('/fund', routes.fund);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
