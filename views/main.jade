@@ -65,7 +65,8 @@ html
             li
               a(href='#') Blogs
               ul
-                li: a(href='/blog/1') Lord Quibs
+                each blog in main_blogs
+                  li: a(href='/blog/#{blog.id}') #{blog.name}
             li
               a(href='#') Other
               ul
@@ -110,9 +111,8 @@ html
           div.col_240
             h4.replace New Members
             ul.bullet-list
-              li quibs
-              li ughquibs
-              li Nigel
+              each usr in main_lastusers
+                li= usr.username
           div#footer-bottom
             div#toTop.left Back to Top
             div#footer-note.right

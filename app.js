@@ -20,15 +20,29 @@ app.configure(function(){
 		if (req.url.substring(0, 6) == '/ajax/') {
 			req.url = req.url.substring(5);
 			res.locals.__REQUEST_TYPE = 'ajax';
+			res.locals.__REQUEST_URL = req.url;
+			next();
 		} else {
 			res.locals.__REQUEST_TYPE = 'normal';
+			res.locals.__REQUEST_URL = req.url;
+
 			// not an ajax request, so we'll need to do some db
 			// queries for the main layout
 
-
+			step(
+				function () {
+					db.query("SELECT id,name FROM blogs", [], this);
+				},
+				function(rows) {
+					res.locals.main_blogs = rows;
+					db.query("SELECT username FROM users ORDER BY id DESC LIMIT 3", [], this);
+				},
+				function (users) {
+					res.locals.main_lastusers = users;
+					next();
+				}
+			);
 		}
-		res.locals.__REQUEST_URL = req.url;
-		next();
 	});
 	app.use(app.router);
 	app.use(express.static(path.join(__dirname, 'public')));
@@ -38,17 +52,6 @@ app.configure(function(){
 	  app.use(express.errorHandler());
 	}
 });
-
-var pageCore = function(req, res, next) {
-	if (res.locals.__REQUEST_TYPE == 'normal') {
-		// this is a normal request, so we need to perform some db queries for the layout
-		/*step(
-			function () {
-
-			}
-		);*/
-	}
-};
 
 app.get('/', routes.index);
 app.get('/fund', routes.fund);
