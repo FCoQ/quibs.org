@@ -1,0 +1,67 @@
+/*
+Theme Name: Peekaboo
+Theme URL: http://themeforest.net/user/population2/
+Author: Population2
+Version: 1.2
+*/
+
+
+h1, h2, h3, h4, h5, h6 { color: #007cc3; }
+a { color: #6A930B; }
+::selection, .highlight {
+background: #007cc3;
+color: #fff;
+}
+::-moz-selection {
+background: #007cc3;
+color: #fff;
+}
+.fancy { background: #88AA31; }
+.fancy:hover { background: #74912a; }
+#main { background: #f2f2f2; }
+/*---Header---*/
+.sf-menu { background: url(../img/nav-mid-bg-2.jpg) repeat-x bottom; }
+.sf-menu a, .sf-menu a:visited { color:#FFF; }
+.sf-menu ul a:hover { background:#037FC5; }
+.sf-menu li li { background:#21a2ec; }
+.sf-menu li ul { -moz-box-shadow:2px 2px 2px #505050; -webkit-box-shadow:2px 2px 2px #505050; box-shadow:2px 2px 2px #505050; }
+/*---Quick Menu---*/
+#quickmenu { border: 1px solid #577909; background: #6a930b url(../img/quickmenu-bg-2.jpg) no-repeat center top; }
+#quickmenu h2 { color: #F6F6F6; text-shadow: 1px 1px 5px #8d6727; }
+#quickmenu .next:hover { background:transparent url(../img/quick-menu-arrow-2.png) no-repeat scroll 0 -17px; }
+#quickmenu .prev:hover { background:transparent url(../img/quick-menu-arrow-2.png) no-repeat scroll -25px -17px; }
+.overview li a.menu-box { background: #bed600; color: #494242; }
+.overview li a.menu-box:hover { background: #e2e86f; }
+.overview li a.menu-box:hover span.arrow { background: url(../img/menu-box-arrow-2.png) no-repeat left top; }
+.overview span.arrow { background: url(../img/menu-box-arrow-2.png) no-repeat left bottom; }
+.overview span.title { color: #494242; }
+/*---Sidebar---*/
+.testimonials-container { background: #DADF8B url(../img/chat.png) no-repeat 10px 10px; border: 5px solid #89AF2B; }
+.download { border: 5px solid #E6AE11; }
+.sidebar-widget a:hover { color:#6A930B; text-decoration:none; }
+/*.sub-nav li a:hover { background: #C2DFEF url(../img/left_arrow_16px.png) no-repeat left center; }
+.sub-nav li.active a { background: url(../img/nav-mid-bg-2.png) repeat-x 4px; color: #FFF; }*/
+ul#submenu { border: 5px solid #BED600;  background:#F2F2F2; }
+ul#submenu li.active {  background: url(../img/nav-mid-bg-2.jpg) repeat-x top #037FC5; } 
+ul#submenu li a:hover {  background: url(../img/nav-mid-bg-2.jpg) repeat-x top #037FC5; color: #FFF; }
+.minimal 					{ border: 5px solid #BED600; }	
+ul.reg-item li{ list-style: url(../img/list-bullet-2.jpg); }
+ /*---Footer---*/
+#footer { background: url(../img/footer-bg-2.jpg) no-repeat top center #e6ae11;  border-top: 1px solid #FFE11F; border-right: 1px solid #EFB61D; border-bottom: 1px solid #DFA60D; border-left: 1px solid #EFB61D; }
+#footer a, #footer address { color:#343434; }
+#footer-bottom { border-top: dotted 2px #feebbb; }
+#footer-note { color: #feebbb; }
+#footer h4 { color: #5a8e22;}
+#toTop { width:100px; background: url(../img/top-arrow-btn-2.png) no-repeat left 6px; color:#343434; }
+#footer span.date { color:#1c6de7; }
+.bullet-list li { background: url(../img/bullet-arrow-2.png) no-repeat left 5px; }
+#modalmap { background: url(../img/map-pin-2.png) no-repeat top left; }
+a#modalmap:hover { background: url(../img/map-pin-2.png) no-repeat left 1px; }
+ul#twitter_update_list li a { color: #1c6de7; }
+ul#twitter_update_list li span { color: #343434; }
+ul#twitter_update_list li span a { color: #1c6de7; }
+/*---Misc---*/
+.page_title { background: #bed600; }
+.page_title h1 { color: #516F07; }
+.post h2 a:hover { color:#6A930B; }
+.profile dt { color: #6A930B; }

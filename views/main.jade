@@ -1,0 +1,108 @@
+- if (__REQUEST_TYPE != 'ajax') {
+doctype 5
+html
+  head
+    meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
+    meta(name='keywords', content='quibs,first,church,grant')
+    meta(name='description', content='The First Church of Quibs is a modern church for the celebration of our deity Quibs.')
+    meta(name='robots', content='index, follow')
+
+    link(rel='stylesheet', type="text/css", href='/css/style.css')
+    link(rel='stylesheet', type="text/css", href='/css/default.css')
+    link(rel='stylesheet', type="text/css", href='/css/nivo-slider.css')
+    link(rel="stylesheet", type="text/css", href="/css/jquery.gritter.js")
+
+    script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js")
+    script(type="text/javascript", src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.js")
+    script(type="text/javascript", src="/js/jquery.gritter.min.js")
+    script(type="text/javascript", src="/js/cufon-yui.js")
+    script(type="text/javascript", src="/js/Museo.font.js")
+    script(type="text/javascript", src="/js/Museo_Sans.font.js")
+    script(type="text/javascript", src="/js/supersized.3.1.3.core.min.js")
+    script(type="text/javascript", src="/js/superfish-compile.js")
+    script(type="text/javascript", src="/js/jquery.nivo.slider.pack.js")
+    script(type="text/javascript", src="/js/jquery.tinycarousel.min.js")
+    script(type="text/javascript", src="/js/jquery.colorbox.js")
+    script(type="text/javascript", src="/js/jquery.tweet.js")
+    script(type="text/javascript", src="/js/p2.js?r")
+
+    block extrascripts
+
+    style.
+      #sun {
+        display:none;
+        position:fixed;
+        width:100px;
+        height:100px;
+        z-index:-5;
+        cursor:pointer;
+      }
+      #rainbow {
+        display:none;
+        position:fixed;
+        width:100px;
+        height:100px;
+        z-index:-5;
+        cursor:pointer;
+      }
+
+    title The First Church of Quibs - #{title}
+    link(rel="shortcut icon", href="/favicon.ico")
+  body
+    div#content-wrapper
+      div#sun(onclick="window.location='http://quibs.org/panel';")
+      div#rainbow(onclick="window.location='http://quibs.org/admin.php';")
+      div#container
+        div#header.clearfix
+          div#logo
+            a(href='/')
+              img(src='/img/logo.png')
+          ul.sf-menu
+            li: a(href='/fund') Fund
+            li: a(href='/grant') Grant
+            li: a(href='/events') Events
+            li
+              a(href='#') Blogs
+              ul
+                li: a(href='/blog/1') Lord Quibs
+            li
+              a(href='#') Other
+              ul
+                li: a(href='/clubs') Club Hub
+                li: a(href='/gallery') Gallery
+                li: a(href='/quotes') Testimonials
+
+        div#pagecontent
+          block content
+
+        div#footer.round_8.clearfix
+          div.col_201
+            h4.replace Latest News
+            ul.bullet-list
+              li: a(href='/post/49') Radio Quibs Mockups
+          div.col_201
+            h4.replace Contact
+            address
+              | 9520 Tarbutton Rd<br />
+              | South Vienna, OH 45369
+            a#modalmap(href='#') Map it!
+          div.col_201
+            h4.replace Welcome, Sean!
+            ul.bullet-list
+              li: a(href='/panel') Member panel
+              li: a(href='/logout') Log out
+              li: a(href='/admin') Admin panel
+          div.col_240
+            h4.replace New Members
+            ul.bullet-list
+              li quibs
+              li ughquibs
+              li Nigel
+          div#footer-bottom
+            div#toTop.left Back to Top
+            div#footer-note.right
+              small
+                | &copy;2013 <strong>First Church of Quibs</strong>, building a better community for our children.
+- } else { // elseif __REQUEST_TYPE ajax
+block content
+- }
