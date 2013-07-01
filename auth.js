@@ -4,7 +4,18 @@ var step = require('step')
 
 var self = exports;
 
+exports.built = false;
+
+exports.rebuild = function(req, res, next) {
+	self.built = false;
+
+	self.build(req, res, next);
+}
+
 exports.build = function (req, res, next) {
+	if (self.built)
+		next();
+
 	res.locals.__AUTH_USERDATA = {};
 	res.locals.__AUTH_LOGGED_IN = false;
 
@@ -13,7 +24,6 @@ exports.build = function (req, res, next) {
 			db.query("SELECT * FROM users WHERE email=?", [req.cookies.email], this);
 		},
 		function (userdata) {
-			console.log(userdata);
 			if (userdata.length > 0) {
 				userdata = userdata[0];
 				if (userdata.pass == req.cookies.pass) {

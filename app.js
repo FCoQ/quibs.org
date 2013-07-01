@@ -6,6 +6,7 @@ var express = require('express')
   , routes = require('./routes')
   , db = require('./db')
   , auth = require('./auth')
+  , util = require('./util')
 
 var app = express();
 
@@ -23,28 +24,11 @@ app.configure(function(){
 			req.url = req.url.substring(5);
 			res.locals.__REQUEST_TYPE = 'ajax';
 			res.locals.__REQUEST_URL = req.url;
-			next();
 		} else {
 			res.locals.__REQUEST_TYPE = 'normal';
 			res.locals.__REQUEST_URL = req.url;
-
-			step(
-				function() {
-					auth.build(req, res, this); // build authentication
-				},
-				function () {
-					db.query("SELECT id,name FROM blogs", [], this);
-				},
-				function(rows) {
-					res.locals.main_blogs = rows;
-					db.query("SELECT username FROM users ORDER BY id DESC LIMIT 3", [], this);
-				},
-				function (users) {
-					res.locals.main_lastusers = users;
-					next();
-				}
-			);
 		}
+		next();
 	});
 	app.use(app.router);
 	app.use(express.static(path.join(__dirname, 'public')));
@@ -55,8 +39,12 @@ app.configure(function(){
 	}
 });
 
-app.get('/', routes.index);
-app.get('/fund', routes.fund);
+/// ROUTEWARE:
+// auth.require - require authentication
+// auth.build - build authentication
+// util.prepareLayout - prepare layout (navbar, footer) if non-ajax request
+app.get('/', util.prepareLayout, routes.index);
+app.get('/fund', util.prepareLayout, routes.fund);
 //app.get('/panel', auth.require, routes.panel)
 
 http.createServer(app).listen(app.get('port'), function(){
