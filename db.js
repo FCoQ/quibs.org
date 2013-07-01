@@ -5,7 +5,7 @@ mysql.auth('quibs', 'root', process.env.DBPASS);
 exports.query = function(query, params, callback) {
 	var rows = [];
 
-	var cmd = mysql.query(query, params);
+	var cmd = mysql.execute(query, params);
 
 	cmd.addListener('row', function(r) {
 		rows.push(r);

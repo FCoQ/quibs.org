@@ -1,9 +1,11 @@
 var express = require('express')
   , http = require('http')
   , path = require('path')
+  , crypto = require('crypto')
   , step = require('step')
   , routes = require('./routes')
-  , db = require('./db');
+  , db = require('./db')
+  , auth = require('./auth')
 
 var app = express();
 
@@ -26,10 +28,10 @@ app.configure(function(){
 			res.locals.__REQUEST_TYPE = 'normal';
 			res.locals.__REQUEST_URL = req.url;
 
-			// not an ajax request, so we'll need to do some db
-			// queries for the main layout
-
 			step(
+				function() {
+					auth.build(req, res, this); // build authentication
+				},
 				function () {
 					db.query("SELECT id,name FROM blogs", [], this);
 				},
@@ -55,6 +57,7 @@ app.configure(function(){
 
 app.get('/', routes.index);
 app.get('/fund', routes.fund);
+//app.get('/panel', auth.require, routes.panel)
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

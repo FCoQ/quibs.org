@@ -51,7 +51,9 @@ html
     link(rel="shortcut icon", href="/favicon.ico")
   body
     div#content-wrapper
+      - if (__AUTH_LOGGED_IN) {
       div#sun(onclick="getPage('/panel')")
+      - }
       div#rainbow(onclick="getPage('/admin')")
       div#container
         div#header.clearfix
@@ -121,6 +123,8 @@ html
     script.
       $(document).ready(function() {
         onPageLoad(false);
+        if ($('#sun').length > 0)
+          setInterval('setSun();', 500);
       });
 - } else { // elseif __REQUEST_TYPE ajax
 script.
