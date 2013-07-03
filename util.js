@@ -8,6 +8,17 @@ var RECAPTCHA_PRIVATE_KEY = process.env.PRIVATEKEY;
 
 var self = exports;
 
+exports.timeNow = function() {
+	return Math.floor(new Date().getTime()/1000);
+}
+
+exports.isset = function(param) {
+	if (typeof(param) == 'undefined')
+		return false;
+
+	return true;
+}
+
 exports.verifyRecaptcha = function(req, res, next) {
 	res.locals.__RECAPTCHA = false;
 	res.locals.__RECAPTCHA_PUBLIC_KEY = RECAPTCHA_PUBLIC_KEY;

@@ -31,12 +31,16 @@ exports.fund = function(req, res) {
 exports.submitgrant = function(req, res) {
 	if (!res.locals.__RECAPTCHA) {
 		res.locals.msg = 'Error: the CAPTCHA you provided was wrong. Try again.';
+		self.grants(req, res);
 	} else if (!req.body.name.match(/^[a-zA-Z0-9 ]{1,25}$/)) {
 		res.locals.msg = 'Error: the name you provided was wrong. Try again.';
+		self.grants(req, res);
 	} else {
-		res.locals.msg = 'Success! Grant posted.';
+		db.query("INSERT INTO grants (date, name, msg, ip) VALUES (?, ?, ?, ?)", [util.timeNow(), req.body.name, req.body.msg, req.connection.remoteAddress], function() {
+			res.locals.msg = 'Success! Grant posted.';
+			self.grants(req, res);
+		});
 	}
-	self.grants(req, res);
 }
 
 exports.grants = function(req, res) {

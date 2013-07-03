@@ -4,7 +4,7 @@ include mixins/captcha
 
 block content
 	div#main.round_8.clearfix
-		- if (typeof(msg) !== 'undefined') {
+		- if (_isset(msg)) {
 			p
 				b= msg
 		- }
@@ -84,7 +84,7 @@ block content
 									b(style='color:red') REJECTED
 							br
 							code
-								!= nl2br_escape(grant.msg)
+								!= _nl2br_escape(grant.msg)
 
 				if show != 'processed'
 					mixin pagebar(curpage, lastpage, '/grants/pending/%#viewgrants')

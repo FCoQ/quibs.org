@@ -22,7 +22,8 @@ app.configure(function(){
 	app.use(express.methodOverride());
 	app.use(util.verifyRecaptcha);
 	app.use(function(req, res, next) {
-		res.locals.nl2br_escape = util.nl2br_escape;
+		res.locals._nl2br_escape = util.nl2br_escape;
+		res.locals._isset = util.isset;
 
 		if (req.url.substring(0, 6) == '/ajax/') {
 			req.url = req.url.substring(5);
@@ -47,10 +48,9 @@ app.configure(function(){
 // auth.require - require authentication
 // auth.build - build authentication
 // util.prepareLayout - prepare layout (navbar, footer) if non-ajax request
-// util.verifyRecaptcha - check recaptcha fields submitted
 app.get('/', util.prepareLayout, routes.index);
 app.get('/fund', util.prepareLayout, routes.fund);
-app.get('/grants/:type?/:page?', util.prepareLayout, routes.grants);
+app.get('/grants/:type?/:page?', util.prepareLayout, auth.build, routes.grants);
 app.post('/grants', util.prepareLayout, routes.submitgrant);
 //app.get('/panel', auth.require, routes.panel)
 
