@@ -1,0 +1,92 @@
+extends main
+include mixins/pagination
+include mixins/captcha
+
+block content
+	div#main.round_8.clearfix
+		- if (typeof(msg) !== 'undefined') {
+			p
+				b= msg
+		- }
+		div.green.page_title.round_6
+			h1.replace Community Grants
+		div#content.left
+			div.post
+				p: img(src='/img/stock/640x350_single.jpg')
+				h3 We can help.
+				p.
+					Times are tough for many families in our community. Thankfully, the Church exists to spread wealth
+					and improve the lives of our members. It starts with a grant process, accessible to all of our members,
+					which we believe upholds our mission and the transparency our church strives for.
+
+
+				div#comment_form
+					h4: a#button-applygrant(href='#', style="text-decoration:underline") Apply for a Grant
+					form#contact_form(action='/grants', method="post", style="display:none")
+						div.form_field_half.left
+							label
+								strong Name
+							input#name.text.round_6(size="44", name="name")
+						div.form_field
+						br
+						br
+						br
+						div.form_field
+							label
+								strong Application
+								textarea#message.textarea.round_6(cols="72",rows="7",name="msg")
+						div.form_field
+							label
+								strong CAPTCHA
+								mixin captcha
+						div.form_field
+							input#submit.fancy(name="submit",type="submit",value="Submit Application")
+						hr
+				br
+				script.
+					$('#button-applygrant').click(function(e) {
+						e.preventDefault();
+						$(this).parent().html('Apply for a Grant');
+						$('#contact_form').css('display', 'block');
+					})
+
+				a(name='viewgrants')
+				if show != 'processed'
+					h4.left Pending Grants
+					p.right
+						a.blue.small.fancy(href='/grants/processed#viewgrants') Show Processed
+				else
+					h4.left Processed Grants
+					p.right
+						a.blue.small.fancy(href='/grants/pending#viewgrants') Show Pending
+
+				div.clear
+
+				if show != 'processed'
+					mixin pagebar(curpage, lastpage, '/grants/pending/%#viewgrants')
+				else
+					mixin pagebar(curpage, lastpage, '/grants/processed/%#viewgrants')
+
+				div.clear
+				p
+					ul
+						each grant in grants
+							li #{grant.name} wrote:
+
+							if grant.status == 0
+								div(style='float:right')
+									b PENDING
+							else if grant.status == 2
+								div(style='float:right')
+									b(style='color:green') ACCEPTED
+							else
+								div(style='float:right')
+									b(style='color:red') REJECTED
+							br
+							code
+								!= nl2br_escape(grant.msg)
+
+				if show != 'processed'
+					mixin pagebar(curpage, lastpage, '/grants/pending/%#viewgrants')
+				else
+					mixin pagebar(curpage, lastpage, '/grants/processed/%#viewgrants')

@@ -10,6 +10,7 @@
     "jade": "*",
     "mysql-native": "*",
     "step":"*",
-    "crypto":"*"
+    "crypto":"*",
+    "recaptcha":"*"
   }
 }

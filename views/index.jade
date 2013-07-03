@@ -1,9 +1,63 @@
 extends main
 
 block content
+	div#slide-container.clearfix
+		div#slider-wrapper.left
+			div#slider.nivoSlider
+				a(href='/gallery'): img(src='http://shane.quibs.org/s/1369712344-07ec.png', title='Education connects all corners of the globe.')
+				a(href='/gallery'): img(src='http://shane.quibs.org/s/1369955517-26ed.png', title='We all must learn from our elders.')
+				a(href='/gallery'): img(src='http://shane.quibs.org/s/1372149771-049d.png', title='Extend a warm embrace.')
+				a(href='/gallery'): img(src='/img/stock/slide-image-4.jpg', title='We have room for all ethnic groups.')
+		div#quickmenu.left
+			h2.replace Our Clubs
+			div.viewport
+				ul.overview
+					each club in clubs
+						li
+							a.menu-box.round_4(href='/club/#{club.id}')
+								span.title= club.name
+								br
+								span.arrow
+			a.buttons.prev(href='#') Prev
+			a.buttons.next(href='#') Next
+
 	div#main.round_8.clearfix
-		div.page_title.round_6
-			h1.replace
-				a(href='#') No joke...
-		div#content.left
-			p Homepage
+		div#home-content.left
+			h2.replace It's not just faith.
+			div.intro
+				div.thumbnail_100_right(style='background: url(http://shane.quibs.org/s/1372150794-0cf2.png) repeat')
+				p.
+					We believe our future begins with our children. Offering them the best environment for their development
+					requires building a strong community based on respect, values and consent. Here at the first church, our
+					goal is to build a world we can all share peacefully.<br /><br /><br /><br />
+			hr
+			div.col_201
+				h3.replace Teamspeak
+				div.thumbnail_60_left(style='background: url(http://shane.quibs.org/s/1372150933-a67a.png) repeat')
+				p.landing_col ts3.quibs.org
+				a(href='/post/2').fancy.small Learn More
+					img.arrow(src='/img/nav-right-arrow.png')
+			div.col_201.omega
+				h3.replace Grant
+				div.thumbnail_60_left(style='background: url(http://i.imgur.com/sHjOm8s.png) repeat')
+				p.landing_col Building synergy, locally.
+				a(href='/grants').fancy.small Learn More
+					img.arrow(src='/img/nav-right-arrow.png')
+		div#sidebar-home.left
+			div.sidebar-widget
+				div.search
+					form(action='/search', method='post')
+						div
+							input(name='text',type='text').search-field
+							input(name='submit',type='image',value='search',src='/img/search.png').search-submit
+			div.sidebar-widget.shadow-light
+				span#webcam.promo-container
+			div.sidebar-widget.shadow-light
+				div.testimonials-container
+					h3.replace What they say
+					p
+						a(href='/quotes')
+							= randomquote.text
+							br
+							small
+								em= randomquote.username

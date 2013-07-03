@@ -1,6 +1,15 @@
-var mysql = require('mysql-native').createTCPClient('162.213.254.14', 3306);
-mysql.auto_prepare = true;
-mysql.auth('quibs', 'root', process.env.DBPASS);
+var mysql;
+function connect() {
+	mysql = require('mysql-native').createTCPClient('162.213.254.14', 3306);
+	mysql.auto_prepare = true;
+	mysql.auth('quibs', 'root', process.env.DBPASS);
+}
+connect();
+
+mysql.on('error', function() {
+	// reconnect to mysql
+	connect();
+});
 
 exports.query = function(query, params, callback) {
 	var rows = [];

@@ -1,0 +1,9 @@
+mixin captcha
+	div#recaptcha
+	script.
+		Recaptcha.create("#{__RECAPTCHA_PUBLIC_KEY}",
+			'recaptcha',
+			{
+				theme: 'red',
+				callback: function(){}
+			});

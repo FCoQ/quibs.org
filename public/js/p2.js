@@ -1,4 +1,7 @@
+	var hookPageLoad = function() {};
+
 	var currentRequest = 0;
+	var hassuper = true;
 
 	function getPage(url, q) {
 		if (currentRequest != 0)
@@ -23,6 +26,7 @@
 				$('#pagecontent').stop();
 				$('#pagecontent').slideDown('fast', function() {
 					$('#pagecontent').attr('style', 'display:block');
+					onPageLoad(true, url.split('#', 2)[1]);
 				});
 			});
 		};
@@ -79,9 +83,16 @@
 		$('#rainbow').css('left', (l + defaultRainbowLeft*wR) + 'px');
 	};
 
-function onPageLoad(ajax) {
+function onPageLoad(ajax, anchor) {
 	if (typeof(ajax) == 'undefined')
 		ajax = false;
+	if (typeof(anchor) != 'undefined') {
+		window.location.hash = '';
+		window.location.hash = anchor; // reset the anchor
+	}
+
+	hookPageLoad();
+	hookPageLoad = function() {};
 
 	Cufon.replace('.replace,.sidebar-widget h4',{fontFamily: 'Museo 500'} );
 	if (!ajax)
@@ -102,14 +113,14 @@ function onPageLoad(ajax) {
 			effect: 'fade'
 		});
 
-	if ($('#webcam').length != 0)
-			$('#webcam').html('<img border="0" style="width: 245px;height:162px;" src="http://50.34.240.178:8008">');
-
 	$('#quickmenu').tinycarousel({ 
 		axis: 'y',
 		display: 3, 
 		duration: 500
 	});
+
+	if ($('#webcam').length != 0 && !hassuper)
+		$('#webcam').html('<img border="0" style="width: 245px;height:162px;" src="http://50.34.240.178:8008">');
 };
 
 // ajax frontend:
@@ -117,8 +128,10 @@ $('a').live('click', function(e) {
 	if (!$(this).hasClass('noajax')) {
 		// we need to replace this link with an ajax page request
 		if ($(this).attr('href').substring(0, 1) == '/') {
-			e.preventDefault();
-			getPage($(this).attr('href'));
+			if ($(this).attr('target') != '_blank') {
+				e.preventDefault();
+				getPage($(this).attr('href'));
+			}
 		}
 	}
 });

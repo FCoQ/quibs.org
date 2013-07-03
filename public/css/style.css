@@ -7,7 +7,12 @@ Version: 1.2
 
 @import url(//fonts.googleapis.com/css?family=Amatic+SC);
 
-
+#preloadedImages {
+	width: 0px;
+    height: 0px;
+    display: inline;
+    background-image: url(/img/bg1.jpg);
+}
 
 /* Grow */
 @keyframes breathe {

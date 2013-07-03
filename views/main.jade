@@ -15,6 +15,7 @@ html
 
     script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js")
     script(type="text/javascript", src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.js")
+    script(type="text/javascript", src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js")
     script(type="text/javascript", src="/js/jquery.gritter.min.js")
     script(type="text/javascript", src="/js/cufon-yui.js")
     script(type="text/javascript", src="/js/Museo.font.js")
@@ -51,10 +52,10 @@ html
     link(rel="shortcut icon", href="/favicon.ico")
   body
     div#content-wrapper
-      - if (__AUTH_LOGGED_IN) {
-      div#sun(onclick="getPage('/panel')")
-      - }
-      div#rainbow(onclick="getPage('/admin')")
+      if __AUTH_LOGGED_IN
+        div#sun(onclick="getPage('/panel')")
+      if __AUTH_USERDATA.grp == 3
+        div#rainbow(onclick="getPage('/admin')")
       div#container
         div#header.clearfix
           div#logo
@@ -62,7 +63,7 @@ html
               img(src='/img/logo.png')
           ul.sf-menu
             li: a(href='/fund') Fund
-            li: a(href='/grant') Grant
+            li: a(href='/grants') Grant
             li: a(href='/events') Events
             li
               a(href='#') Blogs
@@ -105,11 +106,18 @@ html
               | South Vienna, OH 45369
             a#modalmap(href='#') Map it!
           div.col_201
-            h4.replace Welcome, Sean!
-            ul.bullet-list
-              li: a(href='/panel') Member panel
-              li: a(href='/logout') Log out
-              li: a(href='/admin') Admin panel
+            if __AUTH_LOGGED_IN
+              h4.replace Welcome, #{__AUTH_USERDATA.username}!
+              ul.bullet-list
+                li: a(href='/panel') Member panel
+                li: a(href='/logout') Log out
+                if __AUTH_USERDATA.grp == 3
+                  li: a(href='/admin') Admin panel
+            else
+              h4.replace Welcome, Guest!
+              ul.bullet-list
+                li: a(href='/register') Register
+                li: a(href='/login') Log in
           div.col_240
             h4.replace New Members
             ul.bullet-list
@@ -120,17 +128,20 @@ html
             div#footer-note.right
               small
                 | &copy;2013 <strong>First Church of Quibs</strong>, building a better community for our children.
+    div#preloadedImages
     script.
       $(document).ready(function() {
         onPageLoad(false);
         if ($('#sun').length > 0)
           setInterval('setSun();', 500);
+        if ($('#rainbow').length > 0)
+          setInterval('setRainbow();', 500);
+        
       });
-- } else { // elseif __REQUEST_TYPE ajax
+- } else { // else __REQUEST_TYPE == ajax
 script.
   $('#ajax-current-page').attr('quib-curpage', '#{__REQUEST_URL}');
   window.History.pushState({caused:true}, 'The First Church of Quibs - #{title}', '#{__REQUEST_URL}');
-  onPageLoad(true);
 
 block content
 - }

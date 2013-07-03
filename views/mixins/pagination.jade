@@ -1,0 +1,14 @@
+mixin pagebar(curpage, numpages, pattern)
+	div#page-nav
+		if (curpage > 1)
+			a(href='#{pattern.replace("%", curpage-1)}') Previous
+		
+		- for (var i=1;i<=numpages;i++) {
+			if i == curpage
+				a.active(href='#{pattern.replace("%", i)}') #{i}
+			else
+				a(href='#{pattern.replace("%", i)}') #{i}
+		- }
+
+		if (curpage < numpages)
+			a(href='#{pattern.replace("%", curpage+1)}') Next
