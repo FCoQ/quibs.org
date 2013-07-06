@@ -14,6 +14,8 @@
 			} else if (typeof(ret) != 'undefined' && typeof(ret) != 'boolean') {
 				gotoSelector = $(ret); // the hook gave us a new selector to scroll to
 			}
+		} else if (newAnchor == '#') {
+			return;
 		}
 
 		if (window.location.hash == newAnchor) {
@@ -22,7 +24,7 @@
 		}
 
 		if (gotoSelector.length) {
-			$('#content-wrapper').animate({scrollTop: gotoSelector.offset().top}, 'fast', 'swing', function() {
+			$('#content-wrapper').animate({scrollTop: $("#content-wrapper").scrollTop() + gotoSelector.offset().top}, 'fast', 'swing', function() {
 				window.location.hash = newAnchor;
 			});
 		} else {
