@@ -38,7 +38,7 @@ block content
 						div.form_field
 							label
 								strong CAPTCHA
-								mixin captcha
+								+captcha
 						div.form_field
 							input#submit.fancy(name="submit",type="submit",value="Submit Application")
 				br
@@ -58,9 +58,9 @@ block content
 				div.clear
 
 				if show != 'processed'
-					mixin pagebar(curpage, lastpage, '/grants/pending/%#viewgrants')
+					+pagebar(curpage, lastpage, '/grants/pending/%#viewgrants')
 				else
-					mixin pagebar(curpage, lastpage, '/grants/processed/%#viewgrants')
+					+pagebar(curpage, lastpage, '/grants/processed/%#viewgrants')
 
 				div.clear
 				p
@@ -82,9 +82,13 @@ block content
 								!= _nl2br_escape(grant.msg)
 
 				if show != 'processed'
-					mixin pagebar(curpage, lastpage, '/grants/pending/%#viewgrants')
+					+pagebar(curpage, lastpage, '/grants/pending/%#viewgrants')
 				else
-					mixin pagebar(curpage, lastpage, '/grants/processed/%#viewgrants')
+					+pagebar(curpage, lastpage, '/grants/processed/%#viewgrants')
 
 block subs
-	mixin sub('#apply', '$("button-applygrant").parent().html("Apply for a Grant"); $("#contact_form").css("display", "block"); return true;')
+	+sub('#apply', function() {
+	$("button-applygrant").parent().html("Apply for a Grant");
+	$("#contact_form").css("display", "block");
+	return true;
+	})

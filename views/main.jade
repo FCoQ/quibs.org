@@ -1,7 +1,7 @@
 mixin sub(anchor, code)
-  != "subHooks['" + anchor + "'] = function() {"
+  != "subHooks['" + anchor + "'] = "
   != code
-  != "};"
+  != ";"
 
 - if (__REQUEST_TYPE != 'ajax') {
 doctype 5
