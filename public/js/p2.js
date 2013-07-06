@@ -1,4 +1,35 @@
-	var hookPageLoad = function() {};
+	var hookPageLoad = function(ajax) {};
+	var subHooks = {};
+	var hookChange = function(newAnchor) {
+		console.log('hookChange(' + newAnchor + ')');
+		var gotoSelector = $("a[name='" + newAnchor.substr(1) + "']");
+
+		// do we have a hook for this anchor?
+		if (typeof(subHooks[newAnchor]) != 'undefined') {
+			// yep! let's try running it
+			var ret = subHooks[newAnchor]();
+			if (ret === false) {
+				// the hook returned false, it just wanted to run not change the URL
+				return;
+			} else if (typeof(ret) != 'undefined' && typeof(ret) != 'boolean') {
+				gotoSelector = $(ret); // the hook gave us a new selector to scroll to
+			}
+		}
+
+		if (window.location.hash == newAnchor) {
+			// we're already here!
+			return;
+		}
+
+		if (gotoSelector.length) {
+			$('#content-wrapper').animate({scrollTop: gotoSelector.offset().top}, 'fast', 'swing', function() {
+				window.location.hash = newAnchor;
+			});
+		} else {
+			window.location.hash = newAnchor;
+		}
+		return;
+	};
 
 	var currentRequest = 0;
 	var hassuper = true;
@@ -26,7 +57,11 @@
 				$('#pagecontent').stop();
 				$('#pagecontent').slideDown('fast', function() {
 					$('#pagecontent').attr('style', 'display:block');
-					onPageLoad(true, url.split('#', 2)[1]);
+					var newanchor = '#' + url.split('#', 2)[1];
+					if (newanchor == '#undefined')
+						onPageLoad(true);
+					else
+						onPageLoad(true, newanchor);
 				});
 			});
 		};
@@ -86,13 +121,13 @@
 function onPageLoad(ajax, anchor) {
 	if (typeof(ajax) == 'undefined')
 		ajax = false;
-	if (typeof(anchor) != 'undefined') {
-		window.location.hash = '';
-		window.location.hash = anchor; // reset the anchor
-	}
 
-	hookPageLoad();
+	hookPageLoad(ajax);
 	hookPageLoad = function() {};
+
+	if (typeof(anchor) != 'undefined' && anchor != '') {
+		hookChange(anchor);
+	}
 
 	Cufon.replace('.replace,.sidebar-widget h4',{fontFamily: 'Museo 500'} );
 	if (!ajax)
@@ -127,19 +162,20 @@ function onPageLoad(ajax, anchor) {
 $('a').live('click', function(e) {
 	if (!$(this).hasClass('noajax')) {
 		// we need to replace this link with an ajax page request
-		if ($(this).attr('href').substring(0, 1) == '/') {
+		if ($(this).attr('id') == 'toTop') {
+			e.preventDefault();
+			$('#content-wrapper').animate({scrollTop:0},600);
+		} else if ($(this).attr('href').substring(0, 1) == '/') {
 			if ($(this).attr('target') != '_blank') {
 				e.preventDefault();
 				getPage($(this).attr('href'));
 			}
+		} else if ($(this).attr('href').substring(0, 1) == '#') {
+			e.preventDefault();
+			hookChange($(this).attr('href'));
 		}
 	}
 });
-
-	// Scroll to Top
-	$('#toTop').live('click', (function() {
-		$('#content-wrapper').animate({scrollTop:0},600);
-	}));	
 
 $(document).ready(function() {
 	var History = window.History;

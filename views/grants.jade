@@ -19,9 +19,9 @@ block content
 					and improve the lives of our members. It starts with a grant process, accessible to all of our members,
 					which we believe upholds our mission and the transparency our church strives for.
 
-
+				a(name='apply')
 				div#comment_form
-					h4: a#button-applygrant(href='#', style="text-decoration:underline") Apply for a Grant
+					h4: a#button-applygrant(href='#apply', style="text-decoration:underline") Apply for a Grant
 					form#contact_form(action='/grants', method="post", style="display:none")
 						div.form_field_half.left
 							label
@@ -42,12 +42,6 @@ block content
 						div.form_field
 							input#submit.fancy(name="submit",type="submit",value="Submit Application")
 				br
-				script.
-					$('#button-applygrant').click(function(e) {
-						e.preventDefault();
-						$(this).parent().html('Apply for a Grant');
-						$('#contact_form').css('display', 'block');
-					})
 
 				hr
 
@@ -91,3 +85,6 @@ block content
 					mixin pagebar(curpage, lastpage, '/grants/pending/%#viewgrants')
 				else
 					mixin pagebar(curpage, lastpage, '/grants/processed/%#viewgrants')
+
+block subs
+	mixin sub('#apply', '$("button-applygrant").parent().html("Apply for a Grant"); $("#contact_form").css("display", "block"); return true;')

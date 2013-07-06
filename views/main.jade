@@ -1,3 +1,8 @@
+mixin sub(anchor, code)
+  != "subHooks['" + anchor + "'] = function() {"
+  != code
+  != "};"
+
 - if (__REQUEST_TYPE != 'ajax') {
 doctype 5
 html
@@ -131,17 +136,27 @@ html
     div#preloadedImages
     script.
       $(document).ready(function() {
-        onPageLoad(false);
+        onPageLoad(false, window.location.hash);
         if ($('#sun').length > 0)
           setInterval('setSun();', 500);
         if ($('#rainbow').length > 0)
           setInterval('setRainbow();', 500);
         
       });
+
+    != "<script>"
+    block subs
+    != "</script>"
+
+
 - } else { // else __REQUEST_TYPE == ajax
 script.
   $('#ajax-current-page').attr('quib-curpage', '#{__REQUEST_URL}');
   window.History.pushState({caused:true}, 'The First Church of Quibs - #{title}', '#{__REQUEST_URL}');
+
+!= "<script>subHooks = {}; "
+block subs
+!= "</script>"
 
 block content
 - }
