@@ -1,5 +1,5 @@
 var auth = require('./auth'),
-	step = require('step'),
+	async = require('async'),
 	db = require('./db'),
 	Recaptcha = require('recaptcha').Recaptcha
 
@@ -7,6 +7,36 @@ var RECAPTCHA_PUBLIC_KEY = "6LeJ8eESAAAAAMfJjOGW94Uw7HO-sA19JMtriC9p";
 var RECAPTCHA_PRIVATE_KEY = process.env.PRIVATEKEY;
 
 var self = exports;
+
+// TODO: do better than this
+exports.error = function(err, req, res) {
+	console.log("--------------------\n" + err + "\n--------------------");
+	res.send("We're sorry... there was an error with your request. :(");
+}
+
+/**
+pagination:
+query = "SELECT * FROM grants WHERE derp=?" (example)
+countquery = "SELECT count(id) as cnt WHERE derp!=?"
+params = [] params for query
+curpage = 1
+perpage = 10
+callback = function(pagedata, lastpage)
+**/
+exports.pagination = function(query, countquery, params, curpage, perpage, after) {
+	async.series({
+		page: function(callback) {
+			db.query(query + " LIMIT ?,?", params.concat([(curpage-1)*perpage, perpage]), callback);
+		},
+		count: function(callback) {
+			db.query(countquery, params, callback);
+		}
+	}, function(err, results) {
+		if (err) return after(err, {});
+
+		after(null, {rows: results.page, pages: Math.ceil(results.count[0].cnt / perpage)});
+	});
+}
 
 exports.timeNow = function() {
 	return Math.floor(new Date().getTime()/1000);
@@ -75,22 +105,23 @@ exports.nl2br_escape = function(str) {
 
 exports.prepareLayout = function(req, res, next) {
 	if (res.locals.__REQUEST_TYPE == 'normal') {
-		step(
-			function() {
-				auth.build(req, res, this); // build authentication
+		async.series({
+			auth: function (callback) {
+				auth.build(req, res, function() {
+					callback(null, []);
+				});
 			},
-			function () {
-				db.query("SELECT id,name FROM blogs", [], this);
+			blogs: function(callback) {
+				db.query("SELECT id,name FROM blogs", [], callback);
 			},
-			function(rows) {
-				res.locals.main_blogs = rows;
-				db.query("SELECT username FROM users ORDER BY id DESC LIMIT 3", [], this);
-			},
-			function (users) {
-				res.locals.main_lastusers = users;
-				next();
+			lastusers: function(callback) {
+				db.query("SELECT username FROM users ORDER BY id DESC LIMIT 3", [], callback);
 			}
-		);
+		}, function(err, results) {
+			res.locals.main_blogs = results.blogs;
+			res.locals.main_lastusers = results.lastusers;
+			next();
+		});
 	} else {
 		next();
 	}

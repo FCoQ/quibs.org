@@ -41,7 +41,6 @@ block content
 								mixin captcha
 						div.form_field
 							input#submit.fancy(name="submit",type="submit",value="Submit Application")
-						hr
 				br
 				script.
 					$('#button-applygrant').click(function(e) {
@@ -49,6 +48,8 @@ block content
 						$(this).parent().html('Apply for a Grant');
 						$('#contact_form').css('display', 'block');
 					})
+
+				hr
 
 				a(name='viewgrants')
 				if show != 'processed'

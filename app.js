@@ -2,7 +2,6 @@ var express = require('express')
   , http = require('http')
   , path = require('path')
   , crypto = require('crypto')
-  , step = require('step')
   , routes = require('./routes')
   , db = require('./db')
   , auth = require('./auth')
@@ -38,10 +37,11 @@ app.configure(function(){
 	app.use(app.router);
 	app.use(express.static(path.join(__dirname, 'public')));
 
-	// development only
-	if ('development' == app.get('env')) {
-	  app.use(express.errorHandler());
-	}
+	app.use(function(err, req, res, next) {
+		if (!err) return next();
+
+		util.error(err, req, res);
+	});
 });
 
 /// ROUTEWARE:
@@ -49,9 +49,13 @@ app.configure(function(){
 // auth.build - build authentication
 // util.prepareLayout - prepare layout (navbar, footer) if non-ajax request
 app.get('/', util.prepareLayout, routes.index);
+
 app.get('/fund', util.prepareLayout, routes.fund);
-app.get('/grants/:type?/:page?', util.prepareLayout, auth.build, routes.grants);
-app.post('/grants', util.prepareLayout, routes.submitgrant);
+
+app.get('/grants/:type?/:page?', util.prepareLayout, auth.build, routes.grants.show);
+app.post('/grants', util.prepareLayout, routes.grants.submitgrant);
+
+app.get('/blog/:id/:page?', util.prepareLayout, auth.build, routes.blog.show);
 //app.get('/panel', auth.require, routes.panel)
 
 http.createServer(app).listen(app.get('port'), function(){

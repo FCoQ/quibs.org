@@ -1,0 +1,35 @@
+extends main
+include mixins/pagination
+
+block content
+	div#main.round_8.clearfix
+		div.page_title.round_6
+			h1.replace
+				a(href='/blog/#{blogdata.id}') Blog: #{blogdata.name}
+		div#content.left
+			each post in posts
+				div.post
+					h2
+						a(href='/post/#{post.id}') #{post.title}
+					ul.meta.clearfix
+						li
+							img(src='/img/icon-cal.png')
+							= post.date
+						li
+							img(src='/img/icon-cat.png')
+							= post.username
+						li
+							img(src='/img/icon-comment.png')
+								a(href='/post/#{post.id}') 0 Comments
+						li
+							a(href='#') Delete
+
+					div.entry.left.excerpt
+						p= post.msg
+					div.clearfix
+				hr
+
+		div.clear
+		mixin pagebar(curpage, lastpage, '/blog/' + blogdata.id + '/%')
+
+
