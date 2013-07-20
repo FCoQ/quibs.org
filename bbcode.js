@@ -53,6 +53,15 @@ exports.parse = function(input, callback) {
   if a tag doesn't match, return bool false.
 */
 exports.tags = {
+  "ol":function(content, attr) {
+    return "<ol>" + content + "</ol>"
+  },
+  "ul":function(content, attr) {
+    return "<ul>" + content + "</ul>"
+  },
+  "li":function(content, attr) {
+    return "<li>" + content + "</li>"
+  },
   "b":function(content, attr) {
     return "<b>" + content + "</b>"
   },
