@@ -23,7 +23,7 @@ noparse_tag
 
 bbcode
   = "[*]" { return newTag('', '[*]') }
-  / "[code]"i noparse:noparse_tag* "[/code]"i { return newTag('', noparse) }
+  / "[code]"i noparse:noparse_tag* "[/code]"i { return newTag('code', noparse) }
   / start:start_tag &{tree.unshift(start.tag); return true;} content:bbcode* &{tree.shift(start.tag); return true;} end:end_tag &{
   		return end.tag == start.tag;
 	} { return newTag(start.tag, content, start.attr, start.raw) }
