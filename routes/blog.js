@@ -38,13 +38,15 @@ exports.show = function(req, res) {
 
 		async.map(results.posts.rows, function(post, callback) {
 			bbcode.parse(post.msg, function(err, data) {
-				if (err) return util.error(err, req, res);
+				if (err) return callback(err);
 
 				post.rawmsg = post.msg;
 				post.msg = data;
-				callback(err, post);
+				callback(null, post);
 			});
 		}, function(err, posts) {
+			if (err) return util.error("BBcode parser failed!", req, res);
+
 			res.render('blog', {title:'Blog', blogdata: results.blogdata[0], posts: posts, lastpage: results.posts.pages, curpage: page});
 		})
 	})
