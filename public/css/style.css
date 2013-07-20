@@ -482,7 +482,7 @@ Blog Page
 	.meta li img 						{ margin: 0 4px 0 0; float:left; }
 .post_title 					{ width:580px; margin-bottom:5px; }
 .post_image img 					{ padding: 6px; border: 1px solid #DFDFDF; -moz-border-radius: 4px; -webkit-border-radius: 4px; }
-.post .entry					{ width: 435px;}
+.post .entry					{ width: 600px;}
 .post h2 a 						{ color:#0082c0; }
 .post h2 a:hover 				{ color:#E57200; text-decoration:none; }
 .post img 						{ margin-bottom:12px; }

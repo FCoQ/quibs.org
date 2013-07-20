@@ -8,28 +8,57 @@ block content
 				a(href='/blog/#{blogdata.id}') Blog: #{blogdata.name}
 		div#content.left
 			each post in posts
-				div.post
+				div.post(id="post_#{post.id}")
 					h2
 						a(href='/post/#{post.id}') #{post.title}
 					ul.meta.clearfix
 						li
 							img(src='/img/icon-cal.png')
-							= post.date
+							= _timeSince(post.date)
 						li
 							img(src='/img/icon-cat.png')
 							= post.username
 						li
 							img(src='/img/icon-comment.png')
-								a(href='/post/#{post.id}') 0 Comments
+							a(href='/post/#{post.id}') 0 Comments
 						li
-							a(href='#') Delete
+							&nbsp;&nbsp;&nbsp;
+						li
+							a(href='#', do="delete", quib-id=post.id) Delete
+						li
+							a(href='#', do="edit", quib-id=post.id) Edit
 
-					div.entry.left.excerpt
-						p= post.msg
+					div.entry.left.excerpt(style="width:600px")
+						p.bbcode!= post.msg
+						form(method="POST", action="/bp_edit", style="display:none", quib-id=post.id)
+							input(name="title", type="text", value="#{post.title}", style="width:300px")
+							textarea(name="content", style="width:100%", cols=100, rows=20)= post.rawmsg
+							input(type="submit", value="Update Post")
+							input(type="button", value="Cancel", onclick="sub('cancel', this);")
+							input(type="hidden", name="bpid", value=post.id)
 					div.clearfix
 				hr
 
 		div.clear
 		+pagebar(curpage, lastpage, '/blog/' + blogdata.id + '/%')
 
-
+block subs
+	+sub("delete", function(obj) {
+	alert("Deleting post ID " + $(obj).attr('quib-id'));
+	return false;
+	})
+	+sub("edit", function(obj) {
+	$("#post_" + $(obj).attr('quib-id') + " .bbcode").css('display', 'none');
+	$("#post_" + $(obj).attr('quib-id') + " form").css('display', 'block');
+	$("#post_" + $(obj).attr('quib-id') + " textarea").sceditor({
+	plugins: "bbcode",
+	style: "/css/default.min.css",
+	toolbar: "bold,italic,underline,strike|left,center,right|size,color,removeformat|orderedlist,bulletlist,code,quote|image,link,youtube,source"
+	});
+	return false;
+	})
+	+sub("cancel", function(obj) {
+	obj = $(obj).closest('form');
+	$("#post_" + $(obj).attr('quib-id') + " .bbcode").css('display', 'block');
+	$("#post_" + $(obj).attr('quib-id') + " form").css('display', 'none');
+	})

@@ -1,6 +1,7 @@
 var db = require('../db'),
 	util = require('../util'),
-	async = require('async')
+	async = require('async'),
+	bbcode = require('../bbcode.js')
 
 var self = exports;
 
@@ -15,6 +16,9 @@ exports.show = function(req, res) {
 		return util.error("There's no blog by that ID.", req, res);
 
 	var id = parseInt(req.params.id);
+	if (!id)
+		return util.error("There's no blog by that ID.", req, res);
+	
 	var perpage = 5;
 
 	async.series({
@@ -32,7 +36,17 @@ exports.show = function(req, res) {
 	}, function(err, results) {
 		if (err) return util.error("Couldn't get blog information!", req, res);
 
-		res.render('blog', {title:'Blog', blogdata: results.blogdata[0], posts: results.posts.rows, lastpage: results.posts.pages, curpage: page});
+		async.map(results.posts.rows, function(post, callback) {
+			bbcode.parse(post.msg, function(err, data) {
+				if (err) return util.error(err, req, res);
+
+				post.rawmsg = post.msg;
+				post.msg = data;
+				callback(err, post);
+			});
+		}, function(err, posts) {
+			res.render('blog', {title:'Blog', blogdata: results.blogdata[0], posts: posts, lastpage: results.posts.pages, curpage: page});
+		})
 	})
 	// TODO! comments, date stuff, bbcode, etc.
 /*

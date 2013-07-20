@@ -11,6 +11,7 @@
     "mysql-native": "*",
     "async":"*",
     "crypto":"*",
-    "recaptcha":"*"
+    "recaptcha":"*",
+    "pegjs":"*"
   }
 }

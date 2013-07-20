@@ -1,13 +1,13 @@
 	var hookPageLoad = function(ajax) {};
 	var subHooks = {};
-	var hookChange = function(newAnchor) {
+	var hookChange = function(newAnchor, obj) {
 		console.log('hookChange(' + newAnchor + ')');
 		var gotoSelector = $("a[name='" + newAnchor.substr(1) + "']");
 
 		// do we have a hook for this anchor?
 		if (typeof(subHooks[newAnchor]) != 'undefined') {
 			// yep! let's try running it
-			var ret = subHooks[newAnchor]();
+			var ret = subHooks[newAnchor](obj);
 			if (ret === false) {
 				// the hook returned false, it just wanted to run not change the URL
 				return;
@@ -32,6 +32,15 @@
 		}
 		return;
 	};
+
+	// this simulates a subroutine (subpage) action
+	var sub = function(triggerAnchor, obj) {
+		if (typeof(subHooks[triggerAnchor]) != 'undefined') {
+			subHooks[triggerAnchor](obj);
+		}
+
+		return false;
+	}
 
 	var currentRequest = 0;
 	var hassuper = true;
@@ -128,7 +137,7 @@ function onPageLoad(ajax, anchor) {
 	hookPageLoad = function() {};
 
 	if (typeof(anchor) != 'undefined' && anchor != '') {
-		hookChange(anchor);
+		hookChange(anchor, null);
 	}
 
 	Cufon.replace('.replace,.sidebar-widget h4',{fontFamily: 'Museo 500'} );
@@ -174,7 +183,11 @@ $('a').live('click', function(e) {
 			}
 		} else if ($(this).attr('href').substring(0, 1) == '#') {
 			e.preventDefault();
-			hookChange($(this).attr('href'));
+			if ($(this).attr('do')) {
+				hookChange($(this).attr('do'), this);
+			} else {
+				hookChange($(this).attr('href'), this);
+			}
 		}
 	}
 });

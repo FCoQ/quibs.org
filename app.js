@@ -23,6 +23,7 @@ app.configure(function(){
 	app.use(function(req, res, next) {
 		res.locals._nl2br_escape = util.nl2br_escape;
 		res.locals._isset = util.isset;
+		res.locals._timeSince = util.timeSince;
 
 		if (req.url.substring(0, 6) == '/ajax/') {
 			req.url = req.url.substring(5);
