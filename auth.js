@@ -47,3 +47,30 @@ exports.require = function(req, res, next) {
 		}
 	});
 }
+
+/*
+	determines what permissions the local user has for the module described by auth
+
+	example:
+
+	auth: {
+		module: "blogpost",
+		bid: 10 // blog post ID
+	}
+
+	next is a callback which is called with the permission of the user
+
+	permission:
+		0 = no access
+		1 = read access
+		2 = read/write access
+		3 = super access
+*/
+exports.permission = function(req, res, auth, next) {
+	switch (auth) {
+		case "*":
+			// simply get the user's group id
+			
+		break;
+	}
+}

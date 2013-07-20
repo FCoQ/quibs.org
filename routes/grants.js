@@ -7,16 +7,16 @@ var self = exports;
 exports.submitgrant = function(req, res) {
 	if (!res.locals.__RECAPTCHA) {
 		res.locals.msg = 'Error: the CAPTCHA you provided was wrong. Try again.';
-		self.show(req, res);
+		util.redirect(req, res, '/grants')
 	} else if (!req.body.name.match(/^[a-zA-Z0-9 ]{1,25}$/)) {
 		res.locals.msg = 'Error: the name you provided was wrong. Try again.';
-		self.show(req, res);
+		util.redirect(req, res, '/grants')
 	} else {
 		db.query("INSERT INTO grants (date, name, msg, ip) VALUES (?, ?, ?, ?)", [util.timeNow(), req.body.name, req.body.msg, req.connection.remoteAddress], function(err) {
 			if (err) res.locals.msg = "Grant wasn't posted for some reason...";
 			else res.locals.msg = 'Success! Grant posted.';
 
-			self.show(req, res);
+			util.redirect(req, res, '/grants')
 		});
 	}
 }

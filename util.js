@@ -112,10 +112,13 @@ exports.verifyRecaptcha = function(req, res, next) {
 }
 
 exports.redirect = function(req, res, path) {
+	res.render('redirect', {'path':path});
+	/*
 	if (res.locals.__REQUEST_TYPE == 'ajax')
-		res.render('redirect', {'path':'/login'});
+		res.render('redirect', {'path':path});
 	else
 		res.redirect(path);
+	*/
 }
 
 exports.escape = function (html){

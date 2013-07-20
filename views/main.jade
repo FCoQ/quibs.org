@@ -98,6 +98,15 @@ html
             span.letter .
 
         div#ajax-current-page(style='display:none', quib-curpage='#{__REQUEST_URL}')
+
+        - if (_isset(msg)) {
+        div#notice-box.round_8.clearfix(style='display:block')
+          p#notice-content(style='margin-bottom: 10px')= msg
+        - } else {
+        div#notice-box.round_8.clearfix(style='display:none')
+          p#notice-content(style='margin-bottom: 10px')
+        - }
+
         div#pagecontent
           block content
 
@@ -155,6 +164,23 @@ html
 script.
   $('#ajax-current-page').attr('quib-curpage', '#{__REQUEST_URL}');
   window.History.pushState({caused:true}, 'The First Church of Quibs - #{title}', '#{__REQUEST_URL}');
+
+- if (_isset(msg)) {
+script.
+  redirecting = false;
+  $('#notice-content').html('#{msg}');
+  $('#notice-box').css('display', 'block')
+p
+  b= msg
+- } else {
+script.
+  if (!redirecting) {
+    $('#notice-content').html('');
+    $('#notice-box').css('display', 'none')
+  } else {
+    redirecting = false;
+  }
+- }
 
 != "<script>subHooks = {}; "
 block subs

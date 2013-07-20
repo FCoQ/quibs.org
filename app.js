@@ -57,6 +57,7 @@ app.get('/grants/:type?/:page?', util.prepareLayout, auth.build, routes.grants.s
 app.post('/grants', util.prepareLayout, routes.grants.submitgrant);
 
 app.get('/blog/:id/:page?', util.prepareLayout, auth.build, routes.blog.show);
+app.post('/post/:id/edit', auth.require, routes.blog.editpost);
 //app.get('/panel', auth.require, routes.panel)
 
 http.createServer(app).listen(app.get('port'), function(){

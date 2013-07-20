@@ -1,3 +1,4 @@
+	var redirecting = false;
 	var hookPageLoad = function(ajax) {};
 	var subHooks = {};
 	var hookChange = function(newAnchor, obj) {

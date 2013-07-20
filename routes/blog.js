@@ -5,6 +5,30 @@ var db = require('../db'),
 
 var self = exports;
 
+exports.editpost = function(req, res) {
+	if (!util.isset(req.params.id))
+		return util.error("There's no blog by that ID.", req, res);
+
+	var id = parseInt(req.params.id);
+	if (!id)
+		return util.error("There's no blog by that ID.", req, res);
+
+	async.series({
+		post: function(callback) {
+			db.query("SELECT bp.*,b.name as blogname FROM blogposts bp LEFT JOIN blogs b ON b.id=bp.bid WHERE bp.id=?", [id], callback)
+		}
+	}, function(err, results) {
+		if (err) return util.error("Couldn't get post information!", req, res);
+
+		if (results.length > 0) {
+			results = results[0];
+
+		} else {
+			if (err) return util.error("Couldn't get post information!", req, res);
+		}
+	});
+}
+
 exports.show = function(req, res) {
 	var page;
 	if (!util.isset(req.params.page))
