@@ -193,6 +193,16 @@ $('a').live('click', function(e) {
 	}
 });
 
+$('form').live('submit', function(e) {
+	if (!$(this).hasClass('noajax')) {
+		if ($(this).attr('action').substring(0, 1) == '/') {
+			e.preventDefault();
+			getPage($(this).attr('action'), $(this).serialize());
+			return false;
+		}
+	}
+});
+
 $(document).ready(function() {
 	var History = window.History;
 	History.Adapter.bind(window, 'statechange', function() {
