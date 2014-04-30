@@ -24,8 +24,13 @@ exports.editpost = function(req, res) {
 		if (results.post.length > 0) {
 			var post = results.post[0];
 
-			// Can this user edit the blog post?
-			
+			auth.permission(req, res, ["edit blog", post.bid], function(err, ok) {
+				if (!err) return util.error("Couldn't get blog post permission information.", req, res);
+				if (!ok) return util.error("No permission to edit blog post.", req, res);
+
+				// TODO: perform the update
+				util.redirect(req, res, '/blogpost/' + post.id)
+			})
 		} else {
 			if (err) return util.error("Couldn't get post information!", req, res);
 		}
@@ -59,6 +64,9 @@ exports.show = function(req, res) {
 				page,
 				perpage,
 				callback);
+		},
+		canedit: function(callback) {
+			auth.permission(req, res, ["edit blog", id], callback);
 		}
 	}, function(err, results) {
 		if (err) return util.error("Couldn't get blog information!", req, res);
@@ -74,7 +82,7 @@ exports.show = function(req, res) {
 		}, function(err, posts) {
 			if (err) return util.error("BBcode parser failed!", req, res);
 
-			res.render('blog', {title:'Blog', blogdata: results.blogdata[0], posts: posts, lastpage: results.posts.pages, curpage: page});
+			res.render('blog', {title:'Blog', blogdata: results.blogdata[0], posts: posts, lastpage: results.posts.pages, curpage: page, canedit: results.canedit});
 		})
 	})
 	// TODO! comments, date stuff, bbcode, etc.

@@ -24,6 +24,9 @@ exports.build = function (req, res, next) {
 	async.series({
 		userdata: function(callback) {
 			db.query("SELECT * FROM users WHERE email=?", [req.cookies.email], callback);
+		},
+		permissions: function(callback) {
+			db.query("SELECT p.uid as `uid`, p.type as `type`, p.obj as `obj`, p.level as `level` FROM userpermissions p LEFT JOIN users u ON p.uid=u.id WHERE u.email=?", [req.cookies.email], callback);
 		}
 	}, function(err, results) {
 		if (util.isset(results.userdata.length) && (results.userdata.length > 0)) {
@@ -31,6 +34,19 @@ exports.build = function (req, res, next) {
 			if (results.userdata.pass == req.cookies.pass) {
 				res.locals.__AUTH_LOGGED_IN = true;
 				res.locals.__AUTH_USERDATA = results.userdata;
+
+				var permissions = {1:{}, 2:{}};
+
+				// results.permissions contains a list of {uid,type,obj,level}
+				results.permissions.forEach(function(perm) {
+					if (typeof permissions[perm.type] == "undefined") {
+						permissions[perm.type] = {};
+					}
+
+					permissions[perm.type][perm.obj] = perm.level;
+				})
+
+				res.locals.__AUTH_PERMISSIONS = permissions;
 			}
 		}
 		next();
@@ -49,28 +65,28 @@ exports.require = function(req, res, next) {
 }
 
 /*
-	determines what permissions the local user has for the module described by auth
+	get permissions for the user
 
-	example:
+	(req, res, ["edit blog", 10], function(ok) {
+		if (!ok) return util.error...
 
-	auth: {
-		module: "blogpost",
-		bid: 10 // blog post ID
-	}
-
-	next is a callback which is called with the permission of the user
-
-	permission:
-		0 = no access
-		1 = read access
-		2 = read/write access
-		3 = super access
+	})
 */
 exports.permission = function(req, res, auth, next) {
-	switch (auth) {
-		case "*":
-			// simply get the user's group id
-			
+	var action = auth[0];
+	var object = auth[1];
+
+	// TYPES:
+	//  1 = blog
+	//  2 = club
+
+	switch (action) {
+		case "edit blog":
+			if (res.locals.__AUTH_PERMISSIONS[1][object] >= 2) {
+				next(null, true);
+			} else {
+				next(null, false);
+			}
 		break;
 	}
 }

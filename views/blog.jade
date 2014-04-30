@@ -22,11 +22,12 @@ block content
 							img(src='/img/icon-comment.png')
 							a(href='/post/#{post.id}') 0 Comments
 						li
-							&nbsp;&nbsp;&nbsp;
-						li
-							a(href='#', do="delete", quib-id=post.id) Delete
-						li
-							a(href='#', do="edit", quib-id=post.id) Edit
+							| &nbsp;&nbsp;&nbsp;
+						if canedit
+							li
+								a(href='#', do="delete", quib-id=post.id) Delete
+							li
+								a(href='#', do="edit", quib-id=post.id) Edit
 
 					div.entry.left.excerpt(style="width:600px")
 						p.bbcode!= post.msg
