@@ -1,17 +1,18 @@
 var db = require('../db'),
 	util = require('../util'),
 	async = require('async'),
-	bbcode = require('../bbcode.js')
+	bbcode = require('../bbcode.js'),
+	auth = require('../auth')
 
 var self = exports;
 
 exports.editpost = function(req, res) {
 	if (!util.isset(req.params.id))
-		return util.error("There's no blog by that ID.", req, res);
+		return util.error("There's no blogpost by that ID.", req, res);
 
 	var id = parseInt(req.params.id);
 	if (!id)
-		return util.error("There's no blog by that ID.", req, res);
+		return util.error("There's no blogpost by that ID.", req, res);
 
 	async.series({
 		post: function(callback) {
@@ -20,9 +21,11 @@ exports.editpost = function(req, res) {
 	}, function(err, results) {
 		if (err) return util.error("Couldn't get post information!", req, res);
 
-		if (results.length > 0) {
-			results = results[0];
+		if (results.post.length > 0) {
+			var post = results.post[0];
 
+			// Can this user edit the blog post?
+			
 		} else {
 			if (err) return util.error("Couldn't get post information!", req, res);
 		}
