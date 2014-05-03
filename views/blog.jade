@@ -46,7 +46,7 @@ block content
 block subs
 	+sub("delete", function(obj) {
 		if (confirm("Are you sure you'd like to delete this post?")) {
-			alert("Deleting post ID " + $(obj).attr('quib-id'));
+			getPage("/post/" + $(obj).attr('quib-id') + "/delete", {});
 		}
 		return false;
 	})

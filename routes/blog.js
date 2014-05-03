@@ -6,42 +6,71 @@ var db = require('../db'),
 
 var self = exports;
 
-exports.editpost = function(req, res) {
-	if (!util.isset(req.params.id))
-		return util.error("There's no blogpost by that ID.", req, res);
+function getBlogPost(id, callback) {
+	if (!util.isset(id))
+		return callback("No blogpost ID sent.");
 
-	var id = parseInt(req.params.id);
+	id = parseInt(id);
 	if (!id)
-		return util.error("There's no blogpost by that ID.", req, res);
+		return callback("Valid blogpost ID not sent.");
 
 	async.series({
-		post: function(callback) {
-			db.query("SELECT bp.*,b.name as blogname FROM blogposts bp LEFT JOIN blogs b ON b.id=bp.bid WHERE bp.id=?", [id], callback)
+		post: function(c) {
+			db.query("SELECT bp.*,b.name as blogname FROM blogposts bp LEFT JOIN blogs b ON b.id=bp.bid WHERE bp.id=?", [id], c)
 		}
 	}, function(err, results) {
-		if (err) return util.error("Couldn't get post information!", req, res);
+		if (err) return callback(err);
 
 		if (results.post.length > 0) {
 			var post = results.post[0];
 
-			auth.permission(req, res, ["edit blog", post.bid], function(err, ok) {
-				if (err) return util.error("Couldn't get blog post permission information.", req, res);
-
-				if (!ok) {
-					res.locals.msg = "You do not have permission to update this post.";
-				} else {
-					// TODO: perform the update
-					res.locals.msg = "Post updated!";
-				}
-
-				// TODO: redirect to blog post
-				//util.redirect(req, res, '/blogpost/' + post.id)
-				util.redirect(req, res, '/blog/' + post.bid)
-			})
+			return callback(null, post);
 		} else {
-			if (err) return util.error("Couldn't get post information!", req, res);
+			return callback("Couldn't get post information!");
 		}
-	});
+	})
+};
+
+exports.deletepost = function(req, res) {
+	getBlogPost(req.params.id, function(err, post) {
+		if (err) return util.error(err, req, res);
+
+		auth.permission(req, res, ["edit blog", post.bid], function(err, ok) {
+			if (err) return util.error(err, req, res);
+
+			if (!ok) {
+				res.locals.msg = "You do not have permission to update this post.";
+			} else {
+				// TODO: perform the delete
+				res.locals.msg = "Post deleted!";
+			}
+
+			// TODO: redirect to blog post
+			//util.redirect(req, res, '/blogpost/' + post.id)
+			util.redirect(req, res, '/blog/' + post.bid)
+		})
+	})
+}
+
+exports.editpost = function(req, res) {
+	getBlogPost(req.params.id, function(err, post) {
+		if (err) return util.error(err, req, res);
+
+		auth.permission(req, res, ["edit blog", post.bid], function(err, ok) {
+			if (err) return util.error(err, req, res);
+
+			if (!ok) {
+				res.locals.msg = "You do not have permission to update this post.";
+			} else {
+				// TODO: perform the update
+				res.locals.msg = "Post updated!";
+			}
+
+			// TODO: redirect to blog post
+			//util.redirect(req, res, '/blogpost/' + post.id)
+			util.redirect(req, res, '/blog/' + post.bid)
+		})
+	})
 }
 
 exports.show = function(req, res) {

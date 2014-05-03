@@ -58,6 +58,7 @@ app.post('/grants', util.prepareLayout, routes.grants.submitgrant);
 
 app.get('/blog/:id/:page?', util.prepareLayout, auth.build, routes.blog.show);
 app.post('/post/:id/edit', auth.require, routes.blog.editpost);
+app.post('/post/:id/delete', auth.require, routes.blog.deletepost);
 //app.get('/panel', auth.require, routes.panel)
 
 http.createServer(app).listen(app.get('port'), function(){

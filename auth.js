@@ -19,7 +19,7 @@ exports.build = function (req, res, next) {
 	res.locals.__AUTH_LOGGED_IN = false;
 
 	if (!util.isset(req.cookies.email) || !util.isset(req.cookies.pass))
-		next();
+		return next();
 
 	async.series({
 		userdata: function(callback) {
