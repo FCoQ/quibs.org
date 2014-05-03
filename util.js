@@ -3,7 +3,7 @@ var auth = require('./auth'),
 	db = require('./db'),
 	Recaptcha = require('recaptcha').Recaptcha
 
-var RECAPTCHA_PUBLIC_KEY = "6LeJ8eESAAAAAMfJjOGW94Uw7HO-sA19JMtriC9p";
+var RECAPTCHA_PUBLIC_KEY = "6LfX7vISAAAAAGFqn4yRgOGpx6zfIG05XxBgN0Tz";
 var RECAPTCHA_PRIVATE_KEY = process.env.PRIVATEKEY;
 
 var self = exports;
