@@ -1,2 +1,6 @@
+# using this to store my DBPASS/PRIVATEKEY/etc. environment variables
+start.sh
+
+# node stuff
 node_modules/
 npm-debug.log

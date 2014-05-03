@@ -67,9 +67,10 @@ exports.require = function(req, res, next) {
 /*
 	get permissions for the user
 
-	(req, res, ["edit blog", 10], function(ok) {
+	(req, res, ["edit blog", 10], function(err, ok) {
+		if (err)
 		if (!ok) return util.error...
-
+		
 	})
 */
 exports.permission = function(req, res, auth, next) {

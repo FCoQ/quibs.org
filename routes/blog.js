@@ -25,11 +25,18 @@ exports.editpost = function(req, res) {
 			var post = results.post[0];
 
 			auth.permission(req, res, ["edit blog", post.bid], function(err, ok) {
-				if (!err) return util.error("Couldn't get blog post permission information.", req, res);
-				if (!ok) return util.error("No permission to edit blog post.", req, res);
+				if (err) return util.error("Couldn't get blog post permission information.", req, res);
 
-				// TODO: perform the update
-				util.redirect(req, res, '/blogpost/' + post.id)
+				if (!ok) {
+					res.locals.msg = "You do not have permission to update this post.";
+				} else {
+					// TODO: perform the update
+					res.locals.msg = "Post updated!";
+				}
+
+				// TODO: redirect to blog post
+				//util.redirect(req, res, '/blogpost/' + post.id)
+				util.redirect(req, res, '/blog/' + post.bid)
 			})
 		} else {
 			if (err) return util.error("Couldn't get post information!", req, res);
