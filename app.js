@@ -48,18 +48,24 @@ app.configure(function(){
 /// ROUTEWARE:
 // auth.require - require authentication
 // auth.build - build authentication
-// util.prepareLayout - prepare layout (navbar, footer) if non-ajax request
+// util.prepareLayout - prepare layout (navbar, footer) if non-ajax request // todo consider placing this on everything
+//////////////////////////////////////////////////////////////////////////////////////
+
+// index
 app.get('/', util.prepareLayout, routes.index);
 
+// church fund
 app.get('/fund', util.prepareLayout, routes.fund);
 
+// grants page
 app.get('/grants/:type?/:page?', util.prepareLayout, auth.build, routes.grants.show);
 app.post('/grants', util.prepareLayout, routes.grants.submitgrant);
 
+// blog system
 app.get('/blog/:id/:page?', util.prepareLayout, auth.build, routes.blog.show);
-app.post('/post/:id/edit', auth.require, routes.blog.editpost);
-app.post('/post/:id/delete', auth.require, routes.blog.deletepost);
-//app.get('/panel', auth.require, routes.panel)
+app.get('/post/:id', util.prepareLayout, auth.build, routes.blogpost.show);
+app.post('/post/:id/edit', auth.require, routes.blogpost.editpost);
+app.post('/post/:id/delete', auth.require, routes.blogpost.deletepost);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
