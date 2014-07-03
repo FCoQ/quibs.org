@@ -17,6 +17,7 @@ exports.build = function (req, res, next) {
 
 	res.locals.__AUTH_USERDATA = {};
 	res.locals.__AUTH_LOGGED_IN = false;
+	res.locals.__AUTH_PERMISSIONS = {1:{}, 2:{}};
 
 	if (!util.isset(req.cookies.email) || !util.isset(req.cookies.pass))
 		return next();
@@ -35,18 +36,14 @@ exports.build = function (req, res, next) {
 				res.locals.__AUTH_LOGGED_IN = true;
 				res.locals.__AUTH_USERDATA = results.userdata;
 
-				var permissions = {1:{}, 2:{}};
-
 				// results.permissions contains a list of {uid,type,obj,level}
 				results.permissions.forEach(function(perm) {
-					if (typeof permissions[perm.type] == "undefined") {
-						permissions[perm.type] = {};
+					if (typeof res.locals.__AUTH_PERMISSIONS[perm.type] == "undefined") {
+						res.locals.__AUTH_PERMISSIONS[perm.type] = {};
 					}
 
-					permissions[perm.type][perm.obj] = perm.level;
+					res.locals.__AUTH_PERMISSIONS[perm.type][perm.obj] = perm.level;
 				})
-
-				res.locals.__AUTH_PERMISSIONS = permissions;
 			}
 		}
 		next();
