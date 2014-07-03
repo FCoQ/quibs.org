@@ -2,8 +2,7 @@ var mysql;
 function connect() {
 	mysql = require('mysql-native').createTCPClient('127.0.0.1', 3306);
 	mysql.auto_prepare = true;
-//	mysql.auth('quibs', 'root', process.env.DBPASS);
-	mysql.auth('quibs', 'root', 'derp'); // local development, not our root password i swear ;)
+	mysql.auth('quibs', 'root', process.env.DBPASS);
 }
 
 function reset() {
