@@ -11,7 +11,7 @@ var app = express();
 
 app.configure(function(){
 	// all environments
-	app.set('port', process.env.PORT || 80);
+	app.set('port', process.env.PORT || 8080);
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
 
@@ -63,6 +63,7 @@ app.post('/grants', util.prepareLayout, routes.grants.submitgrant);
 
 // blog system
 app.get('/blog/:id/:page?', util.prepareLayout, auth.build, routes.blog.show);
+app.get('/blog/:id/newpost', util.prepareLayout, auth.require, routes.blog.newpost)
 app.get('/post/:id', util.prepareLayout, auth.build, routes.blogpost.show);
 app.post('/post/:id/edit', auth.require, routes.blogpost.editpost);
 app.post('/post/:id/delete', auth.require, routes.blogpost.deletepost);

@@ -6,6 +6,10 @@ var db = require('../db'),
 
 var self = exports;
 
+exports.newpost = function(req, res) {
+
+}
+
 exports.show = function(req, res) {
 	var page;
 	if (!util.isset(req.params.page))

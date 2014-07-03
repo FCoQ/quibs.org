@@ -6,6 +6,10 @@ block content
 		div.page_title.round_6
 			h1.replace
 				a(href='/blog/#{blogdata.id}') Blog: #{blogdata.name}
+		if canedit
+			div#postdiv(style="float:right")
+				h5
+					a(href="/blog/#{blogdata.id}/newpost",style="text-decoration:underline") Submit Post
 		div#content.left
 			each post in posts
 				div.post(id="post_#{post.id}")
