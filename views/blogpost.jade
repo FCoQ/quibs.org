@@ -1,4 +1,69 @@
 extends main
 
 block content
-	= JSON.stringify(post)
+	div#main.round_8.clearfix
+		div.page_title.round_6
+			h1.replace
+				a(href='/blog/#{blogdata.id}') Blog: #{blogdata.name}
+		if canedit
+			div#postdiv(style="float:right;margin-right:20px")
+				h5
+					a(href="/blog/#{blogdata.id}/newpost",style="text-decoration:underline") Submit Post
+		div#content.left
+			each post in posts
+				div.post(id="post_#{post.id}")
+					h2
+						a(href='/post/#{post.id}') #{post.title}
+					ul.meta.clearfix
+						li
+							img(src='/img/icon-cal.png')
+							= _timeSince(post.date)
+						li
+							img(src='/img/icon-cat.png')
+							= post.username
+						li
+							img(src='/img/icon-comment.png')
+							a(href='/post/#{post.id}') 0 Comments
+						li
+							| &nbsp;&nbsp;&nbsp;
+						if canedit
+							li
+								a(href='#', do="delete", quib-id=post.id) Delete
+							li
+								a(href='#', do="edit", quib-id=post.id) Edit
+
+					div.entry.left.excerpt(style="width:600px")
+						div.bbcode!= post.msg
+						form(method="POST", action="/post/#{post.id}/edit", style="display:none", quib-id=post.id)
+							input(name="title", type="text", value="#{post.title}", style="width:300px")
+							textarea(name="content", style="width:100%", cols=100, rows=20)= post.rawmsg
+							input(type="submit", value="Update Post")
+							input(type="button", value="Cancel", onclick="sub('cancel', this);")
+							input(type="hidden", name="bpid", value=post.id)
+					div.clearfix
+				hr
+
+		div.clear
+
+block subs
+	+sub("delete", function(obj) {
+		if (confirm("Are you sure you'd like to delete this post?")) {
+			getPage("/post/" + $(obj).attr('quib-id') + "/delete", {});
+		}
+		return false;
+	})
+	+sub("edit", function(obj) {
+		$("#post_" + $(obj).attr('quib-id') + " .bbcode").css('display', 'none');
+		$("#post_" + $(obj).attr('quib-id') + " form").css('display', 'block');
+		$("#post_" + $(obj).attr('quib-id') + " textarea").sceditor({
+			plugins: "bbcode",
+			style: "/css/default.min.css",
+			toolbar: "bold,italic,underline,strike|left,center,right|size,color,removeformat|orderedlist,bulletlist,code,quote|image,link,youtube,source"
+		});
+		return false;
+	})
+	+sub("cancel", function(obj) {
+		obj = $(obj).closest('form');
+		$("#post_" + $(obj).attr('quib-id') + " .bbcode").css('display', 'block');
+		$("#post_" + $(obj).attr('quib-id') + " form").css('display', 'none');
+	})

@@ -34,7 +34,7 @@ exports.show = function(req, res) {
 	var grants = [];
 
 	var render = function(err, pagedata) {
-		if (err) return util.error(err, req, res);
+		if (err) return util.error(err, req, res, "Couldn't load grants.");
 
 		res.render('grants', {title:'Grants', show: show, curpage: page, lastpage: pagedata.pages, grants: pagedata.rows});
 	};

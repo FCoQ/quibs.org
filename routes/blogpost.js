@@ -33,50 +33,75 @@ function getBlogPost(id, callback) {
 
 exports.deletepost = function(req, res) {
 	getBlogPost(req.params.id, function(err, post) {
-		if (err) return util.error(err, req, res);
+		if (err) return util.error(err, req, res, "That blog post may not exist or we couldn't find it.");
 
 		auth.permission(req, res, ["edit blog", post.bid], function(err, ok) {
-			if (err) return util.error(err, req, res);
+			if (err) return util.error(err, req, res, "Couldn't get permission information.");
 
 			if (!ok) {
-				res.locals.msg = "You do not have permission to update this post.";
+				util.error(null, req, res, "You do not have permission to edit this blog.");
 			} else {
-				// TODO: perform the delete
-				res.locals.msg = "Post deleted!";
-			}
+				db.query("DELETE FROM blogposts WHERE id=?", [post.id], function(err, result) {
+					if (err) return util.error(err, req, res, "Couldn't delete post for some reason.");
 
-			// TODO: redirect to blog post
-			//util.redirect(req, res, '/blogpost/' + post.id)
-			util.redirect(req, res, '/blog/' + post.bid)
+					res.locals.msg = "Post deleted!";
+					util.redirect(req, res, '/blog/' + post.bid)
+				})
+			}
 		})
 	})
 }
 
 exports.editpost = function(req, res) {
+	if (!util.isset(req.body.title))
+		return util.error(null, req, res, "Title wasn't sent.");
+
+	if (!util.isset(req.body.content))
+		return util.error(null, req, res, "Content wasn't sent.");
+
 	getBlogPost(req.params.id, function(err, post) {
-		if (err) return util.error(err, req, res);
+		if (err) return util.error(err, req, res, "That blog post may not exist or we couldn't find it.");
 
 		auth.permission(req, res, ["edit blog", post.bid], function(err, ok) {
-			if (err) return util.error(err, req, res);
+			if (err) return util.error(err, req, res, "Couldn't get permission information.");
 
 			if (!ok) {
-				res.locals.msg = "You do not have permission to update this post.";
+				util.error(null, req, res, "You do not have permission to edit this blog.");
 			} else {
-				// TODO: perform the update
-				res.locals.msg = "Post updated!";
-			}
+				db.query("UPDATE blogposts SET title=?, msg=? WHERE id=?", [req.body.title, req.body.content, post.id], function(err, result) {
+					if (err) return util.error(err, req, res, "Couldn't edit post for some reason.")
 
-			// TODO: redirect to blog post
-			//util.redirect(req, res, '/blogpost/' + post.id)
-			util.redirect(req, res, '/blog/' + post.bid)
+					res.locals.msg = "Post updated!";
+					util.redirect(req, res, '/post/' + post.id)
+				})
+			}
 		})
 	})
 }
 
 exports.show = function(req, res) {
-	getBlogPost(req.params.id, function(err, post) {
-		if (err) return util.error(err, req, res);
+	var id = req.params.id;
 
-		res.render('blogpost', {title:'</title>', post: post});
+	getBlogPost(id, function(err, post) {
+		if (err) return util.error(err, req, res, "That blog post may not exist or we couldn't find it.");
+
+		async.series({
+			blogdata: function(callback) {
+				db.query("SELECT * FROM blogs WHERE id=?", [post.bid], callback);
+			},
+			canedit: function(callback) {
+				auth.permission(req, res, ["edit blog", post.bid], callback);
+			}
+		}, function(err, results) {
+			if (err) return util.error(err, req, res, "Couldn't get blog information.");
+
+			bbcode.parse(post.msg, function(err, data) {
+				if (err) return util.error(err, req, res, "BBcode parser failed!");
+
+				post.rawmsg = post.msg;
+				post.msg = data;
+				res.render('blogpost', {title:post.title, posts: [post], blogdata: results.blogdata[0], canedit: results.canedit});
+			})
+		})
 	})
 }

@@ -1,5 +1,4 @@
 	var redirecting = false;
-	var hookPageLoad = function(ajax) {};
 	var subHooks = {};
 	var hookChange = function(newAnchor, obj) {
 		console.log('hookChange(' + newAnchor + ')');
@@ -134,8 +133,7 @@ function onPageLoad(ajax, anchor) {
 	if (typeof(ajax) == 'undefined')
 		ajax = false;
 
-	hookPageLoad(ajax);
-	hookPageLoad = function() {};
+	sub('onPageLoad');
 
 	if (typeof(anchor) != 'undefined' && anchor != '') {
 		hookChange(anchor, null);

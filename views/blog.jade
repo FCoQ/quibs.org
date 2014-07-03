@@ -7,7 +7,7 @@ block content
 			h1.replace
 				a(href='/blog/#{blogdata.id}') Blog: #{blogdata.name}
 		if canedit
-			div#postdiv(style="float:right")
+			div#postdiv(style="float:right;margin-right:20px")
 				h5
 					a(href="/blog/#{blogdata.id}/newpost",style="text-decoration:underline") Submit Post
 		div#content.left
@@ -34,7 +34,7 @@ block content
 								a(href='#', do="edit", quib-id=post.id) Edit
 
 					div.entry.left.excerpt(style="width:600px")
-						p.bbcode!= post.msg
+						div.bbcode!= post.msg
 						form(method="POST", action="/post/#{post.id}/edit", style="display:none", quib-id=post.id)
 							input(name="title", type="text", value="#{post.title}", style="width:300px")
 							textarea(name="content", style="width:100%", cols=100, rows=20)= post.rawmsg

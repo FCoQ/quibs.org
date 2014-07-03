@@ -16,7 +16,7 @@ exports.index = function(req, res) {
 			db.query("SELECT * FROM clubs", [], callback);
 		}
 	}, function(err, results) {
-		if (err) return util.error(err, req, res);
+		if (err) return util.error(err, req, res, "Couldn't render index page, try again later.");
 
 		res.render('index', {title:'It hurts when I pee.', clubs:results.clubs, randomquote:util.randomElement(results.quotes)});
 	});

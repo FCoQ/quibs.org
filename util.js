@@ -9,9 +9,9 @@ var RECAPTCHA_PRIVATE_KEY = process.env.PRIVATEKEY;
 var self = exports;
 
 // TODO: do better than this
-exports.error = function(err, req, res) {
+exports.error = function(err, req, res, readable) {
 	console.log("--------------------\n" + err + "\n--------------------");
-	res.send("We're sorry... there was an error with your request. :(");
+	res.render('error', {readable: readable});
 }
 
 /**

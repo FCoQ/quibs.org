@@ -1,0 +1,24 @@
+extends main
+
+block content
+	div#main.round_8.clearfix
+		div.page_title.round_6
+			h1.replace
+				a(href='/blog/#{blog.id}') Blog: #{blog.name}
+		
+		h2 New Post
+		div#content.left
+			form(method="POST", action="/blog/#{blog.id}/submitpost")
+				input(name="title", type="text", value="", placeholder="Title", style="width:300px")
+				textarea(name="content", width="100%", cols=100, rows=20)
+				input(type="submit", value="Submit Post")
+
+block subs
+	+sub("onPageLoad", function(obj) {
+		$("textarea").sceditor({
+			plugins: "bbcode",
+			style: "/css/default.min.css",
+			toolbar: "bold,italic,underline,strike|left,center,right|size,color,removeformat|orderedlist,bulletlist,code,quote|image,link,youtube,source"
+		});
+		return false;
+	})

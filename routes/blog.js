@@ -6,8 +6,68 @@ var db = require('../db'),
 
 var self = exports;
 
-exports.newpost = function(req, res) {
+exports.submitpost = function(req, res) {
+	if (!util.isset(req.params.id))
+		return util.error(null, req, res, "No blog ID supplied.");
 
+	var id = parseInt(req.params.id);
+	if (!id)
+		return util.error(null, req, res, "No valid blog ID supplied.");
+
+	if (!util.isset(req.body.title))
+		return util.error(null, req, res, "Title wasn't sent.");
+
+	if (!util.isset(req.body.content))
+		return util.error(null, req, res, "Content wasn't sent.");
+
+	async.series({
+		blogdata: function(callback) {
+			db.query("SELECT * FROM blogs WHERE id=?", [id], callback);
+		},
+		canedit: function(callback) {
+			auth.permission(req, res, ["edit blog", id], callback);
+		}
+	}, function(err, results) {
+		if (err) return util.error(err, req, res, "That blog doesn't appear to exist.");
+
+		if (!results.canedit) {
+			return util.error(err, req, res, "You do not have permission to edit this blog.");
+		}
+
+		db.query("INSERT INTO blogposts (id, bid, title, msg, date, isnews, uid) VALUES (NULL, ?, ?, ?, ?, 0, ?)",
+			[id, req.body.title, req.body.content, util.timeNow(), res.locals.__AUTH_USERDATA.id], // TODO: easier way to grab the id?
+			function(err, rows) {
+				if (err) return util.error(err, req, res, "Couldn't submit your post.")
+
+				util.redirect(req, res, '/post/' + rows.insert_id)
+			})
+	})
+}
+
+exports.newpost = function(req, res) {
+	if (!util.isset(req.params.id))
+		return util.error(null, req, res, "No blog ID supplied.");
+
+	var id = parseInt(req.params.id);
+	if (!id)
+		return util.error(null, req, res, "No valid blog ID supplied.");
+
+	async.series({
+		blogdata: function(callback) {
+			db.query("SELECT * FROM blogs WHERE id=?", [id], callback);
+		},
+		canedit: function(callback) {
+			auth.permission(req, res, ["edit blog", id], callback);
+		}
+	}, function(err, results) {
+		if (err) return util.error(err, req, res, "That blog doesn't appear to exist.");
+
+		if (!results.canedit) {
+			return util.error(err, req, res, "You do not have permission to edit this blog.");
+		}
+
+		res.render('blognewpost', {title:'New Post', blog: results.blogdata[0]});
+	})
 }
 
 exports.show = function(req, res) {
@@ -18,11 +78,11 @@ exports.show = function(req, res) {
 		page = parseInt(req.params.page);
 
 	if (!util.isset(req.params.id))
-		return util.error("There's no blog by that ID.", req, res);
+		return util.error(null, req, res, "No blog ID supplied.");
 
 	var id = parseInt(req.params.id);
 	if (!id)
-		return util.error("There's no blog by that ID.", req, res);
+		return util.error(null, req, res, "No valid blog ID supplied.");
 	
 	var perpage = 5;
 
@@ -42,7 +102,7 @@ exports.show = function(req, res) {
 			auth.permission(req, res, ["edit blog", id], callback);
 		}
 	}, function(err, results) {
-		if (err) return util.error("Couldn't get blog information!", req, res);
+		if (err) return util.error(err, req, res, "That blog doesn't appear to exist.");
 
 		async.map(results.posts.rows, function(post, callback) {
 			bbcode.parse(post.msg, function(err, data) {
@@ -53,9 +113,9 @@ exports.show = function(req, res) {
 				callback(null, post);
 			});
 		}, function(err, posts) {
-			if (err) return util.error("BBcode parser failed!", req, res);
+			if (err) return util.error(err, req, res, "BBcode parser failed!");
 
-			res.render('blog', {title:'Blog', blogdata: results.blogdata[0], posts: posts, lastpage: results.posts.pages, curpage: page, canedit: results.canedit});
+			res.render('blog', {title:results.blogdata[0].name, blogdata: results.blogdata[0], posts: posts, lastpage: results.posts.pages, curpage: page, canedit: results.canedit});
 		})
 	})
 	// TODO! comments, date stuff, bbcode, etc.

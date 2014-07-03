@@ -25,12 +25,18 @@ exports.query = function(query, params, callback, last) {
 
 	console.log('PERFORMING QUERY ' + query);
 	console.log('	PARAMS: ' + params);
+
 	var cmd = mysql.execute(query, params);
 
 	cmd.addListener('row', function(r) {
 		rows.push(r);
 	});
 	cmd.addListener('end', function(r) {
+		var resObj = [];
+		resObj.__proto__ = rows.__proto__;
+		resObj.insert_id = r.result.insert_id;
+
+		rows.__proto__ = resObj;
 		callback(null, rows);
 	});
 	cmd.addListener('error', function(err) {
@@ -42,3 +48,4 @@ exports.query = function(query, params, callback, last) {
 		}
 	});
 }
+

@@ -41,7 +41,8 @@ app.configure(function(){
 	app.use(function(err, req, res, next) {
 		if (!err) return next();
 
-		util.error(err, req, res);
+		console.log(err);
+		res.send("We're sorry, there was an error with your request. :(");
 	});
 });
 
@@ -62,8 +63,9 @@ app.get('/grants/:type?/:page?', util.prepareLayout, auth.build, routes.grants.s
 app.post('/grants', util.prepareLayout, routes.grants.submitgrant);
 
 // blog system
+app.post('/blog/:id/submitpost', auth.require, routes.blog.submitpost);
+app.get('/blog/:id/newpost', util.prepareLayout, auth.require, routes.blog.newpost);
 app.get('/blog/:id/:page?', util.prepareLayout, auth.build, routes.blog.show);
-app.get('/blog/:id/newpost', util.prepareLayout, auth.require, routes.blog.newpost)
 app.get('/post/:id', util.prepareLayout, auth.build, routes.blogpost.show);
 app.post('/post/:id/edit', auth.require, routes.blogpost.editpost);
 app.post('/post/:id/delete', auth.require, routes.blogpost.deletepost);

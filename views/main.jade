@@ -163,7 +163,12 @@ html
 - } else { // else __REQUEST_TYPE == ajax
 script.
   $('#ajax-current-page').attr('quib-curpage', '#{__REQUEST_URL}');
-  window.History.pushState({caused:true}, '#{title} - The First Church of Quibs', '#{__REQUEST_URL}');
+  
+  if (redirecting) {
+    window.History.replaceState({caused:true}, '#{title} - The First Church of Quibs', '#{__REQUEST_URL}');
+  } else {
+    window.History.pushState({caused:true}, '#{title} - The First Church of Quibs', '#{__REQUEST_URL}');
+  }
 
 - if (_isset(msg)) {
 script.
