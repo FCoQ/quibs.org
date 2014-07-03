@@ -7,23 +7,37 @@ var loaded = false; // singleton parser
 
 var self = exports;
 
-exports.walk = function(tree) {
+exports.walk = function(tree, parent) {
   var res = "";
   for (var i=0;i<tree.length;i++) {
     if (tree[i].tag == "") {
-      res += tree[i].content;
+      if (parent) {
+        res += self.filter(parent, tree[i].content);
+      } else {
+        res += tree[i].content;
+      }
     } else {
       if (self.tags[tree[i].tag]) {
-        var stage = self.tags[tree[i].tag](self.walk(tree[i].content), tree[i].attr);
+        var stage = self.tags[tree[i].tag](self.walk(tree[i].content, tree[i].tag), tree[i].attr);
         if (stage) {
           res += stage;
           continue;
         }
       }
-      res += tree[i].raw + self.walk(tree[i].content) + '[/' + tree[i].tag + ']';
+      res += tree[i].raw + self.walk(tree[i].content, null) + '[/' + tree[i].tag + ']';
     }
   }
   return res;
+}
+
+exports.filter = function(tag, content) {
+  if (tag == "ol" || tag == "ul") {
+    return ""; // nothing between <li>'s, including newlines
+  }
+  if (tag == "li") {
+    return content.replace("<br />", "")
+  }
+  return content;
 }
 
 exports.parse = function(input, callback) {
@@ -40,7 +54,7 @@ exports.parse = function(input, callback) {
   } else {
     var tree = parser.parse(util.nl2br_escape(input));
 
-    callback(null, self.walk(tree))
+    callback(null, self.walk(tree, null))
   }
 }
 
