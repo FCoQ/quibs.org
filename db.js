@@ -1,50 +1,29 @@
-var mysql;
+var mysql = require('mysql2');
+var connection;
+
 function connect() {
-	mysql = require('mysql-native').createTCPClient('127.0.0.1', 3306);
-	mysql.auto_prepare = true;
-	mysql.auth('quibs', 'root', process.env.DBPASS);
+	console.log("Connecting to MySQL server...");
+	connection = mysql.createConnection({
+		host: '127.0.0.1',
+		port: 3306,
+		user: 'root',
+		password: process.env.DBPASS,
+		database: 'quibs'
+	})
+
+	connection.on('error', function(err, test) {
+		console.log("Error connecting to MySQL server.");
+		connect();
+	})
 }
 
-function reset() {
-	connect();
-	mysql.on('error', function() {
-		// reconnect to mysql
-		reset();
-	});
-}
+connect();
 
-reset();
-
-var self = exports;
-
-exports.query = function(query, params, callback, last) {
-	var rows = [];
-	if (typeof(last) == 'undefined')
-		last = false;
-
+exports.query = function(query, params, callback) {
 	console.log('PERFORMING QUERY ' + query);
 	console.log('	PARAMS: ' + params);
 
-	var cmd = mysql.execute(query, params);
-
-	cmd.addListener('row', function(r) {
-		rows.push(r);
-	});
-	cmd.addListener('end', function(r) {
-		var resObj = [];
-		resObj.__proto__ = rows.__proto__;
-		resObj.insert_id = r.result.insert_id;
-
-		rows.__proto__ = resObj;
-		callback(null, rows);
-	});
-	cmd.addListener('error', function(err) {
-		if (!last) {
-			reset();
-			self.query(query, params, callback, true);
-		} else {
-			callback(new Error("Query failed:\n" + query + "\nParams: " + JSON.stringify(params)), []);
-		}
-	});
+	connection.execute(query, params, function(err, rows, fields) {
+		callback(err, rows);
+	})
 }
-
