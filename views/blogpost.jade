@@ -1,4 +1,5 @@
 extends main
+include mixins/blogpost
 
 block content
 	div#main.round_8.clearfix
@@ -11,36 +12,7 @@ block content
 					a(href="/blog/#{blogdata.id}/newpost",style="text-decoration:underline") Submit Post
 		div#content.left
 			each post in posts
-				div.post(id="post_#{post.id}")
-					h2
-						a(href='/post/#{post.id}') #{post.title}
-					ul.meta.clearfix
-						li
-							img(src='/img/icon-cal.png')
-							= _timeSince(post.date)
-						li
-							img(src='/img/icon-cat.png')
-							= post.username
-						li
-							img(src='/img/icon-comment.png')
-							a(href='/post/#{post.id}') 0 Comments
-						li
-							| &nbsp;&nbsp;&nbsp;
-						if canedit
-							li
-								a(href='#', do="delete", quib-id=post.id) Delete
-							li
-								a(href='#', do="edit", quib-id=post.id) Edit
-
-					div.entry.left.excerpt(style="width:600px")
-						div.bbcode!= post.msg
-						form(method="POST", action="/post/#{post.id}/edit", style="display:none", quib-id=post.id)
-							input(name="title", type="text", value="#{post.title}", style="width:300px")
-							textarea(name="content", style="width:100%", cols=100, rows=20)= post.rawmsg
-							input(type="submit", value="Update Post")
-							input(type="button", value="Cancel", onclick="sub('cancel', this);")
-							input(type="hidden", name="bpid", value=post.id)
-					div.clearfix
+				+blogpost(post, canedit)
 				hr
 
 		div.clear

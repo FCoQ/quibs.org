@@ -135,14 +135,10 @@ exports.prepareLayout = function(req, res, next) {
 					callback(null, []);
 				});
 			},
-			blogs: function(callback) {
-				db.query("SELECT id,name FROM blogs", [], callback);
-			},
 			lastusers: function(callback) {
 				db.query("SELECT username FROM users ORDER BY id DESC LIMIT 3", [], callback);
 			}
 		}, function(err, results) {
-			res.locals.main_blogs = results.blogs;
 			res.locals.main_lastusers = results.lastusers;
 			next();
 		});

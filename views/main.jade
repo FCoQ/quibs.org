@@ -72,11 +72,7 @@ html
             li: a(href='/fund') Fund
             li: a(href='/grants') Grant
             li: a(href='/events') Events
-            li
-              a(href='#') Blogs
-              ul
-                each blog in main_blogs
-                  li: a(href='/blog/#{blog.id}') #{blog.name}
+            li: a(href='/blogs') Blogs
             li
               a(href='#') Other
               ul
@@ -163,7 +159,7 @@ html
 - } else { // else __REQUEST_TYPE == ajax
 script.
   $('#ajax-current-page').attr('quib-curpage', '#{__REQUEST_URL}');
-  
+
   if (redirecting) {
     window.History.replaceState({caused:true}, '#{title} - The First Church of Quibs', '#{__REQUEST_URL}');
   } else {
