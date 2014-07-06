@@ -203,17 +203,6 @@ function onPageLoad(ajax, anchor) {
 		$('#webcam').html('<img border="0" style="width: 245px;height:162px;" src="http://50.34.240.178:8008">');
 };
 
-jQuery.fn.extend({
-  live: function( types, data, fn ) {
-          if( window.console && console.warn ) {
-           console.warn( "jQuery.live is deprecated. Use jQuery.on instead." );
-          }
-
-          jQuery( this.context ).on( types, this.selector, data, fn );
-          return this;
-        }
-});
-
 // ajax frontend:
 $('a').live('click', function(e) {
 	if (!$(this).hasClass('noajax')) {
