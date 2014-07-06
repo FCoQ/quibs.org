@@ -99,12 +99,22 @@
 		};
 
 		if (typeof(q) == 'undefined')
-			currentRequest = $.get(url).success(cb).error(function(data) {
-				cb(data.responseText);
+			currentRequest = $.get(url).success(cb).error(function(data, a, b) {
+				if (b == "Not Found")
+					cb(data.responseText);
+				else {
+					noticebox(data.responseText);
+					cb("");
+				}
 			});
 		else
-			currentRequest = $.post(url, q).success(cb).error(function(data) {
-				cb(data.responseText);
+			currentRequest = $.post(url, q).success(cb).error(function(data, a, b) {
+				if (b == "Not Found")
+					cb(data.responseText);
+				else {
+					noticebox(data.responseText);
+					cb("");
+				}
 			});
 	}
 
