@@ -7,10 +7,16 @@ block content
 		div.page_title.round_6
 			h1.replace
 				a(href='/blog/#{blogdata.id}') Blog: #{blogdata.name}
-		if canedit
-			div#postdiv(style="float:right;margin-right:20px")
+		div#postdiv(style="float:right;margin-right:20px")
+			if canedit
+				a(do="avatar",href="#"): img(src="#{blogdata['140x140']}",width="140px",height="140px")
 				h5
 					a(href="/blog/#{blogdata.id}/newpost",style="text-decoration:underline") Submit Post
+				div#dialog-message(title="Change Avatar",style="display:none")
+					p.
+						Drag a new avatar image anywhere on this page.
+			else
+				a: img(src="#{blogdata['140x140']}",width="140px",height="140px")
 		div#content.left
 			each post in posts
 				+blogpost(post, canedit)
@@ -40,4 +46,16 @@ block subs
 		obj = $(obj).closest('form');
 		$("#post_" + $(obj).attr('quib-id') + " .bbcode").css('display', 'block');
 		$("#post_" + $(obj).attr('quib-id') + " form").css('display', 'none');
+	})
+	+sub("avatar", function(obj) {
+		$("#dialog-message").dialog({
+			draggable: false,
+			modal: true,
+			buttons: {
+					Cancel: function() {
+						$(this).dialog("close");
+					}
+			}
+		});
+		return false;
 	})

@@ -104,6 +104,8 @@ exports.show = function(req, res) {
 	}, function(err, results) {
 		if (err) return util.error(err, req, res, "That blog doesn't appear to exist.");
 
+		if (results.blogdata.length != 1) return util.error(err, req, res, "That blog doesn't appear to exist.");
+
 		async.map(results.posts.rows, function(post, callback) {
 			bbcode.parse(post.msg, function(err, data) {
 				if (err) return callback(err);
