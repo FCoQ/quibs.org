@@ -169,6 +169,7 @@ block subs
 			},
 			close: function() {
 				stopDrag();
+				$(this).dialog("destroy");
 			}
 		});
 		return false;
