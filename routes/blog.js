@@ -9,7 +9,7 @@ var self = exports;
 exports.list = function(req, res) {
 	async.series({
 		blogs: function(callback) {
-			db.query("SELECT * FROM blogs", [], callback);
+			db.query("SELECT * FROM blogs ORDER BY priority DESC", [], callback);
 		}
 	}, function(err, results) {
 		if (err) return util.error(err, req, res, "Couldn't fetch blog list.");

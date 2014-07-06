@@ -21,6 +21,7 @@ html
     link(rel="stylesheet", type="text/css", href="/js/jquery-ui-1.11.0.custom/jquery-ui.min.css")
 
     script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js")
+    //script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.js")
     script(type="text/javascript", src="/js/jquery-migrate-1.2.1.js")
     script(type="text/javascript", src="/js/jquery-ui-1.11.0.custom/jquery-ui.min.js")
     script(type="text/javascript", src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js")
@@ -167,20 +168,20 @@ script.
   $('#ajax-current-page').attr('quib-curpage', '#{__REQUEST_URL}');
 
   if (redirecting) {
-    window.History.replaceState({caused:true}, '#{title} - The First Church of Quibs', '#{__REQUEST_URL}');
+    window.History.replaceState({caused:true}, "#{title} - The First Church of Quibs", '#{__REQUEST_URL}');
   } else {
-    window.History.pushState({caused:true}, '#{title} - The First Church of Quibs', '#{__REQUEST_URL}');
+    window.History.pushState({caused:true}, "#{title} - The First Church of Quibs", '#{__REQUEST_URL}');
   }
 
 - if (_isset(msg)) {
 script.
   redirecting = false;
-  $('#notice-content').html('#{msg}');
+  $('#notice-content').html("#{msg}");
   $('#notice-box').css('display', 'block')
 - } else {
 script.
   if (!redirecting) {
-    $('#notice-content').html('');
+    $('#notice-content').html("");
     $('#notice-box').css('display', 'none')
   } else {
     redirecting = false;

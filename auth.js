@@ -80,7 +80,9 @@ exports.permission = function(req, res, auth, next) {
 
 	switch (action) {
 		case "edit blog":
-			if (res.locals.__AUTH_PERMISSIONS[1][object] >= 2) {
+			if (res.locals.__AUTH_USERDATA.grp == 3) {
+				next(null, true);
+			} else if (res.locals.__AUTH_PERMISSIONS[1][object] >= 2) {
 				next(null, true);
 			} else {
 				next(null, false);
