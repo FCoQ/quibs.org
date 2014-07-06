@@ -17,7 +17,9 @@ app.configure(function(){
 
 	app.use(express.cookieParser());
 	app.use(express.logger('dev'));
-	app.use(express.bodyParser());
+	app.use(express.bodyParser({
+		uploadDir: './public/uploads'
+	}));
 	app.use(express.methodOverride());
 	app.use(util.verifyRecaptcha);
 	app.use(function(req, res, next) {
@@ -69,6 +71,15 @@ app.get('/blog/:id/:page?', util.prepareLayout, auth.build, routes.blog.show);
 app.get('/post/:id', util.prepareLayout, auth.build, routes.blogpost.show);
 app.post('/post/:id/edit', auth.require, routes.blogpost.editpost);
 app.post('/post/:id/delete', auth.require, routes.blogpost.deletepost);
+
+// TODO: make this safer, more agile
+app.post('/uploadimage', auth.require, function(req, res) {
+	var file = req.files.file;
+
+	var oreturn = {path:"/" + file.path.replace("public/", "")};
+
+	res.send(JSON.stringify(oreturn));
+});
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

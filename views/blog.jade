@@ -9,12 +9,18 @@ block content
 				a(href='/blog/#{blogdata.id}') Blog: #{blogdata.name}
 		div#postdiv(style="float:right;margin-right:20px")
 			if canedit
-				a(do="avatar",href="#"): img(src="#{blogdata['140x140']}",width="140px",height="140px")
+				a(do="avatar",href="#"): img#blogicon(src="#{blogdata['140x140']}",width="140px",height="140px")
 				h5
 					a(href="/blog/#{blogdata.id}/newpost",style="text-decoration:underline") Submit Post
-				div#dialog-message(title="Change Avatar",style="display:none")
+				div#dialog-message(title="Change Blog Image",style="display:none")
 					p.
-						Drag a new avatar image anywhere on this page.
+						Drag a new blog image anywhere on this page.
+					p#dialog-info(style="display:none")
+						span.ui-icon.ui-icon-close(style="float:left; margin: 0 7px 50px 0;")
+						span.dialog-text.
+							Why, hello there.
+					p#dialog-img(style="display:none")
+						img(style="width: 140px; height: 140px;")
 			else
 				a: img(src="#{blogdata['140x140']}",width="140px",height="140px")
 		div#content.left
@@ -48,11 +54,107 @@ block subs
 		$("#post_" + $(obj).attr('quib-id') + " form").css('display', 'none');
 	})
 	+sub("avatar", function(obj) {
+		// make entire body drag-and-droppable
+		var o = $("body");
+
+		var block = function(e) {
+			console.log("block!");
+			e.stopPropagation()
+			e.preventDefault()
+		}
+
+		var stopDrag = function() {
+			o.off("dragenter")
+			o.off("dragover")
+			o.off("drop")
+		}
+
+		var onDrop = function(e) {
+			block(e)
+
+			if ((e.originalEvent.dataTransfer == undefined) || (e.originalEvent.dataTransfer.files.length == 0)) {
+				return; // ???
+			}
+
+			var file = e.originalEvent.dataTransfer.files[0];
+
+			console.log(file)
+
+			var fd = new FormData();
+			fd.append('file', file);
+
+			$("#dialog-info").attr('style', 'display:block');
+			$("#dialog-info span.dialog-text").html("Uploading...");
+			$("#dialog-info span.ui-icon").removeClass().addClass('ui-icon ui-icon-arrowreturn-1-n');
+
+			var jqXHR = $.ajax({
+				xhr: function() {
+					var xhrobj = $.ajaxSettings.xhr();
+					if (xhrobj.upload) {
+						xhrobj.upload.addEventListener('progress', function(event) {
+							var percent = 0;
+	                        var position = event.loaded || event.position;
+	                        var total = event.total;
+	                        if (event.lengthComputable) {
+	                            percent = Math.ceil(position / total * 100);
+	                        }
+
+	                        console.log("percent uploaded " + percent);
+						})
+					}
+					return xhrobj;
+				},
+				url: "/uploadimage",
+				type: "POST",
+				contentType: false,
+				processData: false,
+				cache: false,
+				data: fd,
+				dataType: "json",
+				success: function(data) {
+					console.log(data);
+					if (data.path) {
+						$("#dialog-info").attr('style', 'display:none');
+						$("#dialog-img img").attr('src', data.path);
+						$("#dialog-img").attr('style', 'display:block');
+
+						$("#dialog-message").dialog({
+							buttons: [{
+								text: "Cancel",
+								class: 'cancelButton',
+								click: function() {
+									$(this).dialog("close");
+								}
+							},{
+								text: "Save Changes",
+								click: function() {
+									$("#blogicon").attr('src', data.path);
+									$(this).dialog("close");
+								}
+							}]
+						})
+					} else {
+						$("#dialog-info span.ui-icon").removeClass().addClass('ui-icon ui-icon-close');
+						$("#dialog-info.dialog-text").html("Upload failed.");
+					}
+				},
+				error: function() {
+					$("#dialog-info span.ui-icon").removeClass().addClass('ui-icon ui-icon-close');
+					$("#dialog-info.dialog-text").html("Upload failed.");
+				}
+			});
+		}
+
+		o.on("dragenter", block)
+		o.on("dragover", block)
+		o.on("drop", onDrop)
+
 		$("#dialog-message").dialog({
 			draggable: false,
 			modal: true,
 			buttons: {
 					Cancel: function() {
+						stopDrag();
 						$(this).dialog("close");
 					}
 			}

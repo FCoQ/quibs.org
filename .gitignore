@@ -4,3 +4,6 @@ start.sh
 # node stuff
 node_modules/
 npm-debug.log
+
+# file uploads
+public/uploads/*
