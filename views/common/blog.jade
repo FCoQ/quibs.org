@@ -5,7 +5,7 @@ block content
 	div#main.round_8.clearfix
 		div.page_title.round_6
 			h1.replace
-				a#blog-title(href='/blog/#{blogdata.id}', quib-id="#{blogdata.id}") Blog: #{blogdata.name}
+				a#blog-title(href='/blog/#{_slug(blogdata.id, blogdata.name)}', quib-id="#{blogdata.id}") Blog: #{blogdata.name}
 		div#postdiv(style="float:right;margin-right:20px")
 			if canedit
 				a(do="avatar",href="#")

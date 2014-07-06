@@ -46,6 +46,10 @@ exports.attachment = function(url) {
 	}
 }
 
+exports.slug = function(base, w) {
+	return base + "-" + w.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+}
+
 exports.timeNow = function() {
 	return Math.floor(new Date().getTime()/1000);
 }
