@@ -165,9 +165,11 @@ block subs
 			modal: true,
 			buttons: {
 					Cancel: function() {
-						stopDrag();
 						$(this).dialog("close");
 					}
+			},
+			close: function() {
+				stopDrag();
 			}
 		});
 		return false;

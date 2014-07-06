@@ -99,8 +99,8 @@
 		};
 
 		if (typeof(q) == 'undefined')
-			currentRequest = $.get(url).success(cb).error(function(data, data2) {
-				noticebox("There was an internal server error.")
+			currentRequest = $.get(url).success(cb).error(function(data) {
+				noticebox(data.responseText)
 				cb("");
 			});
 		else

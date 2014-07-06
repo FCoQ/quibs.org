@@ -38,14 +38,15 @@ app.configure(function(){
 		}
 		next();
 	});
-	app.use(app.router);
 	app.use(express.static(path.join(__dirname, 'public')));
+	app.use(app.router);
 
 	app.use(function(err, req, res, next) {
-		if (!err) return next();
+		console.log("hi");
+		if (!err) next();
 
 		console.log(err);
-		res.statusCode = 400;
+		res.statusCode = 500;
 		res.send("We're sorry, there was an error with your request. :(");
 	});
 });
@@ -88,6 +89,11 @@ app.post('/uploadimage', auth.require, function(req, res) {
 
 	res.send(JSON.stringify(oreturn));
 });
+
+app.get("*", function(req, res) {
+	res.statusCode = 404;
+	res.render("404");
+})
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
