@@ -6,6 +6,18 @@ var db = require('../db'),
 
 var self = exports;
 
+exports.list = function(req, res) {
+	async.series({
+		blogs: function(callback) {
+			db.query("SELECT * FROM blogs", [], callback);
+		}
+	}, function(err, results) {
+		if (err) return util.error(err, req, res, "Couldn't fetch blog list.");
+
+		res.render("blogs", {title:'Our Blogs', blogs:results.blogs})
+	})
+}
+
 // ajax-only thing?
 exports.setimage = function(req, res) {
 	var err = function() {

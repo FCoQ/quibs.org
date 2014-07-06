@@ -39,10 +39,13 @@ exports.pagination = function(query, countquery, params, curpage, perpage, after
 }
 
 exports.attachment = function(url) {
+	if (url == null)
+		return ""
+
 	if (url.match(/^[a-fA-F0-9]{32}$/)) {
 		return "/uploads/" + url;
 	} else {
-		return ""
+		return url
 	}
 }
 

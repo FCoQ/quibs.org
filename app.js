@@ -43,7 +43,6 @@ app.configure(function(){
 	app.use(app.router);
 
 	app.use(function(err, req, res, next) {
-		console.log("hi");
 		if (!err) next();
 
 		console.log(err);
@@ -76,6 +75,7 @@ app.get('/blog/:id/:page?', util.prepareLayout, auth.build, routes.blog.show);
 app.get('/post/:id', util.prepareLayout, auth.build, routes.blogpost.show);
 app.post('/post/:id/edit', auth.require, routes.blogpost.editpost);
 app.post('/post/:id/delete', auth.require, routes.blogpost.deletepost);
+app.get('/blogs', util.prepareLayout, routes.blog.list);
 
 // TODO: make this safer, more agile
 app.post('/uploadimage', auth.require, function(req, res) {

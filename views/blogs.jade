@@ -1,0 +1,21 @@
+extends main
+
+block content
+	div#main.round_8.clearfix
+		div.green.page_title.round_6
+			h1.replace Our Blogs
+		//div#content.left
+		//	p Would you like a blog? Ask quibs!
+		- c = 0
+		each blog in blogs
+			- if (!(c%4)) {
+				div(style="clear:both")
+					br
+					br
+			- }
+			div.col_201.omega(style="margin-right: 20px")
+				h3.replace(style="height:50px")
+					a(href="/blog/#{_slug(blog.id, blog.name)}")= blog.name
+				p
+					div(onclick="getPage('/blog/#{_slug(blog.id, blog.name)}')", style="cursor:pointer; background:url(#{_attachment(blog['140x140'])}) no-repeat; background-size: 100%; width: 140px; height: 140px")
+			- c++

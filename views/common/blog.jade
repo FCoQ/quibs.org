@@ -22,7 +22,7 @@ block content
 					p#dialog-img(style="display:none")
 						img(style="width: 140px; height: 140px;")
 			else
-				a: img(src="#{blogdata['140x140']}",width="140px",height="140px")
+				a: img#blogicon(src="#{_attachment(blogdata['140x140'])}", width="140px", height="140px")
 		div#content.left
 			each post in posts
 				+blogpost(post, canedit)
