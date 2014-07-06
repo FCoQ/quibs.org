@@ -11,7 +11,7 @@ mixin blogpost(post, canedit)
 				= post.username
 			li
 				img(src='/img/icon-comment.png')
-				a(href='/post/#{post.id}') 0 Comments
+				a(href='/post/#{_slug(post.id, post.title)}#comments') 0 Comments
 			li
 				| &nbsp;&nbsp;&nbsp;
 			if canedit
