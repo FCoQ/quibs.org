@@ -13,7 +13,7 @@ exports.index = function(req, res) {
 			db.query("SELECT c.`text` as `text`,u.username as username FROM quotes c LEFT JOIN users u ON u.id=c.uid", [], callback);
 		},
 		clubs: function(callback) {
-			db.query("SELECT * FROM clubs", [], callback);
+			db.query("SELECT * FROM clubs ORDER BY `order` DESC", [], callback);
 		}
 	}, function(err, results) {
 		if (err) return util.error(err, req, res, "Couldn't render index page, try again later.");
