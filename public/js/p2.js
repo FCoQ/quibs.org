@@ -45,6 +45,27 @@
 	var currentRequest = 0;
 	var hassuper = true;
 
+	function noticebox(msg) {
+		if (msg == false) {
+			$("#notice-box").stop();
+			$("#notice-box").slideUp('fast', function() {
+				$("#notice-box").attr('style', 'display:none');
+				$("#notice-box").html("");
+			});
+			return;
+		}
+
+		$("#notice-box").stop();
+		$("#notice-box").slideUp('fast', function() {
+			$("#notice-box").attr('style', 'display:none');
+
+			$('#notice-content').html(msg);
+			$("#notice-box").slideDown('fast', function() {
+				$("#notice-box").attr('style', 'display:block');
+			});
+		});
+	}
+
 	function getPage(url, q) {
 		if (currentRequest != 0)
 			currentRequest.abort();
@@ -78,9 +99,15 @@
 		};
 
 		if (typeof(q) == 'undefined')
-			currentRequest = $.get(url).success(cb);
+			currentRequest = $.get(url).success(cb).error(function(data, data2) {
+				noticebox("There was an internal server error.")
+				cb("");
+			});
 		else
-			currentRequest = $.post(url, q).success(cb);
+			currentRequest = $.post(url, q).success(cb).error(function(data) {
+				noticebox("There was an internal server error.")
+				cb("");
+			});
 	}
 
 	var defaultSunWidth = 150;

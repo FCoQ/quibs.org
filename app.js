@@ -26,6 +26,7 @@ app.configure(function(){
 		res.locals._nl2br_escape = util.nl2br_escape;
 		res.locals._isset = util.isset;
 		res.locals._timeSince = util.timeSince;
+		res.locals._attachment = util.attachment;
 
 		if (req.url.substring(0, 6) == '/ajax/') {
 			req.url = req.url.substring(5);
@@ -44,6 +45,7 @@ app.configure(function(){
 		if (!err) return next();
 
 		console.log(err);
+		res.statusCode = 400;
 		res.send("We're sorry, there was an error with your request. :(");
 	});
 });
@@ -66,6 +68,7 @@ app.post('/grants', util.prepareLayout, routes.grants.submitgrant);
 
 // blog system
 app.post('/blog/:id/submitpost', auth.require, routes.blog.submitpost);
+app.post('/blog/:id/setimage', auth.require, routes.blog.setimage);
 app.get('/blog/:id/newpost', util.prepareLayout, auth.require, routes.blog.newpost);
 app.get('/blog/:id/:page?', util.prepareLayout, auth.build, routes.blog.show);
 app.get('/post/:id', util.prepareLayout, auth.build, routes.blogpost.show);
@@ -74,9 +77,14 @@ app.post('/post/:id/delete', auth.require, routes.blogpost.deletepost);
 
 // TODO: make this safer, more agile
 app.post('/uploadimage', auth.require, function(req, res) {
+	if (!req.files.file)
+		return util.error("File was not submitted.", req, res, "File was not submitted.");
+
 	var file = req.files.file;
 
-	var oreturn = {path:"/" + file.path.replace("public/", "")};
+	var id = req.files.file.path.replace("public/uploads/", "");
+
+	var oreturn = {path:"/uploads/" + id, id:id};
 
 	res.send(JSON.stringify(oreturn));
 });

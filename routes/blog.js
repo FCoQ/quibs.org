@@ -6,6 +6,44 @@ var db = require('../db'),
 
 var self = exports;
 
+// ajax-only thing?
+exports.setimage = function(req, res) {
+	var err = function() {
+		res.statusCode = 400;
+		res.send("");
+	}
+
+	if (!util.isset(req.body.attachment))
+		return err();
+
+	var attachment = req.body.attachment;
+
+	if (!attachment.match(/^[a-fA-F0-9]{32}$/))
+		return err();
+
+	var id = parseInt(req.params.id);
+	if (!id)
+		return util.error(null, req, res, "No valid blog ID supplied.");
+
+	async.series({
+		canedit: function(callback) {
+			auth.permission(req, res, ["edit blog", id], callback);
+		}
+	}, function(e, results) {
+		if (e) return err();
+
+		if (!results.canedit)
+			return err();
+
+		db.query("UPDATE blogs SET `140x140`=? WHERE id=?", [attachment, id], function(e, results) {
+			if (e) return err();
+
+			res.statusCode = 200;
+			res.send("done")
+		})
+	})
+}
+
 exports.submitpost = function(req, res) {
 	if (!util.isset(req.params.id))
 		return util.error(null, req, res, "No blog ID supplied.");

@@ -6,10 +6,11 @@ block content
 	div#main.round_8.clearfix
 		div.page_title.round_6
 			h1.replace
-				a(href='/blog/#{blogdata.id}') Blog: #{blogdata.name}
+				a#blog-title(href='/blog/#{blogdata.id}', quib-id="#{blogdata.id}") Blog: #{blogdata.name}
 		div#postdiv(style="float:right;margin-right:20px")
 			if canedit
-				a(do="avatar",href="#"): img#blogicon(src="#{blogdata['140x140']}",width="140px",height="140px")
+				a(do="avatar",href="#")
+					img#blogicon(src="#{_attachment(blogdata['140x140'])}", width="140px", height="140px")
 				h5
 					a(href="/blog/#{blogdata.id}/newpost",style="text-decoration:underline") Submit Post
 				div#dialog-message(title="Change Blog Image",style="display:none")
@@ -128,8 +129,21 @@ block subs
 							},{
 								text: "Save Changes",
 								click: function() {
-									$("#blogicon").attr('src', data.path);
 									$(this).dialog("close");
+
+									$.ajax({
+										url: "/blog/" + $("#blog-title").attr('quib-id') + "/setimage",
+										data: {
+											attachment: data.id
+										},
+										type: "POST",
+										success: function() {
+											$("#blogicon").attr('src', data.path);
+										},
+										error: function() {
+											noticebox("Blog image wasn't updated.");
+										}
+									})
 								}
 							}]
 						})
