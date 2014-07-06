@@ -100,13 +100,11 @@
 
 		if (typeof(q) == 'undefined')
 			currentRequest = $.get(url).success(cb).error(function(data) {
-				noticebox(data.responseText)
-				cb("");
+				cb(data.responseText);
 			});
 		else
 			currentRequest = $.post(url, q).success(cb).error(function(data) {
-				noticebox("There was an internal server error.")
-				cb("");
+				cb(data.responseText);
 			});
 	}
 

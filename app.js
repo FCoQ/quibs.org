@@ -47,7 +47,7 @@ app.configure(function(){
 
 		console.log(err);
 		res.statusCode = 500;
-		res.send("We're sorry, there was an error with your request. :(");
+		res.send("<script>notifybox(\"We're sorry, there was an error with your request. :(\");</script>");
 	});
 });
 
@@ -90,9 +90,9 @@ app.post('/uploadimage', auth.require, function(req, res) {
 	res.send(JSON.stringify(oreturn));
 });
 
-app.get("*", function(req, res) {
+app.get("*", util.prepareLayout, function(req, res) {
 	res.statusCode = 404;
-	res.render("404");
+	res.render("404", {title:"404"});
 })
 
 http.createServer(app).listen(app.get('port'), function(){
