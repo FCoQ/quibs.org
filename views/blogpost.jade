@@ -1,41 +1,4 @@
-extends main
-include mixins/blogpost
+extends common/blog
 
-block content
-	div#main.round_8.clearfix
-		div.page_title.round_6
-			h1.replace
-				a(href='/blog/#{blogdata.id}') Blog: #{blogdata.name}
-		if canedit
-			div#postdiv(style="float:right;margin-right:20px")
-				h5
-					a(href="/blog/#{blogdata.id}/newpost",style="text-decoration:underline") Submit Post
-		div#content.left
-			each post in posts
-				+blogpost(post, canedit)
-				hr
-
-		div.clear
-
-block subs
-	+sub("delete", function(obj) {
-		if (confirm("Are you sure you'd like to delete this post?")) {
-			getPage("/post/" + $(obj).attr('quib-id') + "/delete", {});
-		}
-		return false;
-	})
-	+sub("edit", function(obj) {
-		$("#post_" + $(obj).attr('quib-id') + " .bbcode").css('display', 'none');
-		$("#post_" + $(obj).attr('quib-id') + " form").css('display', 'block');
-		$("#post_" + $(obj).attr('quib-id') + " textarea").sceditor({
-			plugins: "bbcode",
-			style: "/css/default.min.css",
-			toolbar: "bold,italic,underline,strike|left,center,right|size,color,removeformat|orderedlist,bulletlist,code,quote|image,link,youtube,source"
-		});
-		return false;
-	})
-	+sub("cancel", function(obj) {
-		obj = $(obj).closest('form');
-		$("#post_" + $(obj).attr('quib-id') + " .bbcode").css('display', 'block');
-		$("#post_" + $(obj).attr('quib-id') + " form").css('display', 'none');
-	})
+block blogbottom
+	| TODO: Comments section.
