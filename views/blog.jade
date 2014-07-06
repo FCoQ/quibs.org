@@ -59,7 +59,6 @@ block subs
 		var o = $("body");
 
 		var block = function(e) {
-			console.log("block!");
 			e.stopPropagation()
 			e.preventDefault()
 		}
@@ -78,8 +77,6 @@ block subs
 			}
 
 			var file = e.originalEvent.dataTransfer.files[0];
-
-			console.log(file)
 
 			var fd = new FormData();
 			fd.append('file', file);
@@ -100,7 +97,7 @@ block subs
 	                            percent = Math.ceil(position / total * 100);
 	                        }
 
-	                        console.log("percent uploaded " + percent);
+	                        //console.log("percent uploaded " + percent);
 						})
 					}
 					return xhrobj;
