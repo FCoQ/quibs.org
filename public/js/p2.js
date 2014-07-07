@@ -207,7 +207,14 @@ function onPageLoad(ajax, anchor) {
 $('a').live('click', function(e) {
 	if (!$(this).hasClass('noajax')) {
 		// we need to replace this link with an ajax page request
-		if ($(this).attr('id') == 'toTop') {
+		if ($(this).attr('href').substring(0, ($('#ajax-current-page').attr('quib-curpage') + '#').length) == $('#ajax-current-page').attr('quib-curpage') + '#') {
+			e.preventDefault();
+			if ($(this).attr('do')) {
+				hookChange($(this).attr('do'), this);
+			} else {
+				hookChange($(this).attr('href').substring($('#ajax-current-page').attr('quib-curpage').length), this);
+			}
+		} else if ($(this).attr('id') == 'toTop') {
 			e.preventDefault();
 			$('#content-wrapper').animate({scrollTop:0},600);
 		} else if ($(this).attr('href').substring(0, 1) == '/') {
