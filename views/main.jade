@@ -18,6 +18,8 @@ html
     link(rel="stylesheet", type="text/css", href="/css/jquery.gritter.css")
     link(rel="stylesheet", type="text/css", href="/css/colorbox.css")
     link(rel="stylesheet", type="text/css", href="/css/default.min.css", media="all")
+
+    // TODO: move this around or something
     link(rel="stylesheet", type="text/css", href="/js/jquery-ui-1.11.0.custom/jquery-ui.min.css")
 
     script(type="text/javascript", src="/js/jquery-1.11.1.min.js")
@@ -167,9 +169,9 @@ script.
   $('#ajax-current-page').attr('quib-curpage', '#{__REQUEST_URL}');
 
   if (redirecting) {
-    window.History.replaceState({caused:true}, "#{title} - The First Church of Quibs", '#{__REQUEST_URL}');
+    window.History.replaceState({caused:true}, !{_quote(title + " - The First Church of Quibs")}, '#{__REQUEST_URL}');
   } else {
-    window.History.pushState({caused:true}, "#{title} - The First Church of Quibs", '#{__REQUEST_URL}');
+    window.History.pushState({caused:true}, !{_quote(title + " - The First Church of Quibs")}, '#{__REQUEST_URL}');
   }
 
 - if (_isset(msg)) {

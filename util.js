@@ -138,6 +138,10 @@ exports.escape = function (html){
     .replace(/"/g, '&quot;');
 };
 
+exports.quote = function(html) {
+	return JSON.stringify(String(html));
+}
+
 exports.nl2br_escape = function(str) {
 	return self.escape(str).replace(/\n/g, "<br />");
 }

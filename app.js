@@ -24,6 +24,7 @@ app.configure(function(){
 	app.use(util.verifyRecaptcha);
 	app.use(function(req, res, next) {
 		res.locals._nl2br_escape = util.nl2br_escape;
+		res.locals._quote = util.quote;
 		res.locals._isset = util.isset;
 		res.locals._timeSince = util.timeSince;
 		res.locals._attachment = util.attachment;
