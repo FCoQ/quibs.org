@@ -92,6 +92,11 @@ app.post('/uploadimage', auth.require, function(req, res) {
 	res.send(JSON.stringify(oreturn));
 });
 
+app.get(/\.(gif|jpg|png|css|js)$/, function(req, res) {
+	res.statusCode = 404;
+	res.send("404 Not Found");
+})
+
 app.get("*", util.prepareLayout, function(req, res) {
 	res.statusCode = 404;
 	res.render("404", {title:"404"});
