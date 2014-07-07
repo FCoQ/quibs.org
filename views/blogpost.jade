@@ -1,5 +1,6 @@
 extends common/blog
+include mixins/comments
 
 block blogbottom
 	a(name='comments')
-	| TODO: Comments section.
+	+comments(comment_tree)

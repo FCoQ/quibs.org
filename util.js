@@ -126,6 +126,10 @@ exports.verifyRecaptcha = function(req, res, next) {
 	});
 }
 
+exports.repeat = function(string, num) {
+	return new Array( num + 1 ).join( string );
+}
+
 exports.redirect = function(req, res, path) {
 	res.render('redirect', {'path':path});
 }

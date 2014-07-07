@@ -2,7 +2,8 @@ var db = require('../db'),
 	util = require('../util'),
 	async = require('async'),
 	bbcode = require('../bbcode.js'),
-	auth = require('../auth')
+	auth = require('../auth'),
+	comments = require('./comments')
 
 var self = exports;
 
@@ -83,6 +84,7 @@ exports.show = function(req, res) {
 	var id = req.params.id;
 
 	getBlogPost(id, function(err, post) {
+		id = parseInt(id);
 		if (err) return util.error(err, req, res, "That blog post may not exist or we couldn't find it.");
 
 		async.series({
@@ -91,6 +93,9 @@ exports.show = function(req, res) {
 			},
 			canedit: function(callback) {
 				auth.permission(req, res, ["edit blog", post.bid], callback);
+			},
+			comments: function(callback) {
+				comments.fetchTree(req, res, "blogpost_" + id, callback);
 			}
 		}, function(err, results) {
 			if (err) return util.error(err, req, res, "Couldn't get blog information.");
@@ -100,7 +105,7 @@ exports.show = function(req, res) {
 
 				post.rawmsg = post.msg;
 				post.msg = data;
-				res.render('blogpost', {title:post.title, posts: [post], blogdata: results.blogdata[0], canedit: results.canedit});
+				res.render('blogpost', {title:post.title, posts: [post], blogdata: results.blogdata[0], canedit: results.canedit, comment_tree: results.comments});
 			})
 		})
 	})

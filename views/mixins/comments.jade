@@ -1,0 +1,9 @@
+mixin renderComment(node, depth)
+	!= (_repeat("&nbsp;&nbsp;&nbsp;", depth)) + node.comment.id + " (" + node.comment.date + ")"
+	br
+	each sub in node.children
+		+renderComment(sub, depth+1)
+
+mixin comments(tree)
+	each node in tree
+		+renderComment(node, 0)

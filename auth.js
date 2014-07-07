@@ -88,5 +88,19 @@ exports.permission = function(req, res, auth, next) {
 				next(null, false);
 			}
 		break;
+		case "view comments":
+			return self.permission(req, res, ["view master", object], next);
+		break;
+		case "view master":
+			var master = object.split("_");
+
+			switch (master[0]) {
+				case "blogpost":
+					var bpid = parseInt(master[1]);
+
+					next(null, true);
+				break;
+			}
+		break;
 	}
 }

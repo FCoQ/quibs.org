@@ -29,6 +29,7 @@ app.configure(function(){
 		res.locals._timeSince = util.timeSince;
 		res.locals._attachment = util.attachment;
 		res.locals._slug = util.slug;
+		res.locals._repeat = util.repeat;
 
 		if (req.url.substring(0, 6) == '/ajax/') {
 			req.url = req.url.substring(5);
