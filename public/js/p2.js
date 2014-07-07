@@ -1,6 +1,10 @@
 	var redirecting = false;
 	var subHooks = {};
 	var hookChange = function(newAnchor, obj) {
+		// must be a valid sub name or whatever
+		if (!newAnchor.match(/^[#a-zA-Z0-9_\-]+$/)) {
+			return;
+		}
 		console.log('hookChange(' + newAnchor + ')');
 		var gotoSelector = $("a[name='" + newAnchor.substr(1) + "']");
 
