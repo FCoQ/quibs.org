@@ -81,6 +81,8 @@ app.get('/blogs', util.prepareLayout, routes.blog.list);
 
 // comments system
 app.post('/comment/:id/edit', auth.require, routes.comments.edit);
+app.post('/comment/submit', auth.require, routes.comments.submit);
+app.get('/comment/:id/delete', auth.require, routes.comments.delete);
 
 // TODO: make this safer, more agile
 app.post('/uploadimage', auth.require, function(req, res) {

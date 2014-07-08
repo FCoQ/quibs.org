@@ -99,6 +99,9 @@ exports.permission = function(req, res, auth, next) {
 				next(null, false);
 			}
 		break;
+		case "submit comment":
+			return self.permission(req, res, ["view master", object], next);
+		break;
 		case "view comments":
 			return self.permission(req, res, ["view master", object], next);
 		break;

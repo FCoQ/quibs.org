@@ -2,11 +2,11 @@
 
 mixin renderComment(master, node, depth, parent)
 	li(class="depth_#{depth}")
-		a(name="viewcomment-#{node.comment.id}")
+		a.commentAnchor(name="viewcomment-#{node.comment.id}")
 		div.comment_container(id="comment_#{node.comment.id}")
 			div.gravatar
 				img.left(src="/placeholder.png",width="76px",height="80px")
-			div.comment_text
+			div.comment_text(mydepth="#{depth}")
 				h5= node.comment.username
 				p: em
 					= _timeSince(node.comment.date)
@@ -37,7 +37,7 @@ mixin renderComment(master, node, depth, parent)
 
 mixin comments(tree, master)
 	+replyForm(master, 0, false)
-	ul.comment_list
+	ul.comment_list(id="children_0")
 		each node in tree
 			+renderComment(master, node, 1, node.comment.parent)
 
@@ -92,14 +92,19 @@ block append subs
 			$(obj).closest(".comment_text").find('.edit').attr('style', 'display:none');
 			$(obj).closest(".comment_text").find('.bbcode').attr('style', 'display:block');
 		}).error(function() {
-			console.log("err");
+			console.log("err"); // TODO
 		})
 
 		return false;
 	})
 	+sub("#delete", function(obj) {
+		// TODO: confirm from user
 		var commentid = $(obj).closest(".comment_text").children('.edit').find("input[name=commentid]").val();
-		console.log("deleting " + commentid);
+		$.get("/comment/" + commentid + "/delete").success(function() {
+			$(obj).closest("li").remove();
+		}).error(function() {
+			console.log('err'); // TODO
+		})
 
 		return false;
 	})
@@ -130,20 +135,31 @@ block append subs
 	+sub("submitReply", function(obj) {
 		var master = $(obj).find("input[name=master]").val();
 		var parent = $(obj).find("input[name=parent]").val();
+		var depth = parseInt($(obj).closest('.comment_text').attr('mydepth'));
+		if (!depth)
+			depth = 1;
+		else {
+			if (depth != 3) depth = depth+1;
+		}
 
 		var r = $(obj).closest('.reply');
 
 		var instance = r.children('textarea').sceditor("instance");
 
 		var content = instance.val();
-		instance.val("");
-		instance.destroy();
 
-		r.children('textarea').val("");
-		r.attr('style', 'display:none');
+		$.post("/comment/submit", {parent: parent, master: master, content: content, depth: depth}).success(function(result) {
+			instance.val("");
+			instance.destroy();
+			r.children('textarea').val("");
+			r.attr('style', 'display:none');
 
-		console.log("content: " + content);
-		console.log("master: " + master + "; parent: " + parent);
+			$("#children_" + parent).append(result)
+			var n = $(result).find('a.commentAnchor').attr('name');
+			hookChange("#" + n);
+		}).error(function(result) {
+			console.log("err"); // TODO
+		})
 
 		return false;
 	})

@@ -18,6 +18,86 @@ function descend(mapComments, parent) {
 	return tree;
 }
 
+exports.submit = function(req, res) {
+	var end = function() {
+		res.statusCode = 400;
+		res.send("");
+	}
+
+	var master = req.body.master;
+	if (!master) return end();
+	master = String(master);
+
+	if (req.body.parent === undefined) return end();
+	var parent = parseInt(req.body.parent);
+
+	var content = req.body.content;
+	if (!content) return end();
+	content = String(content);
+
+	var depth = parseInt(req.body.depth);
+	if (!depth) return end();
+
+	async.series({
+		parent: function(callback) {
+			if (parent == 0) {
+				callback(null, true)
+			} else {
+				db.query("SELECT * FROM comments WHERE id=?", [parent], callback)
+			}
+		},
+		canpost: function(callback) {
+			auth.permission(req, res, ["submit comment", master], callback)
+		}
+	}, function(err, results) {
+		if (err) return end();
+
+		if (results.parent !== true && !results.parent.length) return end();
+
+		if (!results.canpost) return end();
+
+		db.query("INSERT INTO comments (id, master, parent, uid, date, content) values (null, ?, ?, ?, ?, ?)",
+			[master, parent, res.locals.__AUTH_USERDATA.id, util.timeNow(), content],
+			function(err, result) {
+				if (err) return end();
+
+				var newid = result.insertId;
+
+				self.fetchTree(req, res, master, function(err, tree) {
+					if (err) return end();
+
+					res.render("newcomment", {depth: depth, tree: tree[0], master: master, parent: parent})
+				}, newid, parent)
+		})
+	})
+}
+
+exports.delete = function(req, res) {
+	var end = function() {
+		res.statusCode = 400;
+		res.send("");
+	}
+
+	var id = parseInt(req.params.id);
+	if (!id) return end();
+
+	db.query("SELECT * FROM comments WHERE id=?", [id], function(err, comment) {
+		if (err || !comment.length) return end();
+
+		comment = comment[0];
+
+		auth.permission(req, res, ["edit comment", comment], function(err, canedit) {
+			if (!canedit) return end();
+
+			db.query("DELETE FROM comments WHERE id=?", [id], function(err) {
+				if (err) return end();
+
+				res.send("");
+			})
+		});
+	})
+}
+
 // ajax only
 exports.edit = function(req, res) {
 	var end = function() {
@@ -103,21 +183,5 @@ exports.fetchTree = function(req, res, master, callback, just, justparent) {
 			else
 				callback(null, descend(mapComments, 0));
 		})
-/*
-		// turn into parent => children map
-		results.comments.forEach(function(comment) {
-			if (mapComments[comment.parent] == undefined)
-				mapComments[comment.parent] = [];
-
-			auth.permission(req, res, ["edit comment", comment], function(err, ) {
-
-			})
-
-			mapComments[comment.parent].push(comment);
-		})
-
-		// turn into tree starting at parent 0
-		callback(null, descend(mapComments, 0));
-*/
 	})
 }
