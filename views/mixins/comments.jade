@@ -8,7 +8,7 @@ mixin renderComment(master, node, depth)
 				h5= node.comment.uid
 				p: em
 					= _timeSince(node.comment.date)
-					a.right.replybutton(href="#") Reply
+					a.right.replybutton(href="#reply") Reply
 				p.bbcode
 					= node.comment.content
 				p.edit(style="display:none")
@@ -28,7 +28,7 @@ mixin comments(tree, master)
 			+renderComment(master, node, 1)
 
 mixin replyForm(master, parent, hidden)
-	form.reply(do="submitReply",method="POST",style="#{hidden ? 'display:none;' : 'display:block'}")
+	form.reply(do="submitReply",method="POST",style="#{hidden ? 'display:none;' : 'display:block'}",id="reply_#{parent}")
 		textarea.textarea.round_6(rows="7",cols="72")
 		br
 		input(type="hidden", name="master", value="#{master}")
@@ -38,11 +38,33 @@ mixin replyForm(master, parent, hidden)
 		br
 
 block append subs
+	+sub("#reply", function(obj) {
+		$(obj).closest(".comment_text").find('.reply').attr('style', 'display:block');
+		$(obj).closest(".comment_text").find('.reply textarea').sceditor({
+			plugins: "bbcode",
+			width: "600px",
+			style: "/css/default.min.css",
+			autoUpdate: true,
+			toolbar: "bold,italic,underline,strike|left,center,right|size,color,removeformat|orderedlist,bulletlist,code,quote|image,link,youtube,source"
+		})
+
+		return false;
+	})
 	+sub("submitReply", function(obj) {
 		var master = $(obj).find("input[name=master]").val();
 		var parent = $(obj).find("input[name=parent]").val();
 
 		console.log("master: " + master + "; parent: " + parent);
+		console.log($("#reply_" + parent + " textarea").val());
 
 		return false;
+	})
+	+sub("onPageLoad", function(obj) {
+		$("#reply_0 textarea").sceditor({
+			plugins: "bbcode",
+			width: "895px",
+			style: "/css/default.min.css",
+			autoUpdate: true,
+			toolbar: "bold,italic,underline,strike|left,center,right|size,color,removeformat|orderedlist,bulletlist,code,quote|image,link,youtube,source"
+		});
 	})

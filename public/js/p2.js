@@ -1,5 +1,25 @@
 	var redirecting = false;
 	var subHooks = {};
+	var addSub = function(name, val) {
+		if (!(name in subHooks)) {
+			subHooks[name] = [];
+		}
+		subHooks[name].push(val);
+	}
+	var clearSubs = function() {
+		subHooks = {};
+	}
+	// this simulates a subroutine (subpage) action
+	var sub = function(triggerAnchor, obj) {
+		var r = false;
+		if (typeof(subHooks[triggerAnchor]) != 'undefined') {
+			subHooks[triggerAnchor].forEach(function(c) {
+				r = c(obj);
+			});
+		}
+
+		return r;
+	}
 	var hookChange = function(newAnchor, obj) {
 		// must be a valid sub name or whatever
 		if (!newAnchor.match(/^[#a-zA-Z0-9_\-]+$/)) {
@@ -11,7 +31,7 @@
 		// do we have a hook for this anchor?
 		if (typeof(subHooks[newAnchor]) != 'undefined') {
 			// yep! let's try running it
-			var ret = subHooks[newAnchor](obj);
+			var ret = sub(newAnchor, obj);
 			if (ret === false) {
 				// the hook returned false, it just wanted to run not change the URL
 				return;
@@ -36,15 +56,6 @@
 		}
 		return;
 	};
-
-	// this simulates a subroutine (subpage) action
-	var sub = function(triggerAnchor, obj) {
-		if (typeof(subHooks[triggerAnchor]) != 'undefined') {
-			subHooks[triggerAnchor](obj);
-		}
-
-		return false;
-	}
 
 	var currentRequest = 0;
 	var hassuper = true;

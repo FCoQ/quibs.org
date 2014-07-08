@@ -1,7 +1,5 @@
 mixin sub(anchor, code)
-  != "subHooks['" + anchor + "'] = "
-  != code
-  != ";"
+  != "addSub('" + anchor + "', " + code + "); "
 
 - if (__REQUEST_TYPE != 'ajax') {
 doctype html
@@ -189,7 +187,7 @@ script.
   }
 - }
 
-!= "<script>subHooks = {}; "
+!= "<script>clearSubs(); "
 block subs
 != "</script>"
 
