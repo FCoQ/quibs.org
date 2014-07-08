@@ -88,6 +88,17 @@ exports.permission = function(req, res, auth, next) {
 				next(null, false);
 			}
 		break;
+		case "edit comment":
+			var comment = object;
+
+			if (comment.uid == res.locals.__AUTH_USERDATA.id) {
+				next(null, true); // you can edit your own comments
+			} else if (res.locals.__AUTH_USERDATA.grp == 3) {
+				next(null, true); // admins can edit all comments
+			} else {
+				next(null, false);
+			}
+		break;
 		case "view comments":
 			return self.permission(req, res, ["view master", object], next);
 		break;

@@ -1,31 +1,53 @@
-mixin renderComment(master, node, depth)
+mixin renderComment(master, node, depth, parent)
 	li(class="depth_#{depth}")
 		a(name="viewcomment-#{node.comment.id}")
 		div.comment_container(id="comment_#{node.comment.id}")
 			div.gravatar
 				img.left(src="/placeholder.png",width="76px",height="80px")
 			div.comment_text
-				h5= node.comment.uid
+				h5= node.comment.username
 				p: em
 					= _timeSince(node.comment.date)
 					a.right.replybutton(href="#reply") Reply
+					if node.comment.canedit
+						br
+						a.right.replybutton(href="#edit") Edit
+						br
+						a.right.replybutton(href="#delete") Delete
+					
 				p.bbcode
-					= node.comment.content
-				p.edit(style="display:none")
-					textarea= node.comment.content
-					input.savecomment(type="button", value="Save Comment")
+					!= node.comment.content
+				+editForm(master, node.comment, true)
+				- if (depth == 3) {
+				+replyForm(master, parent, true)
+				- } else {
 				+replyForm(master, node.comment.id, true)
-			- if (node.children.length > 0) {
+				- }
+		- if (node.children.length > 0) {
 		ul.comment_list(id="children_#{node.comment.id}")
 			each sub in node.children
-				+renderComment(master, sub, depth+1)
+				- if (depth == 3) {
+				+renderComment(master, sub, depth, parent)
+				- } else {
+				+renderComment(master, sub, depth+1, node.comment.id)
+				- }
 		- }
 
 mixin comments(tree, master)
 	+replyForm(master, 0, false)
 	ul.comment_list
 		each node in tree
-			+renderComment(master, node, 1)
+			+renderComment(master, node, 1, 0)
+
+mixin editForm(master, comment, hidden)
+	form.edit(do="submitEdit",method="POST",style="#{hidden ? 'display:none;' : 'display:block'}",id="edit_#{parent}")
+		textarea.textarea.round_6(rows="7",cols="72")= comment.rawcontent
+		br
+		input(type="hidden", name="commentid", value="#{comment.id}")
+		input.fancy.green(type="submit", value="Save Comment")
+		input.fancy(type="button", value="Cancel", onclick="sub('cancelEdit', this);")
+		br
+		br
 
 mixin replyForm(master, parent, hidden)
 	form.reply(do="submitReply",method="POST",style="#{hidden ? 'display:none;' : 'display:block'}",id="reply_#{parent}")
@@ -33,18 +55,59 @@ mixin replyForm(master, parent, hidden)
 		br
 		input(type="hidden", name="master", value="#{master}")
 		input(type="hidden", name="parent", value="#{parent}")
-		input.fancy.postcomment(type="submit", value="Post Comment")
+		input.fancy.green(type="submit", value="Post Reply")
+		- if (hidden) {
+		input.fancy(type="button", value="Cancel", onclick="sub('cancelReply', this);")
+		- }
 		br
 		br
 
 block append subs
-	+sub("#reply", function(obj) {
-		$(obj).closest(".comment_text").find('.reply').attr('style', 'display:block');
-		$(obj).closest(".comment_text").find('.reply textarea').sceditor({
+	+sub("cancelReply", function(obj) {
+		var r = $(obj).closest('.reply');
+		var instance = r.children('textarea').sceditor("instance").destroy();
+		r.attr('style', 'display:none');
+
+		return false;
+	})
+	+sub("cancelEdit", function(obj) {
+		var instance = $(obj).closest(".comment_text").find('.edit>textarea').sceditor("instance");
+		instance.destroy();
+
+		$(obj).closest(".comment_text").find('.bbcode').attr('style', 'display:block');
+		$(obj).closest(".comment_text").find('.edit').attr('style', 'display:none');
+
+		return false;
+	})
+	+sub("submitEdit", function(obj) {
+		alert("Submitting edit.")
+
+		return false;
+	})
+	+sub("#delete", function(obj) {
+		alert("Are you sure?")
+
+		return false;
+	})
+	+sub("#edit", function(obj) {
+		$(obj).closest(".comment_text").find('.bbcode').attr('style', 'display:none');
+		$(obj).closest(".comment_text").find('.edit').attr('style', 'display:block');
+
+		$(obj).closest(".comment_text").find('.edit>textarea').sceditor({
 			plugins: "bbcode",
 			width: "600px",
 			style: "/css/default.min.css",
-			autoUpdate: true,
+			toolbar: "bold,italic,underline,strike|left,center,right|size,color,removeformat|orderedlist,bulletlist,code,quote|image,link,youtube,source"
+		});
+
+		return false;
+	})
+	+sub("#reply", function(obj) {
+		$(obj).closest(".comment_text").find('.reply').attr('style', 'display:block');
+		$(obj).closest(".comment_text").find('.reply>textarea').sceditor({
+			plugins: "bbcode",
+			width: "600px",
+			style: "/css/default.min.css",
 			toolbar: "bold,italic,underline,strike|left,center,right|size,color,removeformat|orderedlist,bulletlist,code,quote|image,link,youtube,source"
 		})
 
@@ -54,8 +117,19 @@ block append subs
 		var master = $(obj).find("input[name=master]").val();
 		var parent = $(obj).find("input[name=parent]").val();
 
+		var r = $(obj).closest('.reply');
+
+		var instance = r.children('textarea').sceditor("instance");
+
+		var content = instance.val();
+		instance.val("");
+		instance.destroy();
+
+		r.children('textarea').val("");
+		r.attr('style', 'display:none');
+
+		console.log("content: " + content);
 		console.log("master: " + master + "; parent: " + parent);
-		console.log($("#reply_" + parent + " textarea").val());
 
 		return false;
 	})
@@ -64,7 +138,6 @@ block append subs
 			plugins: "bbcode",
 			width: "895px",
 			style: "/css/default.min.css",
-			autoUpdate: true,
 			toolbar: "bold,italic,underline,strike|left,center,right|size,color,removeformat|orderedlist,bulletlist,code,quote|image,link,youtube,source"
 		});
 	})
