@@ -239,8 +239,11 @@ $('a').live('click', function(e) {
 
 $('form').live('submit', function(e) {
 	if (!$(this).hasClass('noajax')) {
-		if ($(this).attr('action').substring(0, 1) == '/') {
-			e.preventDefault();
+		e.preventDefault();
+		if ($(this).attr('do')) {
+			hookChange($(this).attr('do'), this);
+			return false;
+		} else if ($(this).attr('action').substring(0, 1) == '/') {
 			getPage($(this).attr('action'), $(this).serialize());
 			return false;
 		}

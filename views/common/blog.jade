@@ -30,7 +30,7 @@ block content
 		div.clear
 		block blogbottom
 
-block subs
+block append subs
 	+sub("delete", function(obj) {
 		if (confirm("Are you sure you'd like to delete this post?")) {
 			getPage("/post/" + $(obj).attr('quib-id') + "/delete", {});

@@ -1,9 +1,48 @@
-mixin renderComment(node, depth)
-	!= (_repeat("&nbsp;&nbsp;&nbsp;", depth)) + node.comment.id + " (" + node.comment.date + ")"
-	br
-	each sub in node.children
-		+renderComment(sub, depth+1)
+mixin renderComment(master, node, depth)
+	li(class="depth_#{depth}")
+		a(name="viewcomment-#{node.comment.id}")
+		div.comment_container(id="comment_#{node.comment.id}")
+			div.gravatar
+				img.left(src="/placeholder.png",width="76px",height="80px")
+			div.comment_text
+				h5= node.comment.uid
+				p: em
+					= _timeSince(node.comment.date)
+					a.right.replybutton(href="#") Reply
+				p.bbcode
+					= node.comment.content
+				p.edit(style="display:none")
+					textarea= node.comment.content
+					input.savecomment(type="button", value="Save Comment")
+				+replyForm(master, node.comment.id, true)
+			- if (node.children.length > 0) {
+		ul.comment_list(id="children_#{node.comment.id}")
+			each sub in node.children
+				+renderComment(master, sub, depth+1)
+		- }
 
-mixin comments(tree)
-	each node in tree
-		+renderComment(node, 0)
+mixin comments(tree, master)
+	+replyForm(master, 0, false)
+	ul.comment_list
+		each node in tree
+			+renderComment(master, node, 1)
+
+mixin replyForm(master, parent, hidden)
+	form.reply(do="submitReply",method="POST",style="#{hidden ? 'display:none;' : 'display:block'}")
+		textarea.textarea.round_6(rows="7",cols="72")
+		br
+		input(type="hidden", name="master", value="#{master}")
+		input(type="hidden", name="parent", value="#{parent}")
+		input.fancy.postcomment(type="submit", value="Post Comment")
+		br
+		br
+
+block append subs
+	+sub("submitReply", function(obj) {
+		var master = $(obj).find("input[name=master]").val();
+		var parent = $(obj).find("input[name=parent]").val();
+
+		console.log("master: " + master + "; parent: " + parent);
+
+		return false;
+	})
