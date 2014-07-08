@@ -79,6 +79,9 @@ app.post('/post/:id/edit', auth.require, routes.blogpost.editpost);
 app.post('/post/:id/delete', auth.require, routes.blogpost.deletepost);
 app.get('/blogs', util.prepareLayout, routes.blog.list);
 
+// comments system
+app.post('/comment/:id/edit', auth.require, routes.comments.edit);
+
 // TODO: make this safer, more agile
 app.post('/uploadimage', auth.require, function(req, res) {
 	if (!req.files.file)

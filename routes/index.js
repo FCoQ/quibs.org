@@ -29,3 +29,4 @@ exports.fund = function(req, res) {
 exports.grants = require('./grants')
 exports.blog = require('./blog')
 exports.blogpost = require('./blogpost')
+exports.comments = require('./comments')

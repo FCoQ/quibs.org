@@ -1,3 +1,5 @@
+// TODO: namespace all this stuff
+
 mixin renderComment(master, node, depth, parent)
 	li(class="depth_#{depth}")
 		a(name="viewcomment-#{node.comment.id}")
@@ -37,7 +39,7 @@ mixin comments(tree, master)
 	+replyForm(master, 0, false)
 	ul.comment_list
 		each node in tree
-			+renderComment(master, node, 1, 0)
+			+renderComment(master, node, 1, node.comment.parent)
 
 mixin editForm(master, comment, hidden)
 	form.edit(do="submitEdit",method="POST",style="#{hidden ? 'display:none;' : 'display:block'}",id="edit_#{parent}")
@@ -80,12 +82,24 @@ block append subs
 		return false;
 	})
 	+sub("submitEdit", function(obj) {
-		alert("Submitting edit.")
+		var instance = $(obj).closest(".comment_text").find('.edit>textarea').sceditor("instance");
+		var content = instance.val();
+		var commentid = $(obj).closest(".comment_text").children('.edit').find("input[name=commentid]").val();
+
+		$.post("/comment/" + commentid + "/edit", {content: content}).success(function(result) {
+			instance.destroy();
+			$(obj).closest(".comment_text").find('.bbcode').html(result);
+			$(obj).closest(".comment_text").find('.edit').attr('style', 'display:none');
+			$(obj).closest(".comment_text").find('.bbcode').attr('style', 'display:block');
+		}).error(function() {
+			console.log("err");
+		})
 
 		return false;
 	})
 	+sub("#delete", function(obj) {
-		alert("Are you sure?")
+		var commentid = $(obj).closest(".comment_text").children('.edit').find("input[name=commentid]").val();
+		console.log("deleting " + commentid);
 
 		return false;
 	})

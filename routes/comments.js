@@ -18,13 +18,51 @@ function descend(mapComments, parent) {
 	return tree;
 }
 
-exports.fetchTree = function(req, res, master, callback) {
+// ajax only
+exports.edit = function(req, res) {
+	var end = function() {
+		res.statusCode = 400;
+		res.send("");
+	}
+
+	var id = parseInt(req.params.id);
+	if (!id) return end();
+
+	var content = req.body.content;
+	if (!content) return end();
+	content = String(content);
+
+	db.query("SELECT * FROM comments WHERE id=?", [id], function(err, comment) {
+		if (err || !comment.length) return end();
+
+		comment = comment[0];
+
+		auth.permission(req, res, ["edit comment", comment], function(err, canedit) {
+			if (!canedit) return end();
+
+			db.query("UPDATE comments SET content=? WHERE id=?", [content, id], function(err) {
+				if (err) return end();
+
+				self.fetchTree(req, res, comment.master, function(err, tree) {
+					if (err) return end();
+
+					res.send(tree[0].comment.content);
+				}, id, comment.parent)
+			})
+		});
+	})
+}
+
+exports.fetchTree = function(req, res, master, callback, just, justparent) {
 	async.series({
 		canview: function(cb) {
 			auth.permission(req, res, ["view comments", master], cb);
 		},
 		comments: function(cb) {
-			db.query("SELECT c.*,u.username as username,u.avatar as avatar FROM comments c LEFT JOIN users u ON u.id=c.uid WHERE c.master=? ORDER BY c.date ASC", [master], cb);
+			if (just)
+				db.query("SELECT c.*,u.username as username,u.avatar as avatar FROM comments c LEFT JOIN users u ON u.id=c.uid WHERE c.id=? ORDER BY c.date ASC", [just], cb);
+			else
+				db.query("SELECT c.*,u.username as username,u.avatar as avatar FROM comments c LEFT JOIN users u ON u.id=c.uid WHERE c.master=? ORDER BY c.date ASC", [master], cb);
 		}
 	}, function(err, results) {
 		if (err) return callback(err, []);
@@ -60,7 +98,10 @@ exports.fetchTree = function(req, res, master, callback) {
 		}, function(err) {
 			if (err) return callback(err);
 
-			callback(null, descend(mapComments, 0));
+			if (just)
+				callback(null, descend(mapComments, justparent));
+			else
+				callback(null, descend(mapComments, 0));
 		})
 /*
 		// turn into parent => children map
