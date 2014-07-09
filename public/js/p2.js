@@ -1,183 +1,261 @@
-	var redirecting = false;
-	var subHooks = {};
-	var addSub = function(name, val) {
-		if (!(name in subHooks)) {
-			subHooks[name] = [];
-		}
-		subHooks[name].push(val);
+var redirecting = false;
+var subHooks = {};
+var addSub = function(name, val) {
+	if (!(name in subHooks)) {
+		subHooks[name] = [];
 	}
-	var clearSubs = function() {
-		subHooks = {};
+	subHooks[name].push(val);
+}
+var clearSubs = function() {
+	subHooks = {};
+}
+// this simulates a subroutine (subpage) action
+var sub = function(triggerAnchor, obj) {
+	var r = false;
+	if (typeof(subHooks[triggerAnchor]) != 'undefined') {
+		subHooks[triggerAnchor].forEach(function(c) {
+			r = c(obj);
+		});
 	}
-	// this simulates a subroutine (subpage) action
-	var sub = function(triggerAnchor, obj) {
-		var r = false;
-		if (typeof(subHooks[triggerAnchor]) != 'undefined') {
-			subHooks[triggerAnchor].forEach(function(c) {
-				r = c(obj);
-			});
-		}
 
-		return r;
+	return r;
+}
+
+var qdialog = function(title, text, buttons, onClose) {
+	$("#dialog-message").attr('title', title);
+	$("#dialog-text").html(text);
+
+	var destroy = function(cb) {
+		$("#dialog-message").dialog("close");
+		$("#dialog-info").attr('style', 'display:none');
+		$("#dialog-img").attr('style', 'display:none');
 	}
-	var hookChange = function(newAnchor, obj) {
-		// must be a valid sub name or whatever
-		if (!newAnchor.match(/^[#a-zA-Z0-9_\-]+$/)) {
+
+	$("#dialog-message").dialog({
+		draggable: false,
+		modal: true,
+		buttons: buttons,
+		close: function() {
+			destroy();
+
+			if (onClose)
+				onClose();
+
+			$(this).dialog("destroy");
+		}
+	});
+
+	this.close = function() {
+		$("#dialog-message").dialog("close");
+	}
+
+	this.buttons = function(buttons) {
+		$("#dialog-message").dialog({
+			buttons: buttons
+		})
+	}
+
+	this.info = function(text, icon) {
+		if (text == false) {
+			$("#dialog-info").attr('style', 'display:none');
 			return;
 		}
-		console.log('hookChange(' + newAnchor + ')');
-		var gotoSelector = $("a[name='" + newAnchor.substr(1) + "']");
 
-		// do we have a hook for this anchor?
-		if (typeof(subHooks[newAnchor]) != 'undefined') {
-			// yep! let's try running it
-			var ret = sub(newAnchor, obj);
-			if (ret === false) {
-				// the hook returned false, it just wanted to run not change the URL
-				return;
-			} else if (typeof(ret) != 'undefined' && typeof(ret) != 'boolean') {
-				gotoSelector = $(ret); // the hook gave us a new selector to scroll to
+		$("#dialog-info").attr('style', 'display:block');
+		$("#dialog-info-text").html(text);
+		$("#dialog-icon").removeClass().addClass(icon);
+	}
+
+	this.img = function(src) {
+		if (src == false) {
+			$("#dialog-img").attr('style', 'display:none');
+			return;
+		}
+
+		$("#dialog-img>img").attr('src', src);
+		$("#dialog-img").attr('style', 'display:block');
+	}
+}
+
+var qconfirm = function(text, yes, no) {
+	var test = new qdialog("Confirm", text, [{
+			text: "Cancel",
+			class: 'cancelButton',
+			click: function() {
+				$(this).dialog("destroy");
+
+				if (no)
+					no();
 			}
-		} else if (newAnchor == '#') {
-			return;
-		}
+		},{
+			text: "OK",
+			click: function() {
+				$(this).dialog("destroy");
 
-		if (window.location.hash == newAnchor) {
-			// we're already here!
-			return;
-		}
+				if (yes)
+					yes();
+			}
+		}])
+}
 
-		if (gotoSelector.length) {
-			$('#content-wrapper').animate({scrollTop: $("#content-wrapper").scrollTop() + gotoSelector.offset().top}, 'fast', 'swing', function() {
-				window.location.hash = newAnchor;
-			});
-		} else {
-			window.location.hash = newAnchor;
-		}
+var hookChange = function(newAnchor, obj) {
+	// must be a valid sub name or whatever
+	if (!newAnchor.match(/^[#a-zA-Z0-9_\-]+$/)) {
 		return;
-	};
+	}
+	console.log('hookChange(' + newAnchor + ')');
+	var gotoSelector = $("a[name='" + newAnchor.substr(1) + "']");
 
-	var currentRequest = 0;
-	var hassuper = true;
-
-	function noticebox(msg) {
-		if (msg == false) {
-			$("#notice-box").stop();
-			$("#notice-box").slideUp('fast', function() {
-				$("#notice-box").attr('style', 'display:none');
-				$("#notice-box").html("");
-			});
+	// do we have a hook for this anchor?
+	if (typeof(subHooks[newAnchor]) != 'undefined') {
+		// yep! let's try running it
+		var ret = sub(newAnchor, obj);
+		if (ret === false) {
+			// the hook returned false, it just wanted to run not change the URL
 			return;
+		} else if (typeof(ret) != 'undefined' && typeof(ret) != 'boolean') {
+			gotoSelector = $(ret); // the hook gave us a new selector to scroll to
 		}
+	} else if (newAnchor == '#') {
+		return;
+	}
 
+	if (window.location.hash == newAnchor) {
+		// we're already here!
+		return;
+	}
+
+	if (gotoSelector.length) {
+		$('#content-wrapper').animate({scrollTop: $("#content-wrapper").scrollTop() + gotoSelector.offset().top}, 'fast', 'swing', function() {
+			window.location.hash = newAnchor;
+		});
+	} else {
+		window.location.hash = newAnchor;
+	}
+	return;
+};
+
+var currentRequest = 0;
+var hassuper = true;
+
+function noticebox(msg) {
+	if (msg == false) {
 		$("#notice-box").stop();
 		$("#notice-box").slideUp('fast', function() {
 			$("#notice-box").attr('style', 'display:none');
-
-			$('#notice-content').html(msg);
-			$("#notice-box").slideDown('fast', function() {
-				$("#notice-box").attr('style', 'display:block');
-			});
+			$("#notice-box").html("");
 		});
+		return;
 	}
 
-	function getPage(url, q) {
-		if (currentRequest != 0)
-			currentRequest.abort();
-		// add ajax to the beginning of url
-		url = '/ajax' + url;
+	$("#notice-box").stop();
+	$("#notice-box").slideUp('fast', function() {
+		$("#notice-box").attr('style', 'display:none');
 
-		$('#pagecontent').stop();
-		$('#pagecontent').slideUp('fast', function() {
-			$('#pagecontent').attr('style', 'display:none');
+		$('#notice-content').html(msg);
+		$("#notice-box").slideDown('fast', function() {
+			$("#notice-box").attr('style', 'display:block');
 		});
+	});
+}
+
+function getPage(url, q) {
+	if (currentRequest != 0)
+		currentRequest.abort();
+	// add ajax to the beginning of url
+	url = '/ajax' + url;
+
+	$('#pagecontent').stop();
+	$('#pagecontent').slideUp('fast', function() {
+		$('#pagecontent').attr('style', 'display:none');
+	});
+	$('.loader').stop();
+	$('.loader').slideDown('fast', function() {
+		$('.loader').attr('style', 'display:block');
+	});
+
+	var cb = function(data) {
 		$('.loader').stop();
-		$('.loader').slideDown('fast', function() {
-			$('.loader').attr('style', 'display:block');
+		$('.loader').slideUp('fast', function() {
+			$('.loader').attr('style', 'display:none');
+			$('#pagecontent').html(data);
+			$('#pagecontent').stop();
+			$('#pagecontent').slideDown('fast', function() {
+				$('#pagecontent').attr('style', 'display:block');
+				var newanchor = '#' + url.split('#', 2)[1];
+				if (newanchor == '#undefined')
+					onPageLoad(true);
+				else
+					onPageLoad(true, newanchor);
+			});
 		});
-
-		var cb = function(data) {
-			$('.loader').stop();
-			$('.loader').slideUp('fast', function() {
-				$('.loader').attr('style', 'display:none');
-				$('#pagecontent').html(data);
-				$('#pagecontent').stop();
-				$('#pagecontent').slideDown('fast', function() {
-					$('#pagecontent').attr('style', 'display:block');
-					var newanchor = '#' + url.split('#', 2)[1];
-					if (newanchor == '#undefined')
-						onPageLoad(true);
-					else
-						onPageLoad(true, newanchor);
-				});
-			});
-		};
-
-		if (typeof(q) == 'undefined')
-			currentRequest = $.get(url).success(cb).error(function(data, a, b) {
-				if (b == "Not Found")
-					cb(data.responseText);
-				else {
-					noticebox(data.responseText);
-					cb("");
-				}
-			});
-		else
-			currentRequest = $.post(url, q).success(cb).error(function(data, a, b) {
-				if (b == "Not Found")
-					cb(data.responseText);
-				else {
-					noticebox(data.responseText);
-					cb("");
-				}
-			});
-	}
-
-	var defaultSunWidth = 150;
-	var defaultSunHeight = 150;
-	var defaultSunTop = 45;
-	var defaultSunLeft = 140;
-
-	// background triggers
-	function setSun() {
-		$('#sun').css('display', 'block');
-
-		var w = parseInt($('#supersized img').css('width'));
-		var h = parseInt($('#supersized img').css('height'));
-		var t = parseInt($('#supersized img').css('top'));
-		var l = parseInt($('#supersized img').css('left'));
-
-		var wR = w / 1600;
-		var hR = h / 975;
-
-		$('#sun').css('width', (wR * defaultSunWidth) + 'px');
-		$('#sun').css('height', (hR * defaultSunHeight) + 'px');
-
-		$('#sun').css('top', (t + defaultSunTop*hR) + 'px');
-		$('#sun').css('left', (l + defaultSunLeft*wR) + 'px');
 	};
 
-	var defaultRainbowWidth = 100;
-	var defaultRainbowHeight = 50;
-	var defaultRainbowTop = 740;
-	var defaultRainbowLeft = 1475;
+	if (typeof(q) == 'undefined')
+		currentRequest = $.get(url).success(cb).error(function(data, a, b) {
+			if (b == "Not Found")
+				cb(data.responseText);
+			else {
+				noticebox(data.responseText);
+				cb("");
+			}
+		});
+	else
+		currentRequest = $.post(url, q).success(cb).error(function(data, a, b) {
+			if (b == "Not Found")
+				cb(data.responseText);
+			else {
+				noticebox(data.responseText);
+				cb("");
+			}
+		});
+}
 
-	function setRainbow() {
-		$('#rainbow').css('display', 'block');
+var defaultSunWidth = 150;
+var defaultSunHeight = 150;
+var defaultSunTop = 45;
+var defaultSunLeft = 140;
 
-		var w = parseInt($('#supersized img').css('width'));
-		var h = parseInt($('#supersized img').css('height'));
-		var t = parseInt($('#supersized img').css('top'));
-		var l = parseInt($('#supersized img').css('left'));
+// background triggers
+function setSun() {
+	$('#sun').css('display', 'block');
 
-		var wR = w / 1600;
-		var hR = h / 975;
+	var w = parseInt($('#supersized img').css('width'));
+	var h = parseInt($('#supersized img').css('height'));
+	var t = parseInt($('#supersized img').css('top'));
+	var l = parseInt($('#supersized img').css('left'));
 
-		$('#rainbow').css('width', (wR * defaultRainbowWidth) + 'px');
-		$('#rainbow').css('height', (hR * defaultRainbowHeight) + 'px');
-		$('#rainbow').css('top', (t + defaultRainbowTop*hR) + 'px');
-		$('#rainbow').css('left', (l + defaultRainbowLeft*wR) + 'px');
-	};
+	var wR = w / 1600;
+	var hR = h / 975;
+
+	$('#sun').css('width', (wR * defaultSunWidth) + 'px');
+	$('#sun').css('height', (hR * defaultSunHeight) + 'px');
+
+	$('#sun').css('top', (t + defaultSunTop*hR) + 'px');
+	$('#sun').css('left', (l + defaultSunLeft*wR) + 'px');
+};
+
+var defaultRainbowWidth = 100;
+var defaultRainbowHeight = 50;
+var defaultRainbowTop = 740;
+var defaultRainbowLeft = 1475;
+
+function setRainbow() {
+	$('#rainbow').css('display', 'block');
+
+	var w = parseInt($('#supersized img').css('width'));
+	var h = parseInt($('#supersized img').css('height'));
+	var t = parseInt($('#supersized img').css('top'));
+	var l = parseInt($('#supersized img').css('left'));
+
+	var wR = w / 1600;
+	var hR = h / 975;
+
+	$('#rainbow').css('width', (wR * defaultRainbowWidth) + 'px');
+	$('#rainbow').css('height', (hR * defaultRainbowHeight) + 'px');
+	$('#rainbow').css('top', (t + defaultRainbowTop*hR) + 'px');
+	$('#rainbow').css('left', (l + defaultRainbowLeft*wR) + 'px');
+};
 
 function onPageLoad(ajax, anchor) {
 	if (typeof(ajax) == 'undefined')

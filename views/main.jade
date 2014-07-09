@@ -157,6 +157,14 @@ html
         
       });
 
+    div#dialog-message(title="",style="display:none")
+      p#dialog-text
+      p#dialog-info(style="display:none")
+        span#dialog-icon.ui-icon.ui-icon-close(style="float:left; margin: 0 7px 50px 0;")
+        span#dialog-info-text
+      p#dialog-img(style="display:none")
+        img(style="width: 140px; height: 140px;")
+
     != "<script>"
     block subs
     != "</script>"

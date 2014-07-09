@@ -12,14 +12,6 @@ block content
 					img#blogicon(src="#{_attachment(blogdata['140x140'])}", width="140px", height="140px")
 				h5
 					a(href="/blog/#{blogdata.id}/newpost",style="text-decoration:underline") Submit Post
-				div#dialog-message(title="Change Blog Image",style="display:none")
-					p.
-						Drag a new blog image anywhere on this page.
-					p#dialog-info(style="display:none")
-						span.ui-icon.ui-icon-close(style="float:left; margin: 0 7px 50px 0;")
-						span.dialog-text
-					p#dialog-img(style="display:none")
-						img(style="width: 140px; height: 140px;")
 			else
 				a: img#blogicon(src="#{_attachment(blogdata['140x140'])}", width="140px", height="140px")
 		div#content.left
@@ -32,9 +24,9 @@ block content
 
 block append subs
 	+sub("delete", function(obj) {
-		if (confirm("Are you sure you'd like to delete this post?")) {
-			getPage("/post/" + $(obj).attr('quib-id') + "/delete", {});
-		}
+		qconfirm("Are you sure you want to delete this post?", function() {
+			getPage("/post/" + $(obj).attr('quib-id') + "/delete") // maybe ajax?
+		})
 		return false;
 	})
 	+sub("edit", function(obj) {
@@ -68,6 +60,13 @@ block append subs
 			o.off("drop")
 		}
 
+		var dialog = new qdialog("Change Blog Image", "Drag a new blog image anywhere on this page.", [{
+								text: "Cancel",
+								click: function() {
+									dialog.close();
+								}
+							}], stopDrag);
+
 		var onDrop = function(e) {
 			block(e)
 
@@ -80,9 +79,7 @@ block append subs
 			var fd = new FormData();
 			fd.append('file', file);
 
-			$("#dialog-info").attr('style', 'display:block');
-			$("#dialog-info span.dialog-text").html("Uploading...");
-			$("#dialog-info span.ui-icon").removeClass().addClass('ui-icon ui-icon-arrowreturn-1-n');
+			dialog.info("Uploading...", "ui-icon ui-icon-arrowreturn-1-n");
 
 			var jqXHR = $.ajax({
 				xhr: function() {
@@ -111,46 +108,40 @@ block append subs
 				success: function(data) {
 					console.log(data);
 					if (data.path) {
-						$("#dialog-info").attr('style', 'display:none');
-						$("#dialog-img img").attr('src', data.path);
-						$("#dialog-img").attr('style', 'display:block');
+						dialog.info(false);
+						dialog.img(data.path);
+						dialog.buttons([{
+							text: "Cancel",
+							class: 'cancelButton',
+							click: function() {
+								dialog.close();
+							}
+						},{
+							text: "Save Changes",
+							click: function() {
+								dialog.close();
 
-						$("#dialog-message").dialog({
-							buttons: [{
-								text: "Cancel",
-								class: 'cancelButton',
-								click: function() {
-									$(this).dialog("close");
-								}
-							},{
-								text: "Save Changes",
-								click: function() {
-									$(this).dialog("close");
-
-									$.ajax({
-										url: "/blog/" + $("#blog-title").attr('quib-id') + "/setimage",
-										data: {
-											attachment: data.id
-										},
-										type: "POST",
-										success: function() {
-											$("#blogicon").attr('src', data.path);
-										},
-										error: function() {
-											noticebox("Blog image wasn't updated.");
-										}
-									})
-								}
-							}]
-						})
+								$.ajax({
+									url: "/blog/" + $("#blog-title").attr('quib-id') + "/setimage",
+									data: {
+										attachment: data.id
+									},
+									type: "POST",
+									success: function() {
+										$("#blogicon").attr('src', data.path);
+									},
+									error: function() {
+										noticebox("Blog image wasn't updated.");
+									}
+								})
+							}
+						}]);
 					} else {
-						$("#dialog-info span.ui-icon").removeClass().addClass('ui-icon ui-icon-close');
-						$("#dialog-info.dialog-text").html("Upload failed.");
+						dialog.info("Upload failed.", 'ui-icon ui-icon-close');
 					}
 				},
 				error: function() {
-					$("#dialog-info span.ui-icon").removeClass().addClass('ui-icon ui-icon-close');
-					$("#dialog-info.dialog-text").html("Upload failed.");
+					dialog.info("Upload failed.", 'ui-icon ui-icon-close');
 				}
 			});
 		}
@@ -159,18 +150,5 @@ block append subs
 		o.on("dragover", block)
 		o.on("drop", onDrop)
 
-		$("#dialog-message").dialog({
-			draggable: false,
-			modal: true,
-			buttons: {
-					Cancel: function() {
-						$(this).dialog("close");
-					}
-			},
-			close: function() {
-				stopDrag();
-				$(this).dialog("destroy");
-			}
-		});
 		return false;
 	})

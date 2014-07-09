@@ -76,7 +76,7 @@ app.get('/blog/:id/newpost', util.prepareLayout, auth.require, routes.blog.newpo
 app.get('/blog/:id/:page?', util.prepareLayout, auth.build, routes.blog.show);
 app.get('/post/:id', util.prepareLayout, auth.build, routes.blogpost.show);
 app.post('/post/:id/edit', auth.require, routes.blogpost.editpost);
-app.post('/post/:id/delete', auth.require, routes.blogpost.deletepost);
+app.get('/post/:id/delete', auth.require, routes.blogpost.deletepost);
 app.get('/blogs', util.prepareLayout, routes.blog.list);
 
 // comments system
