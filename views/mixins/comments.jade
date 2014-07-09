@@ -1,5 +1,3 @@
-// TODO: namespace all this stuff
-
 mixin renderComment(master, node, depth, parent)
 	li(class="depth_#{depth}")
 		a.commentAnchor(name="viewcomment-#{node.comment.id}")
@@ -10,13 +8,13 @@ mixin renderComment(master, node, depth, parent)
 				h5= node.comment.username
 				p: em
 					= _timeSince(node.comment.date)
-					a.right.replybutton(href="#reply") Reply
+					a.right.replybutton(href="#", do="replyComment") Reply
 					if node.comment.canedit
 						br
-						a.right.replybutton(href="#edit") Edit
+						a.right.replybutton(href="#", do="editComment") Edit
 					if node.comment.candelete
 						br
-						a.right.replybutton(href="#delete") Delete
+						a.right.replybutton(href="#", do="deleteComment") Delete
 					
 				p.bbcode
 					!= node.comment.content
@@ -26,7 +24,6 @@ mixin renderComment(master, node, depth, parent)
 				- } else {
 				+replyForm(master, node.comment.id, true)
 				- }
-		- if (node.children.length > 0) {
 		ul.comment_list(id="children_#{node.comment.id}")
 			each sub in node.children
 				- if (depth == 3) {
@@ -34,7 +31,6 @@ mixin renderComment(master, node, depth, parent)
 				- } else {
 				+renderComment(master, sub, depth+1, node.comment.id)
 				- }
-		- }
 
 mixin comments(tree, master)
 	+replyForm(master, 0, false)
@@ -43,37 +39,37 @@ mixin comments(tree, master)
 			+renderComment(master, node, 1, node.comment.parent)
 
 mixin editForm(master, comment, hidden)
-	form.edit(do="submitEdit",method="POST",style="#{hidden ? 'display:none;' : 'display:block'}",id="edit_#{parent}")
+	form.edit(do="comment_submitEdit",method="POST",style="#{hidden ? 'display:none;' : 'display:block'}",id="edit_#{parent}")
 		textarea.textarea.round_6(rows="7",cols="72")= comment.rawcontent
 		br
 		input(type="hidden", name="commentid", value="#{comment.id}")
 		input.fancy.green(type="submit", value="Save Comment")
-		input.fancy(type="button", value="Cancel", onclick="sub('cancelEdit', this);")
+		input.fancy(type="button", value="Cancel", onclick="sub('comment_cancelEdit', this);")
 		br
 		br
 
 mixin replyForm(master, parent, hidden)
-	form.reply(do="submitReply",method="POST",style="#{hidden ? 'display:none;' : 'display:block'}",id="reply_#{parent}")
+	form.reply(do="comment_submitReply",method="POST",style="#{hidden ? 'display:none;' : 'display:block'}",id="reply_#{parent}")
 		textarea.textarea.round_6(rows="7",cols="72")
 		br
 		input(type="hidden", name="master", value="#{master}")
 		input(type="hidden", name="parent", value="#{parent}")
 		input.fancy.green(type="submit", value="Post Reply")
 		- if (hidden) {
-		input.fancy(type="button", value="Cancel", onclick="sub('cancelReply', this);")
+		input.fancy(type="button", value="Cancel", onclick="sub('comment_cancelReply', this);")
 		- }
 		br
 		br
 
 block append subs
-	+sub("cancelReply", function(obj) {
+	+sub("comment_cancelReply", function(obj) {
 		var r = $(obj).closest('.reply');
 		var instance = r.children('textarea').sceditor("instance").destroy();
 		r.attr('style', 'display:none');
 
 		return false;
 	})
-	+sub("cancelEdit", function(obj) {
+	+sub("comment_cancelEdit", function(obj) {
 		var instance = $(obj).closest(".comment_text").find('.edit>textarea').sceditor("instance");
 		instance.destroy();
 
@@ -82,7 +78,7 @@ block append subs
 
 		return false;
 	})
-	+sub("submitEdit", function(obj) {
+	+sub("comment_submitEdit", function(obj) {
 		var instance = $(obj).closest(".comment_text").find('.edit>textarea').sceditor("instance");
 		var content = instance.val();
 		var commentid = $(obj).closest(".comment_text").children('.edit').find("input[name=commentid]").val();
@@ -98,7 +94,7 @@ block append subs
 
 		return false;
 	})
-	+sub("#delete", function(obj) {
+	+sub("deleteComment", function(obj) {
 		// TODO: confirm from user
 		var commentid = $(obj).closest(".comment_text").children('.edit').find("input[name=commentid]").val();
 		$.get("/comment/" + commentid + "/delete").success(function() {
@@ -109,7 +105,7 @@ block append subs
 
 		return false;
 	})
-	+sub("#edit", function(obj) {
+	+sub("editComment", function(obj) {
 		$(obj).closest(".comment_text").find('.bbcode').attr('style', 'display:none');
 		$(obj).closest(".comment_text").find('.edit').attr('style', 'display:block');
 
@@ -122,7 +118,7 @@ block append subs
 
 		return false;
 	})
-	+sub("#reply", function(obj) {
+	+sub("replyComment", function(obj) {
 		$(obj).closest(".comment_text").find('.reply').attr('style', 'display:block');
 		$(obj).closest(".comment_text").find('.reply>textarea').sceditor({
 			plugins: "bbcode",
@@ -133,7 +129,7 @@ block append subs
 
 		return false;
 	})
-	+sub("submitReply", function(obj) {
+	+sub("comment_submitReply", function(obj) {
 		var master = $(obj).find("input[name=master]").val();
 		var parent = $(obj).find("input[name=parent]").val();
 		var depth = parseInt($(obj).closest('.comment_text').attr('mydepth'));
@@ -155,6 +151,7 @@ block append subs
 			r.children('textarea').val("");
 			r.attr('style', 'display:none');
 
+			console.log($("#children_" + parent));
 			$("#children_" + parent).append(result)
 			var n = $(result).find('a.commentAnchor').attr('name');
 			hookChange("#" + n);

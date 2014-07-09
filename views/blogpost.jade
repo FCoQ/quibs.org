@@ -2,6 +2,5 @@ extends common/blog
 include mixins/comments
 
 block blogbottom
-	div#content.left
-		a(name='comments')
-		+comments(comment_tree, "blogpost_" + posts[0].id)
+	a(name='comments')
+	+comments(comment_tree, "blogpost_" + posts[0].id)
