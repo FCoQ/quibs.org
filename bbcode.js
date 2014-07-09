@@ -54,7 +54,7 @@ exports.parse = function(input, callback) {
   } else {
     var tree = parser.parse(util.nl2br_escape(input));
 
-    callback(null, self.walk(tree, null))
+    callback(null, '<span style="font-size: 12pt">' + self.walk(tree, null) + '</span>')
   }
 }
 
@@ -100,7 +100,7 @@ exports.tags = {
   "size":function(content, attr) {
     var size = parseInt(attr);
     if (size >= 1 && size <= 7)
-      return "<font size=\"" + size + "\">" + content + "</font>"
+      return "<font style=\"font-size: \" size=\"" + size + "\">" + content + "</font>"
     else
       return false;
   },

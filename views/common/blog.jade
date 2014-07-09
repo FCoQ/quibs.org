@@ -32,11 +32,7 @@ block append subs
 	+sub("edit", function(obj) {
 		$("#post_" + $(obj).attr('quib-id') + " .bbcode").css('display', 'none');
 		$("#post_" + $(obj).attr('quib-id') + " form").css('display', 'block');
-		$("#post_" + $(obj).attr('quib-id') + " textarea").sceditor({
-			plugins: "bbcode",
-			style: "/css/default.min.css",
-			toolbar: "bold,italic,underline,strike|left,center,right|size,color,removeformat|orderedlist,bulletlist,code,quote|image,link,youtube,source"
-		});
+		$("#post_" + $(obj).attr('quib-id') + " textarea").qeditor().init();
 		return false;
 	})
 	+sub("cancel", function(obj) {

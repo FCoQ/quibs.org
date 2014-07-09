@@ -98,6 +98,32 @@ var qconfirm = function(text, yes, no) {
 		}])
 }
 
+$.fn.qeditor = function() {
+	var obj = this;
+
+	return {
+		val: function(content) {
+			return $(obj).sceditor("instance").val(content);
+		},
+		init: function(width) {
+			//if (!width)
+			//	width = "895px";
+
+			$(obj).sceditor({
+				width: width,
+				plugins: "bbcode",
+				style: "/css/default.min.css",
+				emoticonsEnabled : false,
+				emoticons: {},
+				toolbar: "bold,italic,underline,strike|left,center,right|size,color,removeformat|orderedlist,bulletlist,code,quote|image,link,youtube,source"
+			});
+		},
+		destroy: function() {
+			$(obj).sceditor("instance").destroy();
+		}
+	}
+}
+
 var hookChange = function(newAnchor, obj) {
 	// must be a valid sub name or whatever
 	if (!newAnchor.match(/^[#a-zA-Z0-9_\-]+$/)) {

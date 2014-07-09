@@ -6,7 +6,7 @@ mixin renderComment(master, node, depth, parent)
 				img.left(src="#{_attachment(node.comment.avatar)}",width="76px",height="80px")
 			div.comment_text(mydepth="#{depth}")
 				h5= node.comment.username
-				p: em
+				p(style="margin-bottom: -4px"): em
 					= _timeSince(node.comment.date)
 					a.right.replybutton(href="#", do="replyComment") Reply
 					if node.comment.canedit
@@ -64,14 +64,13 @@ mixin replyForm(master, parent, hidden)
 block append subs
 	+sub("comment_cancelReply", function(obj) {
 		var r = $(obj).closest('.reply');
-		var instance = r.children('textarea').sceditor("instance").destroy();
+		var instance = r.children('textarea').qeditor().destroy();
 		r.attr('style', 'display:none');
 
 		return false;
 	})
 	+sub("comment_cancelEdit", function(obj) {
-		var instance = $(obj).closest(".comment_text").find('.edit>textarea').sceditor("instance");
-		instance.destroy();
+		$(obj).closest(".comment_text").find('.edit>textarea').qeditor().destroy();
 
 		$(obj).closest(".comment_text").find('.bbcode').attr('style', 'display:block');
 		$(obj).closest(".comment_text").find('.edit').attr('style', 'display:none');
@@ -79,7 +78,7 @@ block append subs
 		return false;
 	})
 	+sub("comment_submitEdit", function(obj) {
-		var instance = $(obj).closest(".comment_text").find('.edit>textarea').sceditor("instance");
+		var instance = $(obj).closest(".comment_text").find('.edit>textarea').qeditor();
 		var content = instance.val();
 		var commentid = $(obj).closest(".comment_text").children('.edit').find("input[name=commentid]").val();
 
@@ -107,26 +106,16 @@ block append subs
 		return false;
 	})
 	+sub("editComment", function(obj) {
-		$(obj).closest(".comment_text").find('.bbcode').attr('style', 'display:none');
+		//$(obj).closest(".comment_text").find('.bbcode').attr('style', 'display:none');
 		$(obj).closest(".comment_text").find('.edit').attr('style', 'display:block');
 
-		$(obj).closest(".comment_text").find('.edit>textarea').sceditor({
-			plugins: "bbcode",
-			width: "600px",
-			style: "/css/default.min.css",
-			toolbar: "bold,italic,underline,strike|left,center,right|size,color,removeformat|orderedlist,bulletlist,code,quote|image,link,youtube,source"
-		});
+		$(obj).closest(".comment_text").find('.edit>textarea').qeditor().init("600px");
 
 		return false;
 	})
 	+sub("replyComment", function(obj) {
 		$(obj).closest(".comment_text").find('.reply').attr('style', 'display:block');
-		$(obj).closest(".comment_text").find('.reply>textarea').sceditor({
-			plugins: "bbcode",
-			width: "600px",
-			style: "/css/default.min.css",
-			toolbar: "bold,italic,underline,strike|left,center,right|size,color,removeformat|orderedlist,bulletlist,code,quote|image,link,youtube,source"
-		})
+		$(obj).closest(".comment_text").find('.reply>textarea').qeditor().init("600px");
 
 		return false;
 	})
@@ -142,7 +131,7 @@ block append subs
 
 		var r = $(obj).closest('.reply');
 
-		var instance = r.children('textarea').sceditor("instance");
+		var instance = r.children('textarea').qeditor();
 
 		var content = instance.val();
 
@@ -163,10 +152,5 @@ block append subs
 		return false;
 	})
 	+sub("onPageLoad", function(obj) {
-		$("#reply_0 textarea").sceditor({
-			plugins: "bbcode",
-			width: "895px",
-			style: "/css/default.min.css",
-			toolbar: "bold,italic,underline,strike|left,center,right|size,color,removeformat|orderedlist,bulletlist,code,quote|image,link,youtube,source"
-		});
+		$("#reply_0 textarea").qeditor().init();
 	})

@@ -11,15 +11,10 @@ block content
 			form(method="POST", action="/blog/#{blog.id}/submitpost")
 				input(name="title", type="text", value="", placeholder="Title", style="width:300px")
 				textarea(name="content", width="100%", cols=100, rows=20)
-				input(type="submit", value="Submit Post")
+				input.fancy(type="submit", value="Submit Post")
 
 block subs
 	+sub("onPageLoad", function(obj) {
-		$("textarea").sceditor({
-			width: "895px",
-			plugins: "bbcode",
-			style: "/css/default.min.css",
-			toolbar: "bold,italic,underline,strike|left,center,right|size,color,removeformat|orderedlist,bulletlist,code,quote|image,link,youtube,source"
-		});
+		$("textarea").qeditor().init("895px");
 		return false;
 	})
