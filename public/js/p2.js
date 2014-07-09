@@ -229,9 +229,6 @@ $('a').live('click', function(e) {
 			} else {
 				hookChange($(this).attr('href').substring($('#ajax-current-page').attr('quib-curpage').length), this);
 			}
-		} else if ($(this).attr('id') == 'toTop') {
-			e.preventDefault();
-			$('#content-wrapper').animate({scrollTop:0},600);
 		} else if ($(this).attr('href').substring(0, 1) == '/') {
 			if ($(this).attr('target') != '_blank') {
 				e.preventDefault();
@@ -290,4 +287,8 @@ $(document).ready(function() {
 		//Background image
 		slides	:  [ { image : '/img/bg1.jpg' } ]
 	});
+
+	$("#toTop").click(function() {
+		$('#content-wrapper').animate({scrollTop:0},600);
+	})
 });
