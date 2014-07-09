@@ -5,7 +5,7 @@ mixin renderComment(master, node, depth, parent)
 		a.commentAnchor(name="viewcomment-#{node.comment.id}")
 		div.comment_container(id="comment_#{node.comment.id}")
 			div.gravatar
-				img.left(src="/placeholder.png",width="76px",height="80px")
+				img.left(src="#{_attachment(node.comment.avatar)}",width="76px",height="80px")
 			div.comment_text(mydepth="#{depth}")
 				h5= node.comment.username
 				p: em
@@ -14,6 +14,7 @@ mixin renderComment(master, node, depth, parent)
 					if node.comment.canedit
 						br
 						a.right.replybutton(href="#edit") Edit
+					if node.comment.candelete
 						br
 						a.right.replybutton(href="#delete") Delete
 					

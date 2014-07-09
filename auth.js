@@ -88,6 +88,13 @@ exports.permission = function(req, res, auth, next) {
 				next(null, false);
 			}
 		break;
+		case "delete comment":
+			if (res.locals.__AUTH_USERDATA.grp == 3) {
+				next(null, true); // admins can edit all comments
+			} else {
+				next(null, false);
+			}
+		break;
 		case "edit comment":
 			var comment = object;
 

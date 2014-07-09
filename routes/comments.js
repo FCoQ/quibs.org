@@ -86,7 +86,7 @@ exports.delete = function(req, res) {
 
 		comment = comment[0];
 
-		auth.permission(req, res, ["edit comment", comment], function(err, canedit) {
+		auth.permission(req, res, ["delete comment", comment], function(err, canedit) {
 			if (!canedit) return end();
 
 			db.query("DELETE FROM comments WHERE id=?", [id], function(err) {
@@ -165,14 +165,20 @@ exports.fetchTree = function(req, res, master, callback, just, justparent) {
 
 				comment.canedit = canedit;
 
-				// parse bbcode of comment
-				bbcode.parse(comment.content, function(err, data) {
+				auth.permission(req, res, ["delete comment", comment], function(err, candelete) {
 					if (err) return cb(err);
 
-					comment.rawcontent = comment.content;
-					comment.content = data;
-					mapComments[comment.parent].push(comment);
-					cb();
+					comment.candelete = candelete;
+
+					// parse bbcode of comment
+					bbcode.parse(comment.content, function(err, data) {
+						if (err) return cb(err);
+
+						comment.rawcontent = comment.content;
+						comment.content = data;
+						mapComments[comment.parent].push(comment);
+						cb();
+					})
 				})
 			})
 		}, function(err) {
