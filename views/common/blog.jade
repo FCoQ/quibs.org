@@ -41,29 +41,13 @@ block append subs
 		$("#post_" + $(obj).attr('quib-id') + " form").css('display', 'none');
 	})
 	+sub("avatar", function(obj) {
-		// make entire body drag-and-droppable
-		// TODO: generalize this
-		var o = $("body");
-
-		var block = function(e) {
-			e.stopPropagation()
-			e.preventDefault()
-		}
-
-		var stopDrag = function() {
-			o.off("dragenter")
-			o.off("dragover")
-			o.off("drop")
-		}
-
-		var dialog = new qdialog("Change Blog Image", "Drag a new blog image anywhere on this page.", [{
+		var uploader = new qdragdrop("/uploadimage");
+		var dialog = new qdialog("Change Blog Image", "Drop a new blog image anywhere on this page.", [{
 								text: "Cancel",
 								click: function() {
 									dialog.close();
 								}
-							}], stopDrag);
-
-		var uploader = new qdragdrop("/uploadimage");
+							}], uploader.end);
 		uploader.on("uploading", function() {
 			dialog.info("Uploading...", "ui-icon ui-icon-arrowreturn-1-n");
 		});

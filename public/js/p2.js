@@ -136,7 +136,7 @@ var qdragdrop = function(uploadURL) {
 
 		},
 		error: function(error) {
-
+			
 		}
 	}
 
