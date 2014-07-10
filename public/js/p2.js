@@ -136,7 +136,7 @@ var qdragdrop = function(uploadURL) {
 
 		},
 		error: function(error) {
-			
+
 		}
 	}
 
@@ -189,7 +189,7 @@ var qdragdrop = function(uploadURL) {
 			data: fd,
 			dataType: "json",
 			success: function(data) {
-				if (data.path) {
+				if (data.orig) {
 					handlers.success(data);
 				} else {
 					handlers.error("Upload failed.");

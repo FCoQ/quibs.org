@@ -93,7 +93,7 @@ app.post('/uploadimage', auth.require, function(req, res) {
 
 	var id = req.files.file.path.replace("public/uploads/", "");
 
-	var oreturn = {path:"/uploads/" + id, id:id};
+	var oreturn = {orig:"/uploads/" + id, id:id};
 
 	res.send(JSON.stringify(oreturn));
 });

@@ -53,7 +53,7 @@ block append subs
 		});
 		uploader.on("success", function(data) {
 			dialog.info(false);
-			dialog.img(data.path);
+			dialog.img(data.orig);
 			dialog.buttons([{
 				text: "Cancel",
 				class: 'cancelButton',
@@ -72,7 +72,7 @@ block append subs
 						},
 						type: "POST",
 						success: function() {
-							$("#blogicon").attr('src', data.path);
+							$("#blogicon").attr('src', data.orig);
 						},
 						error: function() {
 							noticebox("Blog image wasn't updated.");
