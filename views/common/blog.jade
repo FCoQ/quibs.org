@@ -9,11 +9,11 @@ block content
 		div#postdiv(style="float:right;margin-right:20px")
 			if canedit
 				a(do="avatar",href="#")
-					img#blogicon(src="#{_attachment(blogdata['140x140'])}", width="140px", height="140px")
+					img#blogicon(src="#{_attachment(blogdata['140x140'], 140)}", width="140px", height="140px")
 				h5
 					a(href="/blog/#{blogdata.id}/newpost",style="text-decoration:underline") Submit Post
 			else
-				a: img#blogicon(src="#{_attachment(blogdata['140x140'])}", width="140px", height="140px")
+				a: img#blogicon(src="#{_attachment(blogdata['140x140'], 140)}", width="140px", height="140px")
 		div#content.left
 			each post in posts
 				+blogpost(post, canedit)
@@ -53,7 +53,7 @@ block append subs
 		});
 		uploader.on("success", function(data) {
 			dialog.info(false);
-			dialog.img(data.orig);
+			dialog.img(data.thumb140);
 			dialog.buttons([{
 				text: "Cancel",
 				class: 'cancelButton',
@@ -72,7 +72,7 @@ block append subs
 						},
 						type: "POST",
 						success: function() {
-							$("#blogicon").attr('src', data.orig);
+							$("#blogicon").attr('src', data.thumb140);
 						},
 						error: function() {
 							noticebox("Blog image wasn't updated.");

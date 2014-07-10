@@ -6,6 +6,8 @@ var express = require('express')
   , db = require('./db')
   , auth = require('./auth')
   , util = require('./util')
+  , resize = require('./resize')
+  , async = require('async')
 
 var app = express();
 
@@ -39,6 +41,12 @@ app.configure(function(){
 			res.locals.__REQUEST_TYPE = 'normal';
 			res.locals.__REQUEST_URL = req.url;
 		}
+
+		if (req.url.substring(0, "/uploads/".length) == "/uploads/") {
+			req.url = req.url.replace(".png", "")
+			res.contentType("image/png");
+		}
+
 		next();
 	});
 	app.use(express.static(path.join(__dirname, 'public')));
@@ -89,16 +97,43 @@ app.post('/uploadimage', auth.require, function(req, res) {
 	if (!req.files.file)
 		return util.error("File was not submitted.", req, res, "File was not submitted.");
 
-	var file = req.files.file;
+	var path = "/" + req.files.file.path;
 
-	var id = req.files.file.path.replace("public/uploads/", "");
+	async.series({
+		orig: function(cb) {
+			cb(null, path);
+		},
+		thumb32: function(cb) {
+			resize(path, path + "_32", 32, 32, cb)
+		},
+		thumb55: function(cb) {
+			resize(path, path + "_55", 55, 70, cb)
+		},
+		thumb64: function(cb) {
+			resize(path, path + "_64", 64, 64, cb)
+		},
+		thumb140: function(cb) {
+			resize(path, path + "_140", 140, 140, cb)
+		}
+	}, function(err, results) {
+		if (err) return util.error(err, req, res, "Not a valid image.");
 
-	var oreturn = {orig:"/uploads/" + id, id:id};
+		for (e in results) {
+			results[e] = results[e].replace("/public", "")
+		}
 
-	res.send(JSON.stringify(oreturn));
+		results.id = path.replace("/public/uploads/", "");
+
+		res.send(JSON.stringify(results));
+	})
 });
 
 app.get(/\.(gif|jpg|png|css|js)$/, function(req, res) {
+	res.statusCode = 404;
+	res.send("404 Not Found");
+})
+
+app.get(/^\/uploads\//, function(req, res) {
 	res.statusCode = 404;
 	res.send("404 Not Found");
 })

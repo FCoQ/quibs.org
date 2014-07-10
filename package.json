@@ -12,6 +12,7 @@
     "async":"*",
     "crypto":"*",
     "recaptcha":"*",
-    "pegjs":"*"
+    "pegjs":"*",
+    "canvas":"*"
   }
 }

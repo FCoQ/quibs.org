@@ -17,5 +17,5 @@ block content
 				h3.replace(style="height:50px")
 					a(href="/blog/#{_slug(blog.id, blog.name)}")= blog.name
 				p
-					div(onclick="getPage('/blog/#{_slug(blog.id, blog.name)}')", style="cursor:pointer; background:url(#{_attachment(blog['140x140'])}) no-repeat; background-size: 100%; width: 140px; height: 140px")
+					div(onclick="getPage('/blog/#{_slug(blog.id, blog.name)}')", style="cursor:pointer; background:url(#{_attachment(blog['140x140'], 140)}) no-repeat; background-size: 100%; width: 140px; height: 140px")
 			- c++

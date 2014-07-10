@@ -38,12 +38,12 @@ exports.pagination = function(query, countquery, params, curpage, perpage, after
 	});
 }
 
-exports.attachment = function(url) {
+exports.attachment = function(url, size) {
 	if (url == null)
 		return ""
 
 	if (url.match(/^[a-fA-F0-9]{32}$/)) {
-		return "/uploads/" + url;
+		return "/uploads/" + url + "_" + size + ".png";
 	} else {
 		return url
 	}
