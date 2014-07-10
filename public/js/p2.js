@@ -124,6 +124,97 @@ $.fn.qeditor = function() {
 	}
 }
 
+// turns entire page into drag-droppable file thingy
+var qdragdrop = function(uploadURL) {
+	var o = $("body");
+
+	var handlers = {
+		uploading: function() {
+
+		},
+		success: function(data) {
+
+		},
+		error: function(error) {
+
+		}
+	}
+
+	var block = function(e) {
+		e.stopPropagation()
+		e.preventDefault()
+	}
+
+	var stopDrag = function() {
+		o.off("dragenter")
+		o.off("dragover")
+		o.off("drop")
+	}
+
+	var onDrop = function(e) {
+		block(e);
+
+		if ((e.originalEvent.dataTransfer == undefined) || (e.originalEvent.dataTransfer.files.length == 0)) {
+			return handlers.error("You did not drop a file.");
+		}
+
+		var file = e.originalEvent.dataTransfer.files[0];
+
+		var fd = new FormData();
+		fd.append('file', file);
+
+		handlers.uploading();
+
+		var jqXHR = $.ajax({
+			xhr: function() {
+				var xhrobj = $.ajaxSettings.xhr();
+				if (xhrobj.upload) {
+					xhrobj.upload.addEventListener('progress', function(event) {
+						var percent = 0;
+                        var position = event.loaded || event.position;
+                        var total = event.total;
+                        if (event.lengthComputable) {
+                            percent = Math.ceil(position / total * 100);
+                        }
+                        // TODO: progress bar
+					})
+				}
+				return xhrobj;
+			},
+			url: uploadURL,
+			type: "POST",
+			contentType: false,
+			processData: false,
+			cache: false,
+			data: fd,
+			dataType: "json",
+			success: function(data) {
+				if (data.path) {
+					handlers.success(data);
+				} else {
+					handlers.error("Upload failed.");
+				}
+			},
+			error: function() {
+				handlers.error("Upload failed.");
+			}
+		});
+	}
+
+	o.on("dragenter", block)
+	o.on("dragover", block)
+	o.on("drop", onDrop)
+
+	return {
+		end: function() {
+			stopDrag();
+		},
+		on: function(name, val) {
+			handlers[name] = val;
+		}
+	}
+}
+
 var hookChange = function(newAnchor, obj) {
 	// must be a valid sub name or whatever
 	if (!newAnchor.match(/^[#a-zA-Z0-9_\-]+$/)) {

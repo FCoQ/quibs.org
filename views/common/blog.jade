@@ -63,88 +63,43 @@ block append subs
 								}
 							}], stopDrag);
 
-		var onDrop = function(e) {
-			block(e)
-
-			if ((e.originalEvent.dataTransfer == undefined) || (e.originalEvent.dataTransfer.files.length == 0)) {
-				return; // ???
-			}
-
-			var file = e.originalEvent.dataTransfer.files[0];
-
-			var fd = new FormData();
-			fd.append('file', file);
-
+		var uploader = new qdragdrop("/uploadimage");
+		uploader.on("uploading", function() {
 			dialog.info("Uploading...", "ui-icon ui-icon-arrowreturn-1-n");
-
-			var jqXHR = $.ajax({
-				xhr: function() {
-					var xhrobj = $.ajaxSettings.xhr();
-					if (xhrobj.upload) {
-						xhrobj.upload.addEventListener('progress', function(event) {
-							var percent = 0;
-	                        var position = event.loaded || event.position;
-	                        var total = event.total;
-	                        if (event.lengthComputable) {
-	                            percent = Math.ceil(position / total * 100);
-	                        }
-
-	                        //console.log("percent uploaded " + percent);
-						})
-					}
-					return xhrobj;
-				},
-				url: "/uploadimage",
-				type: "POST",
-				contentType: false,
-				processData: false,
-				cache: false,
-				data: fd,
-				dataType: "json",
-				success: function(data) {
-					console.log(data);
-					if (data.path) {
-						dialog.info(false);
-						dialog.img(data.path);
-						dialog.buttons([{
-							text: "Cancel",
-							class: 'cancelButton',
-							click: function() {
-								dialog.close();
-							}
-						},{
-							text: "Save Changes",
-							click: function() {
-								dialog.close();
-
-								$.ajax({
-									url: "/blog/" + $("#blog-title").attr('quib-id') + "/setimage",
-									data: {
-										attachment: data.id
-									},
-									type: "POST",
-									success: function() {
-										$("#blogicon").attr('src', data.path);
-									},
-									error: function() {
-										noticebox("Blog image wasn't updated.");
-									}
-								})
-							}
-						}]);
-					} else {
-						dialog.info("Upload failed.", 'ui-icon ui-icon-close');
-					}
-				},
-				error: function() {
-					dialog.info("Upload failed.", 'ui-icon ui-icon-close');
+		});
+		uploader.on("success", function(data) {
+			dialog.info(false);
+			dialog.img(data.path);
+			dialog.buttons([{
+				text: "Cancel",
+				class: 'cancelButton',
+				click: function() {
+					dialog.close();
 				}
-			});
-		}
+			},{
+				text: "Save Changes",
+				click: function() {
+					dialog.close();
 
-		o.on("dragenter", block)
-		o.on("dragover", block)
-		o.on("drop", onDrop)
+					$.ajax({
+						url: "/blog/" + $("#blog-title").attr('quib-id') + "/setimage",
+						data: {
+							attachment: data.id
+						},
+						type: "POST",
+						success: function() {
+							$("#blogicon").attr('src', data.path);
+						},
+						error: function() {
+							noticebox("Blog image wasn't updated.");
+						}
+					})
+				}
+			}]);
+		});
+		uploader.on("error", function(error) {
+			dialog.info(error, 'ui-icon ui-icon-close');
+		});
 
 		return false;
 	})
