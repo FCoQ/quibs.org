@@ -46,7 +46,7 @@ exports.deletepost = function(req, res) {
 					if (err) return util.error(err, req, res, "Couldn't delete post for some reason.");
 
 					res.locals.msg = "Post deleted!";
-					util.redirect(req, res, '/blog/' + post.bid)
+					util.redirect(req, res, '/blog/' + post.bid) // TODO: slug here?
 				})
 			}
 		})
@@ -73,7 +73,7 @@ exports.editpost = function(req, res) {
 					if (err) return util.error(err, req, res, "Couldn't edit post for some reason.")
 
 					res.locals.msg = "Post updated!";
-					util.redirect(req, res, '/post/' + post.id)
+					util.redirect(req, res, '/post/' + util.slug(post.id, post.title))
 				})
 			}
 		})

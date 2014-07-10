@@ -89,7 +89,7 @@ exports.submitpost = function(req, res) {
 			function(err, rows) {
 				if (err) return util.error(err, req, res, "Couldn't submit your post.")
 
-				util.redirect(req, res, '/post/' + rows.insertId)
+				util.redirect(req, res, '/post/' + util.slug(rows.insertId, rows.title))
 			})
 	})
 }
