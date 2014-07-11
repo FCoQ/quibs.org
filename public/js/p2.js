@@ -515,22 +515,6 @@ $('form').live('submit', function(e) {
 		}
 	}
 });
-/*
-(function(){
-	var win = $(window),
-		doc = $(document)
-	win.scroll(function() {
-		console.log("hey")
-		$("a.infinite").each(function() {
-			console.log("Found an a.infinite")
-			console.log("Position: ")
-			console.log($(this).offset());
-			console.log("Window: ")
-			console.log(win.scrollBottom());
-		})
-	})
-})();
-*/
 
 $(document).ready(function() {
 	$("#content-wrapper").on('scroll', function() {
@@ -558,6 +542,9 @@ $(document).ready(function() {
 	}).superfish({
 		delay:			300,
 		dropShadows:    false
+	}).click(function(a) {
+		if (a.target.localName != "canvas")
+			$(this).find('li.sfHover').hideSuperfishUl();
 	});  // call supersubs first, then superfish, so that subs are 
 					 // not display:none when measuring. Call before initialising 
 					 // containing tabs for same reason. 
