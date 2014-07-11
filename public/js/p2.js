@@ -527,10 +527,11 @@ $(document).ready(function() {
 	var History = window.History;
 	History.Adapter.bind(window, 'statechange', function() {
 		var State = History.getState();
-		if ($('#ajax-current-page').attr('quib-curpage') == State.url.substring(16))
+		var u = State.url.split('.org').splice(1).join('.org')
+		if ($('#ajax-current-page').attr('quib-curpage') == u)
 			return;
 
-		getPage(State.url.substring(16));
+		getPage(u);
 	});
 
 		// Superfish

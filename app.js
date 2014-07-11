@@ -25,6 +25,7 @@ app.configure(function(){
 	app.use(express.methodOverride());
 	app.use(util.verifyRecaptcha);
 	app.use(function(req, res, next) {
+		console.log("requested URL " + req.url)
 		res.locals._nl2br_escape = util.nl2br_escape;
 		res.locals._quote = util.quote;
 		res.locals._isset = util.isset;
