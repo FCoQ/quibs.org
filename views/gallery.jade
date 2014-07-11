@@ -1,0 +1,70 @@
+extends main
+
+mixin gallery_image(img)
+	div.gallery_module(style="width:290px;")
+		a.cboxElement(href="#{img.url}")
+			img(src="#{img.url}",style="max-width:260px;max-height:204px;")
+	p
+		i.
+			by #{img.username}&nbsp;&nbsp;
+		a(href="/viewimage/#{img.id}").
+			0 comments
+		| &nbsp;&nbsp;
+	div(style="margin-bottom:40px")
+
+block content
+	div#main.round_8.clearfix
+		div.green.page_title.round_6
+			h1.replace Gallery
+		div#col1.col_290(style="overflow:hidden; width: 283px; margin-bottom: 5px;")
+			- var c = 0
+			each img in images
+				- if ((c % 3) == 0) {
+					+gallery_image(img)
+				- }
+				- c++
+			- if (c > 0) {
+			a.infinite
+			- }
+		div#col2.col_290(style="overflow:hidden; width: 283px; margin-bottom: 5px;")
+			- var c = 0
+			each img in images
+				- if ((c % 3) == 1) {
+					+gallery_image(img)
+				- }
+				- c++
+			- if (c > 0) {
+			a.infinite
+			- }
+		div#col3.col_290(style="overflow:hidden; width: 283px; margin-bottom: 5px;")
+			- var c = 0
+			each img in images
+				- if ((c % 3) == 2) {
+					+gallery_image(img)
+				- }
+				- c++
+			- if (c > 0) {
+			a.infinite
+			- }
+		div.clear
+
+block subs
+	+state('page', page)
+	+trigger('infinite', function() {
+		var sem;
+		if (sem = qsemaphore("infiniteScroll")) {
+			var page = parseInt(state('page')) + 1;
+			setState('page', page);
+			$.get("/ajax/gallery/" + page).success(function(data) {
+				var parsed = $.parseHTML(data);
+				$("a.infinite").remove();
+				$("#col1").append($(parsed).find('#col1').html());
+				$("#col2").append($(parsed).find('#col2').html());
+				$("#col3").append($(parsed).find('#col3').html());
+				sem.release();
+			}).error(function() {
+				// keep it locked, we errored anyway
+				// sem.release();
+			})
+		}
+	})

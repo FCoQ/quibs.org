@@ -1,6 +1,12 @@
 mixin sub(anchor, code)
   != "addSub('" + anchor + "', " + code + "); "
 
+mixin trigger(anchor, code)
+  != "addTrigger('" + anchor + "', " + code + "); "
+
+mixin state(name, value)
+  != "setState('" + name + "', " + value + "); "
+
 - if (__REQUEST_TYPE != 'ajax') {
 doctype html
 html
@@ -195,7 +201,7 @@ script.
   }
 - }
 
-!= "<script>clearSubs(); "
+!= "<script>clearSubs(); clearTriggers(); clearStates(); resetSemaphores(); "
 block subs
 != "</script>"
 

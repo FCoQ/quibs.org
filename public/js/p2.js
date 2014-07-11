@@ -1,13 +1,30 @@
 var redirecting = false;
 var subHooks = {};
+var triggers = {};
+var qstates = {};
+var setState = function(name, val) {
+	qstates[name] = val;
+}
+var state = function(name) {
+	return qstates[name];
+}
+var clearStates = function() {
+	qstates = {};
+}
 var addSub = function(name, val) {
 	if (!(name in subHooks)) {
 		subHooks[name] = [];
 	}
 	subHooks[name].push(val);
 }
+var addTrigger = function(name, val) {
+	triggers[name] = val;
+}
 var clearSubs = function() {
 	subHooks = {};
+}
+var clearTriggers = function() {
+	triggers = {};
 }
 // this simulates a subroutine (subpage) action
 var sub = function(triggerAnchor, obj) {
@@ -19,6 +36,51 @@ var sub = function(triggerAnchor, obj) {
 	}
 
 	return r;
+}
+
+var trigger = function(name) {
+	if (typeof triggers[name] != "undefined") {
+		triggers[name]();
+	}
+}
+
+var qsemaphores = {};
+
+var qsemaphore = function(name) {
+	if (qsemaphores[name]) {
+		return false;
+	}
+
+	qsemaphores[name] = true;
+
+	return {
+		release: function() {
+			delete qsemaphores[name];
+		}
+	}
+}
+
+var resetSemaphores = function() {
+	qsemaphores = {};
+}
+
+var checkScroll = function() {
+	$("a.infinite").each(function() {
+		// the scroll bar can behave differently in two different contexts
+		// so dumb
+		var wtop = $(window).scrollTop();
+		var ctop = $("#content-wrapper").scrollTop();
+
+		if (wtop > ctop) {
+			if ((wtop + $(window).height()) > ($(this).position().top)) {
+				trigger('infinite');
+			}
+		} else {
+			if ((ctop + $(window).height()) > ($(this).position().top + ctop)) {
+				trigger('infinite');
+			}
+		}
+	})
 }
 
 var qdialog = function(title, text, buttons, onClose) {
@@ -378,6 +440,7 @@ function onPageLoad(ajax, anchor) {
 	if (typeof(ajax) == 'undefined')
 		ajax = false;
 
+	checkScroll();
 	sub('onPageLoad');
 
 	if (typeof(anchor) != 'undefined' && anchor != '') {
@@ -452,8 +515,31 @@ $('form').live('submit', function(e) {
 		}
 	}
 });
+/*
+(function(){
+	var win = $(window),
+		doc = $(document)
+	win.scroll(function() {
+		console.log("hey")
+		$("a.infinite").each(function() {
+			console.log("Found an a.infinite")
+			console.log("Position: ")
+			console.log($(this).offset());
+			console.log("Window: ")
+			console.log(win.scrollBottom());
+		})
+	})
+})();
+*/
 
 $(document).ready(function() {
+	$("#content-wrapper").on('scroll', function() {
+		checkScroll();
+	})
+	$(window).on('scroll', function() {
+		checkScroll();
+	})
+
 	var History = window.History;
 	History.Adapter.bind(window, 'statechange', function() {
 		var State = History.getState();
