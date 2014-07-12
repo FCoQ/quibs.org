@@ -146,8 +146,12 @@ exports.repeat = function(string, num) {
 	return new Array( num + 1 ).join( string );
 }
 
-exports.redirect = function(req, res, path) {
-	res.render('redirect', {'path':path});
+exports.redirect = function(req, res, path, force) {
+	if (!force) {
+		res.render('redirect', {'path':path,force:false});
+	} else {
+		res.render('redirect', {'path':path,force:true});
+	}
 }
 
 exports.escape = function (html){

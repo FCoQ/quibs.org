@@ -1,0 +1,16 @@
+extends main
+
+block content
+	div#main.round_8.clearfix
+		div.green.page_title.round_6
+			h1.replace Change Password
+		div#content.left
+			form#contact_form(action='/reset/#{code}', method="post")
+				table
+					tr
+						td(style="text-align:right") new password:
+						td(style="text-align:left")
+							input#name.text.round_6(size="15", name="password", type="password")
+					tr
+						td(colspan="2")
+							input#submit.fancy(name="submit",type="submit",value="Change Password")

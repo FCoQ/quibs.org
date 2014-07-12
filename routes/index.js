@@ -27,7 +27,8 @@ exports.fund = function(req, res) {
 };
 
 exports.grants = require('./grants')
-exports.blog = require('./blog')
+exports.blog = require('./blog') // todo: might as well merge this with blogpost anyway
 exports.blogpost = require('./blogpost')
 exports.comments = require('./comments')
 exports.gallery = require('./gallery')
+exports.user = require('./user')

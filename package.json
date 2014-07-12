@@ -13,6 +13,7 @@
     "crypto":"*",
     "recaptcha":"*",
     "pegjs":"*",
-    "canvas":"*"
+    "canvas":"*",
+    "validator":"*"
   }
 }

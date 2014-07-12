@@ -1,0 +1,30 @@
+extends main
+include mixins/captcha
+
+block content
+	div#main.round_8.clearfix
+		div.green.page_title.round_6
+			h1.replace Register
+		div#content.left
+			p The First Church of Quibs is a community that cherishes inclusion and tolerance. We welcome everyone to join us and make the world a better place.
+			form#contact_form(action='/register', method="post")
+				table
+					tr
+						td(style="text-align:right") username:
+						td(style="text-align:left")
+							input#name.text.round_6(size="15", maxlength="25", name="username")
+					tr
+						td(style="text-align:right") password:
+						td(style="text-align:left")
+							input#name.text.round_6(size="15", maxlength="25", name="password", type="password")
+					tr
+						td(style="text-align:right") email:
+						td(style="text-align:left")
+							input#name.text.round_6(size="20", name="email")
+					tr
+						td(colspan="2")
+							center
+								// +captcha
+					tr
+						td(colspan="2")
+							input#submit.fancy(name="submit",type="submit",value="Register")

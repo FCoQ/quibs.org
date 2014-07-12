@@ -1,0 +1,25 @@
+extends main
+
+block content
+	div#main.round_8.clearfix
+		div.green.page_title.round_6
+			h1.replace Log in
+		div#postdiv(style="float:right;margin-right:20px;width:200px")
+			p
+				img.ui-icon.ui-icon-alert.left
+				| &nbsp;Did you forget your password?&nbsp;&nbsp;
+				a(href="/forgotpassword") We can help.
+		div#content.left
+			form#contact_form(action='/login', method="post")
+				table
+					tr
+						td(style="text-align:right") username:
+						td(style="text-align:left")
+							input#name.text.round_6(size="15", maxlength="25", name="username")
+					tr
+						td(style="text-align:right") password:
+						td(style="text-align:left")
+							input#name.text.round_6(size="15", maxlength="25", name="password", type="password")
+					tr
+						td(colspan="2")
+							input#submit.fancy(name="submit",type="submit",value="Log in")

@@ -544,8 +544,9 @@ $(document).ready(function() {
 		delay:			300,
 		dropShadows:    false
 	}).click(function(a) {
-		if (a.target.localName != "canvas")
+		if ($(a.target).closest('a').attr('href') != "#") {
 			$(this).find('li.sfHover').hideSuperfishUl();
+		}
 	});  // call supersubs first, then superfish, so that subs are 
 					 // not display:none when measuring. Call before initialising 
 					 // containing tabs for same reason. 

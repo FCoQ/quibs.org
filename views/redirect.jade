@@ -1,6 +1,10 @@
 extends main
 
 block content
-	script.
-		redirecting = true;
-		getPage('#{path}')
+	if !force
+		script.
+			redirecting = true;
+			getPage('#{path}')
+	else
+		script.
+			window.location = '#{path}';

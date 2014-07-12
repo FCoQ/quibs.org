@@ -1,7 +1,6 @@
 var express = require('express')
   , http = require('http')
   , path = require('path')
-  , crypto = require('crypto')
   , routes = require('./routes')
   , db = require('./db')
   , auth = require('./auth')
@@ -94,6 +93,18 @@ app.get('/comment/:id/delete', auth.require, routes.comments.delete);
 
 // gallery system
 app.get(/^\/gallery(\/([0-9]+)?)?$/, util.prepareLayout, routes.gallery.show);
+
+// user centric stuff
+app.get('/register', util.prepareLayout, routes.user.register);
+app.post('/register', util.prepareLayout, auth.build, routes.user.register_submit);
+app.get('/logout', util.prepareLayout, routes.user.logout);
+app.get('/login', util.prepareLayout, routes.user.login);
+app.post('/login', util.prepareLayout, routes.user.login_submit)
+app.get('/verify/:code', util.prepareLayout, routes.user.verify)
+app.get('/forgotpassword', util.prepareLayout, routes.user.forgot);
+app.post('/forgotpassword', util.prepareLayout, routes.user.forgot_submit);
+app.get('/reset/:code', util.prepareLayout, routes.user.reset);
+app.post('/reset/:code', util.prepareLayout, routes.user.reset_submit);
 
 // TODO: make this safer, more agile
 app.post('/uploadimage', auth.require, function(req, res) {
