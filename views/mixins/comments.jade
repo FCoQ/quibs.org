@@ -1,4 +1,4 @@
-mixin renderComment(master, node, depth, parent)
+mixin renderComment(master, node, depth, parent, cancomment)
 	li(class="depth_#{depth}")
 		a.commentAnchor(name="viewcomment-#{node.comment.id}")
 		div.comment_container(id="comment_#{node.comment.id}")
@@ -8,7 +8,8 @@ mixin renderComment(master, node, depth, parent)
 				h5= node.comment.username
 				p(style="margin-bottom: -4px"): em
 					= _timeSince(node.comment.date)
-					a.right.replybutton(href="#", do="replyComment") Reply
+					if cancomment
+						a.right.replybutton(href="#", do="replyComment") Reply
 					if node.comment.canedit
 						br
 						a.right.replybutton(href="#", do="editComment") Edit
@@ -32,11 +33,12 @@ mixin renderComment(master, node, depth, parent)
 				+renderComment(master, sub, depth+1, node.comment.id)
 				- }
 
-mixin comments(tree, master)
-	+replyForm(master, 0, false)
+mixin comments(tree, master, cancomment)
+	if cancomment
+		+replyForm(master, 0, false)
 	ul.comment_list(id="children_0")
 		each node in tree
-			+renderComment(master, node, 1, node.comment.parent)
+			+renderComment(master, node, 1, node.comment.parent, cancomment)
 
 mixin editForm(master, comment, hidden)
 	form.edit(do="comment_submitEdit",method="POST",style="#{hidden ? 'display:none;' : 'display:block'}",id="edit_#{parent}")

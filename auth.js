@@ -44,9 +44,21 @@ exports.build = function (req, res, next) {
 
 					res.locals.__AUTH_PERMISSIONS[perm.type][perm.obj] = perm.level;
 				})
+
+				// are we on a new ip now
+				if (res.locals.__AUTH_USERDATA.ip_lastlog != req.connection.remoteAddress) {
+					db.query("UPDATE users SET ip_lastlog=? WHERE id=?", [req.connection.remoteAddress, res.locals.__AUTH_USERDATA.id], function() {
+						next();
+					})
+				} else {
+					next();
+				}
+			} else {
+				next();
 			}
+		} else {
+			next();
 		}
-		next();
 	});
 }
 
@@ -107,6 +119,10 @@ exports.permission = function(req, res, auth, next) {
 			}
 		break;
 		case "submit comment":
+			if (!res.locals.__AUTH_LOGGED_IN) {
+				return next(null, false);
+			}
+
 			return self.permission(req, res, ["view master", object], next);
 		break;
 		case "view comments":

@@ -3,4 +3,4 @@ include mixins/comments
 
 block blogbottom
 	a(name='comments')
-	+comments(comment_tree, "blogpost_" + posts[0].id)
+	+comments(comment_tree, "blogpost_" + posts[0].id, cancomment)

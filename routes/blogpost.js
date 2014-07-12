@@ -94,6 +94,9 @@ exports.show = function(req, res) {
 			canedit: function(callback) {
 				auth.permission(req, res, ["edit blog", post.bid], callback);
 			},
+			cancomment: function(callback) {
+				auth.permission(req, res, ["submit comment", "blogpost_" + id], callback)
+			},
 			comments: function(callback) {
 				comments.fetchTree(req, res, "blogpost_" + id, callback);
 			}
@@ -105,7 +108,7 @@ exports.show = function(req, res) {
 
 				post.rawmsg = post.msg;
 				post.msg = data;
-				res.render('blogpost', {title:post.title, posts: [post], blogdata: results.blogdata[0], canedit: results.canedit, comment_tree: results.comments});
+				res.render('blogpost', {title:post.title, posts: [post], blogdata: results.blogdata[0], canedit: results.canedit, cancomment: results.cancomment, comment_tree: results.comments});
 			})
 		})
 	})
