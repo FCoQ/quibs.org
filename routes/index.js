@@ -18,7 +18,7 @@ exports.index = function(req, res) {
 	}, function(err, results) {
 		if (err) return util.error(err, req, res, "Couldn't render index page, try again later.");
 
-		res.render('index', {title:'It hurts when I pee.', clubs:results.clubs, randomquote:util.randomElement(results.quotes)});
+		res.render('index', {title:'It burns when I pee.', clubs:results.clubs, randomquote:util.randomElement(results.quotes)});
 	});
 };
 
