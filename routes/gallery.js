@@ -14,6 +14,13 @@ exports.show = function(req, res) {
 	var start = (page - 1) * 9;
 
 	db.query("SELECT g.*, u.username as username FROM images g LEFT JOIN users u ON u.id=g.uid ORDER BY g.time DESC LIMIT ?,9", [start], function(err, results) {
+		results = results.map(function(v) {
+			if (!v.username) {
+				v.username = "Dobby";
+			}
+
+			return v;
+		})
 		res.render("gallery", {page: page, title:'Gallery', images:results});
 	})
 }
