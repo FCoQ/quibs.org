@@ -93,6 +93,7 @@ app.get('/comment/:id/delete', auth.require, routes.comments.delete);
 
 // gallery system
 app.get(/^\/gallery(\/([0-9]+)?)?$/, util.prepareLayout, routes.gallery.show);
+app.get('/viewimage/:id', util.prepareLayout, auth.build, routes.gallery.viewimage);
 
 // user centric stuff
 app.get('/register', util.prepareLayout, routes.user.register);

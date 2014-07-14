@@ -137,6 +137,11 @@ exports.permission = function(req, res, auth, next) {
 
 					next(null, true);
 				break;
+				case "image":
+					var iid = parseInt(master[1]);
+
+					next(null, true);
+				break;
 			}
 		break;
 	}

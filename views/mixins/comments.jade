@@ -36,6 +36,9 @@ mixin renderComment(master, node, depth, parent, cancomment)
 mixin comments(tree, master, cancomment)
 	if cancomment
 		+replyForm(master, 0, false)
+	else
+		| You have to be logged in to comment.
+		br
 	ul.comment_list(id="children_0")
 		each node in tree
 			+renderComment(master, node, 1, node.comment.parent, cancomment)
