@@ -132,8 +132,8 @@ exports.login_submit = function(req, res) {
 
 		var userdata = results[0];
 
-		res.cookie('email', userdata.email, {maxAge: 31536000})
-		res.cookie('pass', userdata.pass, {maxAge: 31536000})
+		res.cookie('email', userdata.email, {maxAge: 94636000000})
+		res.cookie('pass', userdata.pass, {maxAge: 94636000000})
 
 		util.redirect(req, res, "/", true)
 	})
@@ -191,8 +191,8 @@ exports.register_submit = function(req, res) {
 			return;
 		}
 
-		res.cookie('email', email, {maxAge: 31536000})
-		res.cookie('pass', hashed_password, {maxAge: 31536000})
+		res.cookie('email', email, {maxAge: 94636000000})
+		res.cookie('pass', hashed_password, {maxAge: 94636000000})
 		
 		// TODO: email verification
 		util.redirect(req, res, "/verify/" + confirm_code, true)
