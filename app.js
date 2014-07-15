@@ -95,6 +95,9 @@ app.get('/comment/:id/delete', auth.require, routes.comments.delete);
 app.get(/^\/gallery(\/([0-9]+)?)?$/, util.prepareLayout, routes.gallery.show);
 app.get('/viewimage/:id', util.prepareLayout, auth.build, routes.gallery.viewimage);
 
+// inbox system
+app.get('/inbox/:type', util.prepareLayout, auth.require, routes.notifications.inbox);
+
 // user centric stuff
 app.get('/register', util.prepareLayout, routes.user.register);
 app.post('/register', util.prepareLayout, auth.build, routes.user.register_submit);

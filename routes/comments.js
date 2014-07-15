@@ -136,6 +136,9 @@ exports.edit = function(req, res) {
 exports.fetchTree = function(req, res, master, callback, just) {
 	async.series({
 		canview: function(cb) {
+			if (just) {
+				return cb(null, true);
+			}
 			auth.permission(req, res, ["view comments", master], cb);
 		},
 		comments: function(cb) {

@@ -34,10 +34,10 @@ mixin renderComment(master, node, depth, parent, cancomment)
 				+renderComment(master, sub, depth+1, node.comment.id, cancomment)
 				- }
 
-mixin comments(tree, master, cancomment)
-	if cancomment
+mixin comments(tree, master, cancomment, hideform)
+	if cancomment && !hideform
 		+replyForm(master, 0, false)
-	else
+	else if !hideform
 		| You have to be logged in to comment.
 		br
 	ul.comment_list(id="children_0")

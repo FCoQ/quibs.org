@@ -1,0 +1,24 @@
+extends main
+include mixins/comments
+
+block content
+	div#main.round_8.clearfix
+		div.green.page_title.round_6
+			h1.replace
+				case type
+					when "grant"
+						| New Grants
+					when "comment_reply"
+						| Replies to your Comments
+		if notifications.length == 0
+			| Nothing to see here...
+		each item in notifications
+			case item.type
+				when "grant"
+					li #{item.grant.name} wrote:
+					br
+					code
+						!= _nl2br_escape(item.grant.msg)
+				when "comment_reply"
+					+comments(item.tree, item.tree[0].comment.master, item.cancomment, true)
+			

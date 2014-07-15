@@ -39,11 +39,11 @@ exports.pagination = function(query, countquery, params, curpage, perpage, after
 }
 
 exports.attachment = function(url, size) {
-	if (url == null)
-		return ""
-
 	if (url.match(/^[a-fA-F0-9]{32}$/)) {
-		return "/uploads/" + url + "_" + size + ".png";
+		if (size)
+			return "/uploads/" + url + "_" + size + ".png";
+		else
+			return "/uploads/" + url + ".png";
 	} else {
 		return url
 	}
