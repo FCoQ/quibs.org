@@ -19,6 +19,7 @@ mixin renderComment(master, node, depth, parent, cancomment)
 					
 				p.bbcode
 					!= node.comment.content
+				div.clear
 				+editForm(master, node.comment, true)
 				- if (depth == 3) {
 				+replyForm(master, parent, true)
@@ -28,9 +29,9 @@ mixin renderComment(master, node, depth, parent, cancomment)
 		ul.comment_list(id="children_#{node.comment.id}")
 			each sub in node.children
 				- if (depth == 3) {
-				+renderComment(master, sub, depth, parent)
+				+renderComment(master, sub, depth, parent, cancomment)
 				- } else {
-				+renderComment(master, sub, depth+1, node.comment.id)
+				+renderComment(master, sub, depth+1, node.comment.id, cancomment)
 				- }
 
 mixin comments(tree, master, cancomment)
@@ -75,23 +76,23 @@ block append subs
 		return false;
 	})
 	+sub("comment_cancelEdit", function(obj) {
-		$(obj).closest(".comment_text").find('.edit>textarea').qeditor().destroy();
+		$(obj).closest(".comment_text").find('.edit>textarea').first().qeditor().destroy();
 
-		$(obj).closest(".comment_text").find('.bbcode').attr('style', 'display:block');
-		$(obj).closest(".comment_text").find('.edit').attr('style', 'display:none');
+		$(obj).closest(".comment_text").find('.bbcode').first().attr('style', 'display:block');
+		$(obj).closest(".comment_text").find('.edit').first().attr('style', 'display:none');
 
 		return false;
 	})
 	+sub("comment_submitEdit", function(obj) {
-		var instance = $(obj).closest(".comment_text").find('.edit>textarea').qeditor();
+		var instance = $(obj).closest(".comment_text").find('.edit>textarea').first().qeditor();
 		var content = instance.val();
-		var commentid = $(obj).closest(".comment_text").children('.edit').find("input[name=commentid]").val();
+		var commentid = $(obj).closest(".comment_text").children('.edit').find("input[name=commentid]").first().val();
 
 		$.post("/comment/" + commentid + "/edit", {content: content}).success(function(result) {
 			instance.destroy();
-			$(obj).closest(".comment_text").find('.bbcode').html(result);
-			$(obj).closest(".comment_text").find('.edit').attr('style', 'display:none');
-			$(obj).closest(".comment_text").find('.bbcode').attr('style', 'display:block');
+			$(obj).closest(".comment_text").find('.bbcode').first().html(result);
+			$(obj).closest(".comment_text").find('.edit').first().attr('style', 'display:none');
+			$(obj).closest(".comment_text").find('.bbcode').first().attr('style', 'display:block');
 		}).error(function() {
 			console.log("err"); // TODO
 		})
@@ -100,7 +101,7 @@ block append subs
 	})
 	+sub("deleteComment", function(obj) {
 		qconfirm("Are you sure you want to delete this comment?", function() {
-			var commentid = $(obj).closest(".comment_text").children('.edit').find("input[name=commentid]").val();
+			var commentid = $(obj).closest(".comment_text").children('.edit').find("input[name=commentid]").first().val();
 			$.get("/comment/" + commentid + "/delete").success(function() {
 				$(obj).closest("li").remove();
 			}).error(function() {
@@ -111,22 +112,22 @@ block append subs
 		return false;
 	})
 	+sub("editComment", function(obj) {
-		//$(obj).closest(".comment_text").find('.bbcode').attr('style', 'display:none');
-		$(obj).closest(".comment_text").find('.edit').attr('style', 'display:block');
+		$(obj).closest(".comment_text").find('.bbcode').attr('style', 'display:none');
+		$(obj).closest(".comment_text").find('.edit').first().attr('style', 'display:block');
 
-		$(obj).closest(".comment_text").find('.edit>textarea').qeditor().init("600px");
+		$(obj).closest(".comment_text").find('.edit>textarea').first().qeditor().init("600px");
 
 		return false;
 	})
 	+sub("replyComment", function(obj) {
-		$(obj).closest(".comment_text").find('.reply').attr('style', 'display:block');
-		$(obj).closest(".comment_text").find('.reply>textarea').qeditor().init("600px");
+		$(obj).closest(".comment_text").find('.reply').first().attr('style', 'display:block');
+		$(obj).closest(".comment_text").find('.reply>textarea').first().qeditor().init("600px");
 
 		return false;
 	})
 	+sub("comment_submitReply", function(obj) {
-		var master = $(obj).find("input[name=master]").val();
-		var parent = $(obj).find("input[name=parent]").val();
+		var master = $(obj).find("input[name=master]").first().val();
+		var parent = $(obj).find("input[name=parent]").first().val();
 		var depth = parseInt($(obj).closest('.comment_text').attr('mydepth'));
 		if (!depth)
 			depth = 1;
@@ -148,7 +149,7 @@ block append subs
 
 			console.log($("#children_" + parent));
 			$("#children_" + parent).append(result)
-			var n = $(result).find('a.commentAnchor').attr('name');
+			var n = $(result).find('a.commentAnchor').first().attr('name');
 			hookChange("#" + n);
 		}).error(function(result) {
 			console.log("err"); // TODO

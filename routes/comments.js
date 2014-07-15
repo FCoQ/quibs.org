@@ -67,7 +67,7 @@ exports.submit = function(req, res) {
 					if (err) return end();
 
 					res.render("newcomment", {depth: depth, tree: tree[0], master: master, parent: parent})
-				}, newid, parent)
+				}, newid)
 		})
 	})
 }
@@ -127,13 +127,13 @@ exports.edit = function(req, res) {
 					if (err) return end();
 
 					res.send(tree[0].comment.content);
-				}, id, comment.parent)
+				}, id)
 			})
 		});
 	})
 }
 
-exports.fetchTree = function(req, res, master, callback, just, justparent) {
+exports.fetchTree = function(req, res, master, callback, just) {
 	async.series({
 		canview: function(cb) {
 			auth.permission(req, res, ["view comments", master], cb);
@@ -184,8 +184,9 @@ exports.fetchTree = function(req, res, master, callback, just, justparent) {
 		}, function(err) {
 			if (err) return callback(err);
 
-			if (just)
-				callback(null, descend(mapComments, justparent));
+			if (just) {
+				callback(null, descend(mapComments, parseInt(Object.keys(mapComments)[0])));
+			}
 			else
 				callback(null, descend(mapComments, 0));
 		})
