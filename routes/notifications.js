@@ -23,7 +23,7 @@ exports.inbox = function(req, res) {
 	db.query("SELECT * FROM new_notifications WHERE uid=? AND type=? AND `read`=0 ORDER BY `time` DESC", [res.locals.__AUTH_USERDATA.id, type], function(err, results) {
 		if (err) return util.error(err, req, res, "Couldn't load notifications.")
 
-		//db.query("UPDATE notifications SET read=1 WHERE uid=? AND type=?", [res.locals.__AUTH_USERDATA.id, type], function(err, results) {
+		//db.query("UPDATE new_notifications SET read=1 WHERE uid=? AND type=?", [res.locals.__AUTH_USERDATA.id, type], function(err, results) {
 			self.proc(results, req, res, function(err, notifications) {
 				res.render("inbox", {type: type, title:'Inbox', notifications:notifications})
 			})
