@@ -170,41 +170,4 @@ exports.show = function(req, res) {
 			res.render('blog', {title:results.blogdata[0].name, blogdata: results.blogdata[0], posts: posts, lastpage: results.posts.pages, curpage: page, canedit: results.canedit});
 		})
 	})
-	// TODO! comments, date stuff, bbcode, etc.
-/*
-	step(
-		function() {
-			db.query("SELECT * FROM blogs WHERE id=?", [id], this);
-		},
-		function(result) {
-			if (result.length > 0) {
-				blog = result[0];
-
-				util.pagination("SELECT bp.*,u.username as username FROM blogposts bp LEFT JOIN users u ON u.id=bp.uid WHERE bp.bid=?", "SELECT count(bp.id) as cnt FROM blogposts bp WHERE bp.bid=? ORDER BY bp.date DESC", [blog.id], page, perpage, this);
-			} else {
-				throw "We don't know what blog you were trying to access.";
-			}
-		},
-		function(pagedata, lastpage) {
-			blogposts = pagedata;
-			numpages = lastpage;
-
-			var next = this.group();
-
-			// iterate over every blog post and get the number of comments
-			for (var i=0;i<blogposts.length;i++) {
-				console.log('comments for ' + blogposts[i].id);
-				db.query("SELECT count(id) as cnt FROM comments WHERE master='blogpost_" + blogposts[i].id + "'", [], next());
-			}
-		},
-		function(comments) {
-			console.log(comments);
-			res.send('k');
-		},
-		function() {
-			res.render('blog', {blogdata: blog, posts: blogposts, lastpage: numpages, curpage: page});
-		}
-	);
-*/
-
 }

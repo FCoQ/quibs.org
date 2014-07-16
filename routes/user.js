@@ -9,7 +9,7 @@ var self = exports;
 var verifyCode = function(req, res, callback) {
 	var confirm_code = String(req.params.code);
 
-	if (!confirm_code.match(/^[a-z0-9]{12}$/)) {
+	if (!util.isValidToken(confirm_code)) {
 		res.locals.msg = "Invalid verification code."
 		util.redirect(req, res, '/');
 		return;
@@ -77,7 +77,7 @@ exports.forgot = function(req, res) {
 exports.forgot_submit = function(req, res) {
 	var email = String(req.body.email)
 
-	var confirm_code = new Array(13).join((Math.random().toString(36)+'00000000000000000').slice(2, 18)).slice(0, 12);
+	var confirm_code = util.token();
 
 	db.query("SELECT * FROM users WHERE email=?", [email], function(err, results) {
 		if (err || (results.length != 1)) {
@@ -169,14 +169,13 @@ exports.register_submit = function(req, res) {
 		return;
 	}
 
-	// TODO: enable captcha when testing is done
-	/*if (!res.locals.__RECAPTCHA) {
+	if (!res.locals.__RECAPTCHA) {
 		res.locals.msg = "The CAPTCHA you entered was invalid, try again."
 		util.redirect(req, res, "/register")
 		return;
-	}*/
+	}
 
-	var confirm_code = new Array(13).join((Math.random().toString(36)+'00000000000000000').slice(2, 18)).slice(0, 12);
+	var confirm_code = util.token();
 
 	var sha1 = crypto.createHash('sha1');
 	sha1.update(password);

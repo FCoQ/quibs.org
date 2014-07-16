@@ -7,6 +7,7 @@ var db = require('../db'),
 
 var self = exports;
 
+// TODO: also print out read stuff as well, with pagination
 exports.inbox = function(req, res) {
 	var type = String(req.params.type);
 

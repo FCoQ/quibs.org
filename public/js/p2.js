@@ -479,7 +479,7 @@ function onPageLoad(ajax, anchor) {
 
 // ajax frontend:
 $('a').live('click', function(e) {
-	if (!$(this).hasClass('noajax')) {
+	//if (!$(this).hasClass('noajax')) {
 		// we need to replace this link with an ajax page request
 		if ($(this).attr('href').substring(0, ($('#ajax-current-page').attr('quib-curpage') + '#').length) == $('#ajax-current-page').attr('quib-curpage') + '#') {
 			e.preventDefault();
@@ -501,11 +501,11 @@ $('a').live('click', function(e) {
 				hookChange($(this).attr('href'), this);
 			}
 		}
-	}
+	//}
 });
 
 $('form').live('submit', function(e) {
-	if (!$(this).hasClass('noajax')) {
+	//if (!$(this).hasClass('noajax')) {
 		e.preventDefault();
 		if ($(this).attr('do')) {
 			hookChange($(this).attr('do'), this);
@@ -514,8 +514,24 @@ $('form').live('submit', function(e) {
 			getPage($(this).attr('action'), $(this).serialize());
 			return false;
 		}
-	}
+	//}
 });
+
+// hijack POST jquery ajax with CSRF protection
+$.old_post = $.post;
+$.post = function(url, q) {
+	var $COOKIE = (document.cookie || '').split(/;\s*/).reduce(function(re, c) {
+	  var tmp = c.match(/([^=]+)=(.*)/);
+	  if (tmp) re[tmp[1]] = unescape(tmp[2]);
+	  return re;
+	}, {});
+	if ($.type(q) === "string") {
+		q += "&csrf=" + $COOKIE.csrf;
+	} else {
+		q.csrf = $COOKIE.csrf;
+	}
+	return $.old_post(url, q);
+}
 
 $(document).ready(function() {
 	$("#content-wrapper").on('scroll', function() {

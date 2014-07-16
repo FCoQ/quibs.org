@@ -24,6 +24,26 @@ app.configure(function(){
 		uploadDir: './public/uploads'
 	}));
 	app.use(express.methodOverride());
+	app.use(function(req, res, next) {
+		var method = req.method;
+
+		if (method == "POST") {
+			if ((!util.isValidToken(req.body.csrf)) || (req.body.csrf != req.cookies.csrf)) {
+				res.statusCode = 403;
+				res.send("403 Forbidden: CSRF validation failure.");
+			} else {
+				next();
+			}
+		} else {
+			next();
+		}
+	})
+	app.use(function(req, res, next) {
+		if (!util.isValidToken(req.cookies.csrf)) {
+			res.cookie('csrf', util.token(), {maxAge: 94636000000, httpOnly:false})
+		}
+		next();
+	})
 	app.use(util.verifyRecaptcha);
 	app.use(function(req, res, next) {
 		res.locals._nl2br_escape = util.nl2br_escape;
@@ -85,13 +105,13 @@ app.get('/blog/:id/newpost', util.prepareLayout, auth.require, routes.blog.newpo
 app.get('/blog/:id/:page?', util.prepareLayout, auth.build, routes.blog.show);
 app.get('/post/:id', util.prepareLayout, auth.build, routes.blogpost.show);
 app.post('/post/:id/edit', auth.require, routes.blogpost.editpost);
-app.get('/post/:id/delete', auth.require, routes.blogpost.deletepost);
+app.post('/post/:id/delete', auth.require, routes.blogpost.deletepost);
 app.get('/blogs', util.prepareLayout, routes.blog.list);
 
 // comments system
 app.post('/comment/:id/edit', auth.require, routes.comments.edit);
 app.post('/comment/submit', auth.require, routes.comments.submit);
-app.get('/comment/:id/delete', auth.require, routes.comments.delete);
+app.post('/comment/:id/delete', auth.require, routes.comments.delete);
 
 // gallery system
 app.get(/^\/gallery(\/([0-9]+)?)?$/, util.prepareLayout, routes.gallery.show);

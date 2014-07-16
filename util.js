@@ -122,6 +122,17 @@ exports.timeSince = function(timestamp) {
     }
 }
 
+exports.token = function() {
+	return new Array(13).join((Math.random().toString(36)+'00000000000000000').slice(2, 18)).slice(0, 12);
+}
+
+exports.isValidToken = function(code) {
+	if (String(code).match(/^[a-z0-9]{12}$/))
+		return true;
+	else
+		return false;
+}
+
 exports.isset = function(param) {
 	if (typeof(param) == 'undefined')
 		return false;
