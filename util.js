@@ -39,8 +39,9 @@ exports.pagination = function(query, countquery, params, curpage, perpage, after
 }
 
 exports.attachment = function(url, size) {
-	if (!url)
-		return "";
+	if (!url) {
+		return "/img/placeholder_bg.jpg";
+	}
 
 	if (url.match(/^[a-fA-F0-9]{32}$/)) {
 		if (size)
