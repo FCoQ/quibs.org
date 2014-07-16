@@ -39,6 +39,9 @@ exports.pagination = function(query, countquery, params, curpage, perpage, after
 }
 
 exports.attachment = function(url, size) {
+	if (!url)
+		return "";
+
 	if (url.match(/^[a-fA-F0-9]{32}$/)) {
 		if (size)
 			return "/uploads/" + url + "_" + size + ".png";
@@ -47,6 +50,10 @@ exports.attachment = function(url, size) {
 	} else {
 		return url
 	}
+}
+
+exports.ip = function(req) {
+	return req.headers['x-real-ip'];
 }
 
 exports.slug = function(base, w) {
@@ -136,7 +143,7 @@ exports.verifyRecaptcha = function(req, res, next) {
 	}
 
 	var data = {
-		remoteip: req.connection.remoteAddress,
+		remoteip: self.ip(req),
 		challenge: req.body.recaptcha_challenge_field,
 		response: req.body.recaptcha_response_field
 	};

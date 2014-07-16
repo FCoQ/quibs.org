@@ -2,7 +2,8 @@ var db = require('../db'),
 	util = require('../util'),
 	async = require('async'),
 	bbcode = require('../bbcode.js'),
-	auth = require('../auth')
+	auth = require('../auth'),
+	notifications = require('./notifications')
 
 var self = exports;
 
@@ -54,6 +55,10 @@ exports.submit = function(req, res) {
 
 		if (results.parent !== true && !results.parent.length) return end();
 
+		var puid = 0;
+		if (results.parent !== true)
+			puid = results.parent[0].uid;
+
 		if (!results.canpost) return end();
 
 		db.query("INSERT INTO comments (id, master, parent, uid, date, content) values (null, ?, ?, ?, ?, ?)",
@@ -63,11 +68,13 @@ exports.submit = function(req, res) {
 
 				var newid = result.insertId;
 
-				self.fetchTree(req, res, master, function(err, tree) {
-					if (err) return end();
+				notifications.send("comment_reply", puid, newid, function() {
+					self.fetchTree(req, res, master, function(err, tree) {
+						if (err) return end();
 
-					res.render("newcomment", {depth: depth, tree: tree[0], master: master, parent: parent})
-				}, newid)
+						res.render("newcomment", {depth: depth, tree: tree[0], master: master, parent: parent})
+					}, newid)
+				})
 		})
 	})
 }

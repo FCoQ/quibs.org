@@ -10,9 +10,11 @@ var express = require('express')
 
 var app = express();
 
+var HTTP_PORT = 8080; // main webserver
+var WS_PORT = 8081; // websockets for notifications
+
 app.configure(function(){
 	// all environments
-	app.set('port', process.env.PORT || 8080);
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
 
@@ -161,6 +163,53 @@ app.get("*", util.prepareLayout, function(req, res) {
 	res.render("404", {title:"404"});
 })
 
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+// TODO: refactor so that much of this logic is in separate components
+http.createServer(app).listen(HTTP_PORT, function(){
+  console.log('Express server listening on port ' + HTTP_PORT + '...');
+
+  var io = require('socket.io').listen(WS_PORT);
+
+  var users = [];
+
+  io.sockets.on('connection', function(socket) {
+  	var ip = socket.request.headers['x-real-ip'];
+  	var active = true;
+
+  	console.log("WebSocket connection from IP " + ip)
+
+  	var $COOKIE = (socket.handshake.headers.cookie || '').split(/;\s*/).reduce(function(re, c) {
+	  var tmp = c.match(/([^=]+)=(.*)/);
+	  if (tmp) re[tmp[1]] = unescape(tmp[2]);
+	  return re;
+	}, {});
+
+	auth.verify(String($COOKIE.email), String($COOKIE.pass), function(err, userdata) {
+		if (err) return; // TODO: ?
+
+		if (!userdata) return; // TODO: ?
+
+		function f(repeat) {
+			if (!active) return;
+
+			routes.notifications.getNum(userdata.id, function(err, result) {
+				if (err) return; // TODO: ?
+
+				socket.emit('newNotifications', result)
+			})
+
+			if (repeat)
+				setTimeout(function() {f(repeat);}, 10000);
+		};
+		f(true);
+
+		socket.on('fetch', function() {
+			f(false);
+		})
+	})
+
+  	socket.on('disconnect', function() {
+  		active = false;
+  		console.log("fuck you " + ip + "! haha")
+  	})
+  })
 });

@@ -23,11 +23,23 @@ exports.inbox = function(req, res) {
 	db.query("SELECT * FROM new_notifications WHERE uid=? AND type=? AND `read`=0 ORDER BY `time` DESC", [res.locals.__AUTH_USERDATA.id, type], function(err, results) {
 		if (err) return util.error(err, req, res, "Couldn't load notifications.")
 
-		//db.query("UPDATE new_notifications SET read=1 WHERE uid=? AND type=?", [res.locals.__AUTH_USERDATA.id, type], function(err, results) {
+		db.query("UPDATE new_notifications SET `read`=1 WHERE uid=? AND type=?", [res.locals.__AUTH_USERDATA.id, type], function(err) {
 			self.proc(results, req, res, function(err, notifications) {
 				res.render("inbox", {type: type, title:'Inbox', notifications:notifications})
 			})
-		//})
+		})
+	})
+}
+
+exports.send = function(type, to, obj, next) {
+	db.query("INSERT INTO new_notifications (time, uid, type, obj) VALUES (?, ?, ?, ?)", [util.timeNow(), to, type, obj], next);
+}
+
+exports.getNum = function(uid, next) {
+	db.query("SELECT type, COUNT(id) as `num` FROM new_notifications WHERE uid=? AND `read`=0 GROUP BY `type`", [uid], function(err, results) {
+		if (err) return next(err);
+
+		next(null, results);
 	})
 }
 

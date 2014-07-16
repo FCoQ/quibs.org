@@ -21,4 +21,8 @@ block content
 						!= _nl2br_escape(item.grant.msg)
 				when "comment_reply"
 					+comments(item.tree, item.tree[0].comment.master, item.cancomment, true)
-			
+
+block append subs
+	+sub('onPageLoad', function() {
+		qsocket.emit("fetch");
+	})

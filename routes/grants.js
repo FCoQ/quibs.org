@@ -1,6 +1,7 @@
 var db = require('../db'),
 	util = require('../util'),
-	async = require('async')
+	async = require('async'),
+	notifications = require('./notifications')
 
 var self = exports;
 
@@ -12,11 +13,13 @@ exports.submitgrant = function(req, res) {
 		res.locals.msg = 'Error: the name you provided was wrong. Try again.';
 		util.redirect(req, res, '/grants')
 	} else {
-		db.query("INSERT INTO grants (date, name, msg, ip) VALUES (?, ?, ?, ?)", [util.timeNow(), req.body.name, req.body.msg, req.connection.remoteAddress], function(err) {
+		db.query("INSERT INTO grants (date, name, msg, ip) VALUES (?, ?, ?, ?)", [util.timeNow(), req.body.name, req.body.msg, util.ip(req)], function(err, r) {
 			if (err) res.locals.msg = "Grant wasn't posted for some reason...";
 			else res.locals.msg = 'Success! Grant posted.';
 
-			util.redirect(req, res, '/grants')
+			notifications.send("grant", 1, r.insertId, function() {
+				util.redirect(req, res, '/grants')
+			})
 		});
 	}
 }

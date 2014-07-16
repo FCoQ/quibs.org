@@ -46,8 +46,8 @@ exports.build = function (req, res, next) {
 				})
 
 				// are we on a new ip now
-				if (res.locals.__AUTH_USERDATA.ip_lastlog != req.connection.remoteAddress) {
-					db.query("UPDATE users SET ip_lastlog=? WHERE id=?", [req.connection.remoteAddress, res.locals.__AUTH_USERDATA.id], function() {
+				if (res.locals.__AUTH_USERDATA.ip_lastlog != util.ip(req)) {
+					db.query("UPDATE users SET ip_lastlog=? WHERE id=?", [util.ip(req), res.locals.__AUTH_USERDATA.id], function() {
 						next();
 					})
 				} else {
@@ -60,6 +60,23 @@ exports.build = function (req, res, next) {
 			next();
 		}
 	});
+}
+
+// TODO factor this into auth.build
+exports.verify = function(email, pass, next) {
+	db.query("SELECT * FROM users WHERE email=?", [email], function(err, results) {
+		if (err) return next(err);
+
+		if (results.length != 1) return next(null, false);
+
+		var user = results[0];
+
+		if (user.pass == pass) {
+			return next(null, user);
+		} else {
+			return next(null, false);
+		}
+	})
 }
 
 // require authentication for the page, forces a build() if it hasn't already

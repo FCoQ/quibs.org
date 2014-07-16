@@ -2,6 +2,7 @@ var redirecting = false;
 var subHooks = {};
 var triggers = {};
 var qstates = {};
+var qsocket; // websocket
 var setState = function(name, val) {
 	qstates[name] = val;
 }
@@ -560,5 +561,68 @@ $(document).ready(function() {
 
 	$("#toTop").click(function() {
 		$('#content-wrapper').animate({scrollTop:0},600);
+	})
+
+	// TODO: remove animation time of gritter
+	$.extend($.gritter.options, { 
+        position: 'top-right',
+		fade_in_speed: 0,
+		fade_out_speed: 0,
+		time: ''
+	});
+
+	var lastMessages = null;
+
+	qsocket = io.connect('/')
+	qsocket.on('newNotifications', function(messages) {
+		if (JSON.stringify(messages) == lastMessages)
+			return;
+		else
+			lastMessages = JSON.stringify(messages);
+
+		var handleMessages = function() {
+			messages.forEach(function(e) {
+				var title;
+				var msg;
+				var num = e.num;
+
+				switch (e.type) {
+					case "grant":
+						title = "New grants";
+						msg = num + " new grants have been posted.";
+					break;
+					case "comment_reply":
+						title = "Comment reply";
+						msg = num + " new replies to your comments.";
+					break;
+				}
+
+				$.gritter.add({
+					title: title,
+					text: msg,
+					sticky: true,
+					time:'',
+					class_name:'qnotification qnotification-' + e.type
+				})
+			})
+		}
+
+		if ($(".qnotification").length > 0) {
+			$.gritter.removeAll({
+				after_close: function() {
+					handleMessages();
+				}
+			});
+		} else {
+			handleMessages();
+		}
+	})
+
+	$('.qnotification-grant').live('click', function() {
+		getPage('/inbox/grant');
+	})
+
+	$('.qnotification-comment_reply').live('click', function() {
+		getPage('/inbox/comment_reply');
 	})
 });
