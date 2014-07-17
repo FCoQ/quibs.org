@@ -2,7 +2,8 @@ var db = require('../db'),
 	util = require('../util'),
 	async = require('async'),
 	bbcode = require('../bbcode.js'),
-	auth = require('../auth')
+	auth = require('../auth'),
+	comments = require('./comments')
 
 var self = exports;
 
@@ -162,7 +163,13 @@ exports.show = function(req, res) {
 
 				post.rawmsg = post.msg;
 				post.msg = data;
-				callback(null, post);
+
+				comments.getnum('blogpost_' + post.id, req, res, function(err, numcomments) {
+					if (err) return callback(err);
+
+					post.numcomments = numcomments;
+					callback(null, post);
+				})
 			});
 		}, function(err, posts) {
 			if (err) return util.error(err, req, res, "BBcode parser failed!");

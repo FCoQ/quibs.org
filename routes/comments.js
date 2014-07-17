@@ -19,6 +19,16 @@ function descend(mapComments, parent) {
 	return tree;
 }
 
+exports.getnum = function(master, req, res, next) {
+	db.query("SELECT COUNT(id) as cnt FROM comments WHERE master=?", [master], function(err, results) {
+		if (err) return next(err);
+
+		if (results.length != 1) return next("Couldn't get a count of comments for some reason.");
+
+		next(null, results[0].cnt);
+	})
+}
+
 exports.submit = function(req, res) {
 	var end = function() {
 		res.statusCode = 400;

@@ -22,7 +22,23 @@ exports.show = function(req, res) {
 
 			return v;
 		})
-		res.render("gallery", {page: page, title:'Gallery', images:results});
+
+		async.map(results, function(v, ret) {
+			if (!v.username) {
+				v.username = "Dobby";
+			}
+
+			comments.getnum('image_' + v.id, req, res, function(err, res) {
+				if (err) return ret(err);
+
+				v.numcomments = res;
+				ret(null, v);
+			});
+		}, function(err, results) {
+			if (err) return util.error(err, req, res, "Couldn't process gallery images.");
+
+			res.render("gallery", {page: page, title:'Gallery', images:results});
+		})
 	})
 }
 

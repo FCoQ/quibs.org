@@ -8,7 +8,7 @@ mixin gallery_image(img)
 		i.
 			by #{img.username}&nbsp;&nbsp;
 		a(href="/viewimage/#{img.id}").
-			0 comments
+			#{img.numcomments} comments
 		| &nbsp;&nbsp;
 	div(style="margin-bottom:40px")
 

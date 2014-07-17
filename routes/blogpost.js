@@ -108,7 +108,14 @@ exports.show = function(req, res) {
 
 				post.rawmsg = post.msg;
 				post.msg = data;
-				res.render('blogpost', {title:post.title, posts: [post], blogdata: results.blogdata[0], canedit: results.canedit, cancomment: results.cancomment, comment_tree: results.comments});
+
+				comments.getnum('blogpost_' + id, req, res, function(err, numcomments) {
+					if (err) return util.error(err, req, res, "Couldn't get the number of comments.");
+
+					post.numcomments = numcomments;
+
+					res.render('blogpost', {title:post.title, posts: [post], blogdata: results.blogdata[0], canedit: results.canedit, cancomment: results.cancomment, comment_tree: results.comments});
+				})
 			})
 		})
 	})
