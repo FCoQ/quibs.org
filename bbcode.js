@@ -143,9 +143,9 @@ exports.tags = {
 
   "url":function(content, attr) {
     if (self.validURL(attr.trim())) {
-      return '<a target="_blank" href="' + attr.trim() + '">' + content + '</a>'
+      return '<a rel="nofollow" target="_blank" href="' + attr.trim() + '">' + content + '</a>'
     } else if (self.validURL(content.trim())) {
-      return '<a target="_blank" href="' + content.trim() + '">' + content + '</a>'
+      return '<a rel="nofollow" target="_blank" href="' + content.trim() + '">' + content + '</a>'
     } else {
       return false;
     }
