@@ -6,6 +6,10 @@ var db = require('../db'),
 
 var self = exports;
 
+exports.panel = function(req, res) {
+	res.render("panel", {title:'User Panel'})
+}
+
 var verifyCode = function(req, res, callback) {
 	var confirm_code = String(req.params.code);
 

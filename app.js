@@ -133,6 +133,8 @@ app.post('/forgotpassword', util.prepareLayout, routes.user.forgot_submit);
 app.get('/reset/:code', util.prepareLayout, routes.user.reset);
 app.post('/reset/:code', util.prepareLayout, routes.user.reset_submit);
 
+app.get('/panel', util.prepareLayout, auth.require, routes.user.panel);
+
 // TODO: make this safer, more agile
 app.post('/uploadimage', auth.require, function(req, res) {
 	if (!req.files.file)

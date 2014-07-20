@@ -3,7 +3,7 @@ mixin renderComment(master, node, depth, parent, cancomment)
 		a.commentAnchor(name="viewcomment-#{node.comment.id}")
 		div.comment_container(id="comment_#{node.comment.id}")
 			div.gravatar
-				img.left(src="#{_attachment(node.comment.avatar, 55)}",width="76px",height="80px")
+				img.left(src="#{_attachment(node.comment.avatar, 64)}",width="64px",height="64px")
 			div.comment_text(mydepth="#{depth}")
 				h5= node.comment.username
 				p(style="margin-bottom: -4px"): em

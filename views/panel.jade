@@ -1,0 +1,44 @@
+extends main
+
+block content
+	div#main.round_8.clearfix
+		div.green.page_title.round_6
+			h1.replace Panel
+		div#postdiv(style="float:right;margin-right:20px;width:200px")
+			h2.replace Change Avatar
+			a(do="avatar",href="#")
+				img#avatar(src="#{_attachment(__AUTH_USERDATA['avatar'], 64)}", width="64px", height="64px")
+			p Your image will be scaled to 64x64.
+		div#content.left
+			h1.replace Change Email
+			form#contact_form(action='/panel/changeemail', method="post")
+				table
+					tr
+						td(style="text-align:right") current email:
+						td(style="text-align:left")
+							input#name.text.round_6(size="15", value="#{__AUTH_USERDATA['email']}", disabled=true)
+					tr
+						td(style="text-align:right") new email:
+						td(style="text-align:left")
+							input#name.text.round_6(size="15", name="email")
+					tr
+						td(colspan="2")
+							input#submit.fancy(name="submit",type="submit",value="Change Email")
+			h1.replace Change Password
+			form#contact_form(action='/panel/changepass', method="post")
+				table
+					tr
+						td(style="text-align:right") current password:
+						td(style="text-align:left")
+							input#name.text.round_6(size="15", type="password", name="current")
+					tr
+						td(style="text-align:right") new password:
+						td(style="text-align:left")
+							input#name.text.round_6(size="15", type="password", name="new")
+					tr
+						td(style="text-align:right") new password (confirm):
+						td(style="text-align:left")
+							input#name.text.round_6(size="15", type="password", name="new_confirm")
+					tr
+						td(colspan="2")
+							input#submit.fancy(name="submit",type="submit",value="Change Password")
