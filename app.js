@@ -134,6 +134,9 @@ app.get('/reset/:code', util.prepareLayout, routes.user.reset);
 app.post('/reset/:code', util.prepareLayout, routes.user.reset_submit);
 
 app.get('/panel', util.prepareLayout, auth.require, routes.user.panel);
+app.post('/panel/setavatar', auth.require, routes.user.setavatar);
+app.post('/panel/changeemail', auth.require, routes.user.changeemail);
+app.post('/panel/changepass', auth.require, routes.user.changepass);
 
 // TODO: make this safer, more agile
 app.post('/uploadimage', auth.require, function(req, res) {

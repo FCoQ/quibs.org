@@ -27,6 +27,16 @@ var clearSubs = function() {
 var clearTriggers = function() {
 	triggers = {};
 }
+
+var getCSRF = function() {
+	var $COOKIE = (document.cookie || '').split(/;\s*/).reduce(function(re, c) {
+	  var tmp = c.match(/([^=]+)=(.*)/);
+	  if (tmp) re[tmp[1]] = unescape(tmp[2]);
+	  return re;
+	}, {});
+	return $COOKIE.csrf;
+}
+
 // this simulates a subroutine (subpage) action
 var sub = function(triggerAnchor, obj) {
 	var r = false;
@@ -225,6 +235,7 @@ var qdragdrop = function(uploadURL) {
 
 		var fd = new FormData();
 		fd.append('file', file);
+		fd.append('csrf', getCSRF());
 
 		handlers.uploading();
 
@@ -520,15 +531,11 @@ $('form').live('submit', function(e) {
 // hijack POST jquery ajax with CSRF protection
 $.old_post = $.post;
 $.post = function(url, q) {
-	var $COOKIE = (document.cookie || '').split(/;\s*/).reduce(function(re, c) {
-	  var tmp = c.match(/([^=]+)=(.*)/);
-	  if (tmp) re[tmp[1]] = unescape(tmp[2]);
-	  return re;
-	}, {});
+	var csrf = getCSRF();
 	if ($.type(q) === "string") {
-		q += "&csrf=" + $COOKIE.csrf;
+		q += "&csrf=" + csrf;
 	} else {
-		q.csrf = $COOKIE.csrf;
+		q.csrf = csrf;
 	}
 	return $.old_post(url, q);
 }

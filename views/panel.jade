@@ -28,17 +28,62 @@ block content
 			form#contact_form(action='/panel/changepass', method="post")
 				table
 					tr
-						td(style="text-align:right") current password:
-						td(style="text-align:left")
-							input#name.text.round_6(size="15", type="password", name="current")
-					tr
 						td(style="text-align:right") new password:
 						td(style="text-align:left")
-							input#name.text.round_6(size="15", type="password", name="new")
+							input#name.text.round_6(size="15", type="password", name="newpass")
 					tr
 						td(style="text-align:right") new password (confirm):
 						td(style="text-align:left")
-							input#name.text.round_6(size="15", type="password", name="new_confirm")
+							input#name.text.round_6(size="15", type="password", name="newpass_confirm")
 					tr
 						td(colspan="2")
 							input#submit.fancy(name="submit",type="submit",value="Change Password")
+block subs
+	+sub("avatar", function(obj) {
+		var uploader = new qdragdrop("/uploadimage");
+		var dialog = new qdialog("Change Avatar", "Drop a new avatar anywhere on this page.", [{
+								text: "Cancel",
+								click: function() {
+									dialog.close();
+								}
+							}], uploader.end);
+		uploader.on("uploading", function() {
+			dialog.info("Uploading...", "ui-icon ui-icon-arrowreturn-1-n");
+		});
+		uploader.on("success", function(data) {
+			dialog.info(false);
+			dialog.img(data.thumb140);
+			dialog.buttons([{
+				text: "Cancel",
+				class: 'cancelButton',
+				click: function() {
+					dialog.close();
+				}
+			},{
+				text: "Save Changes",
+				click: function() {
+					dialog.close();
+
+					$.ajax({
+						url: "/panel/setavatar",
+						data: {
+							attachment: data.id,
+							csrf: getCSRF()
+						},
+						type: "POST",
+						success: function() {
+							$("#avatar").attr('src', data.thumb64);
+						},
+						error: function() {
+							noticebox("Error! Avatar wasn't updated.");
+						}
+					})
+				}
+			}]);
+		});
+		uploader.on("error", function(error) {
+			dialog.info(error, 'ui-icon ui-icon-close');
+		});
+
+		return false;
+	})

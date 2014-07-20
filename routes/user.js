@@ -6,6 +6,78 @@ var db = require('../db'),
 
 var self = exports;
 
+// ajax only
+exports.setavatar = function(req, res) {
+	var err = function() {
+		res.statusCode = 400;
+		res.send("");
+	}
+
+	if (!util.isset(req.body.attachment))
+		return err();
+
+	var attachment = req.body.attachment;
+
+	if (!attachment.match(/^[a-fA-F0-9]{32}$/))
+		return err();
+
+	db.query("UPDATE users SET avatar=? WHERE id=?", [attachment, res.locals.__AUTH_USERDATA.id], function(err) {
+		if (err) return err();
+
+		res.send("");
+	})
+}
+
+exports.changeemail = function(req, res) {
+	var err = function(msg) {
+		res.locals.msg = msg;
+		util.redirect(req, res, '/panel');
+		return;
+	}
+
+	if (!util.isset(req.body.email)) {
+		return err("You didn't supply a valid email, try again.");
+	}
+
+	var email = req.body.email;
+	if (!check.isEmail(email)) {
+		return err("You didn't supply a valid email, try again.");
+	}
+
+	db.query("UPDATE users SET email=? WHERE id=?", [email, res.locals.__AUTH_USERDATA.id], function(error) {
+		if (error) return err("Couldn't update email.");
+
+		res.cookie('email', email, {maxAge: 94636000000})
+		err("Email changed!");
+	})
+}
+
+exports.changepass = function(req, res) {
+	var err = function(msg) {
+		res.locals.msg = msg;
+		util.redirect(req, res, '/panel');
+		return;
+	}
+
+	var newpass = req.body.newpass;
+	var newpass_confirm = req.body.newpass_confirm;
+
+	if (newpass != newpass_confirm) {
+		return err("Your new password didn't match the confirm password!")
+	}
+
+	var sha1 = crypto.createHash('sha1');
+	sha1.update(newpass);
+	var hashed_password = sha1.digest('hex');
+
+	db.query("UPDATE users SET pass=? WHERE id=?", [hashed_password, res.locals.__AUTH_USERDATA.id], function(error) {
+		if (error) return err("Your password wasn't updated, try again later.");
+
+		res.cookie('pass', hashed_password, {maxAge: 94636000000})
+		err("Your password was updated!");
+	})
+}
+
 exports.panel = function(req, res) {
 	res.render("panel", {title:'User Panel'})
 }

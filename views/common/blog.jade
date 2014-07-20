@@ -68,14 +68,15 @@ block append subs
 					$.ajax({
 						url: "/blog/" + $("#blog-title").attr('quib-id') + "/setimage",
 						data: {
-							attachment: data.id
+							attachment: data.id,
+							csrf: getCSRF()
 						},
 						type: "POST",
 						success: function() {
 							$("#blogicon").attr('src', data.thumb140);
 						},
 						error: function() {
-							noticebox("Blog image wasn't updated.");
+							noticebox("Error! Blog image wasn't updated.");
 						}
 					})
 				}
