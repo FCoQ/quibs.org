@@ -633,6 +633,11 @@ $(document).ready(function() {
 			handleMessages();
 		}
 	})
+	qsocket.on('chaching', function() {
+		var audio = new Audio('/media/chaching.wav');
+		audio.volume = 0.2;
+		audio.play();
+	})
 
 	$('.qnotification-grant').live('click', function() {
 		getPage('/inbox/grant');

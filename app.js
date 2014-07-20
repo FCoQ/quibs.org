@@ -7,6 +7,7 @@ var express = require('express')
   , util = require('./util')
   , resize = require('./resize')
   , async = require('async')
+  , fundmanager = require('./fundmanager')
 
 var app = express();
 
@@ -232,4 +233,7 @@ http.createServer(app).listen(HTTP_PORT, function(){
   		console.log("fuck you " + ip + "! haha")
   	})
   })
+  
+  // bitcoin fund manager
+  fundmanager(io);
 });

@@ -4,5 +4,144 @@ block content
 	div#main.round_8.clearfix
 		div.green.page_title.round_6
 			h1.replace Church Fund
+		div#sidebar.right
+			div.sidebar-widget.shadow-light
+				div.minimal
+					h4.replace Assets
+					ul.reg-item
+						li
+							| Current Church Fund
+							br
+							span.meta: em#fundamt 
+						li
+							| All Time High
+							br
+							span.meta: em#athamt
+						li
+							| Red Cross Donations
+							br
+							span.meta: em 0 BTC
 		div#content.left
-			p Welcome to the Church.
+			canvas#fund(width="600px", height="400px")
+
+block subs
+	+state('balance', JSON.stringify(fund))
+	+state('btcusd', JSON.stringify(btcusd))
+	+sub('onPageLoad', function() {
+		var fund = state('balance');
+		var btcusd = state('btcusd');
+
+		var dates = [];
+		var start = new Date("April 25, 2013 00:00:00").getTime() / 1000;
+		var now = Date.now() / 1000;
+
+		while (start < now) {
+			var d = new Date(start * 1000);
+			var label = "";
+			if (d.getDate() == 1)
+				label = [ "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December" ][d.getMonth()] + " " + d.getFullYear();
+
+			dates.push({
+				date: start,
+				label: label,
+				net: 0,
+				btcusd: 0,
+				usdval: 0
+			})
+
+			start += 24 * 60 * 60; // add a day (~)
+		}
+
+		fund.forEach(function(transaction) {
+			var txtime = transaction.date;
+			var net = transaction.btc;
+
+			var dpos = 0;
+
+			while (dpos < dates.length) {
+				if (dates[dpos].date > txtime)
+					break;
+
+				dpos++;
+			}
+
+			if (dpos == dates.length)
+				dpos = dates.length - 1;
+
+			dates[dpos].net += net;
+		})
+
+		var maxbtc = 0;
+		var maxusdval = 0;
+		var alltimehigh = 0;
+
+		var balance = 0;
+		var lastbtcusd = 0;
+		dates.forEach(function(day) {
+			balance += day.net;
+			day.balance = balance;
+
+			if (balance > maxbtc)
+				maxbtc = balance;
+
+			day.btcusd = btcusd[Math.floor(day.date / 86400) * 86400];
+			if (!day.btcusd)
+				day.btcusd = 0;
+
+			day.usdval = day.btcusd * balance;
+			if (day.usdval > alltimehigh) {
+				alltimehigh = day.usdval;
+			}
+
+			if (day.usdval > maxusdval) {
+				maxusdval = day.usdval;
+			}
+		})
+
+		$("#fundamt").html((balance / Math.pow(10, 8)).toFixed(2) + " BTC")
+		$("#athamt").html((alltimehigh / Math.pow(10, 16)).toFixed(2) + " USD")
+
+		var LABELS = [];
+		var BTC_DATA = [];
+		var BTCUSD_DATA = [];
+
+		var gratio = (maxbtc / Math.pow(10, 8)) / (maxusdval / Math.pow(10, 16));
+
+		dates.forEach(function(day) {
+			LABELS.push(day.label);
+			BTC_DATA.push(day.balance / Math.pow(10, 8));
+			BTCUSD_DATA.push( (day.usdval / Math.pow(10, 16)) * gratio )
+		})
+
+		var ctx = document.getElementById("fund").getContext("2d");
+
+		var data = {
+			labels: LABELS,
+			datasets: [
+				{
+					label: "BTC",
+					fillColor: "rgba(0,220,220,0.4)",
+					strokeColor: "rgba(220,220,220,1)",
+					pointColor: "rgba(220,220,220,0)",
+					pointStrokeColor: "rgba(220,220,220,0)",
+					pointHighlightFill: "rgba(220,220,220,0)",
+					pointHighlightStroke: "rgba(151,187,205)",
+					data: BTC_DATA
+				},
+				{
+					label: "USD",
+					fillColor: "rgba(150,220,132,0.4)",
+					strokeColor: "rgba(220,220,220,1)",
+					pointColor: "rgba(220,220,220,0)",
+					pointStrokeColor: "rgba(220,220,220,0)",
+					pointHighlightFill: "rgba(220,220,220,0)",
+					pointHighlightStroke: "rgba(151,187,205)",
+					data: BTCUSD_DATA
+				}
+			]
+		};
+
+		Chart.defaults.global.animation = false;
+		var fund = new Chart(ctx).Line(data, { bezierCurve : false, scaleLabel: "<%=value%> BTC" });
+	})

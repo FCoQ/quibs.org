@@ -23,7 +23,20 @@ exports.index = function(req, res) {
 };
 
 exports.fund = function(req, res) {
-  res.render('fund', {title:'Fund'});
+	db.query("SELECT * FROM fund", [], function(err, results) {
+		if (err) return util.error(err, req, res, "Couldn't get church fund balance sheet.");
+
+		db.query("SELECT * FROM fund_btcusd", [], function(err, btcusd_results) {
+			if (err) return util.error(err, req, res, "Couldn't get historic BTCUSD rate.");
+
+			var btcusd = {};
+			btcusd_results.forEach(function(day) {
+				btcusd[Math.floor(day.date / 86400) * 86400] = day.btcusd;
+			})
+
+			res.render('fund', {title:'Fund', fund:results, btcusd:btcusd});
+		})
+	})
 };
 
 exports.grants = require('./grants')
