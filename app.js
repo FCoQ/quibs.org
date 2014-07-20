@@ -102,6 +102,9 @@ app.get('/quotes', util.prepareLayout, routes.quotes);
 app.get('/grants/:type?/:page?', util.prepareLayout, auth.build, routes.grants.show);
 app.post('/grants', util.prepareLayout, routes.grants.submitgrant);
 
+// club system
+app.get('/clubs', util.prepareLayout, routes.clubs.list);
+
 // blog system
 app.post('/blog/:id/submitpost', auth.require, routes.blog.submitpost);
 app.post('/blog/:id/setimage', auth.require, routes.blog.setimage);

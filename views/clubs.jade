@@ -1,0 +1,29 @@
+extends main
+
+block content
+	div#main.round_8.clearfix
+		div.green.page_title.round_6
+			h1.replace Club Hub
+		div#content.left
+			- c = 0
+			each club in clubs
+				div.col_201.omega
+					a(href="/club/#{_slug(club.id, club.name)}")
+						h3.replace= club.name
+					if leaders[club.id]
+						p
+							| Led by 
+							- first = true
+							each username in leaders[club.id]
+								if first
+									= username
+									- first = false
+								else
+									| , 
+									= username
+					else
+						p
+							| Led by no one.
+				if (c % 3) == 2
+					div.clearfix
+				- c++

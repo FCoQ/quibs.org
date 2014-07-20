@@ -90,6 +90,31 @@ exports.require = function(req, res, next) {
 	});
 }
 
+// finds all users with certain permissions
+exports.find = function(auth, next) {
+	var selector = auth[0];
+	var object = auth[1];
+
+	switch (selector) {
+		case "club leaders":
+			if (object == undefined) {
+				db.query(
+					"select p.obj as clubid, u.username, u.id as uid from clubs c left join userpermissions p on p.obj=c.id left join users u on u.id=p.uid where p.type=2",
+					[],
+					function(err, results) {
+						if (err) return next(err);
+
+						next(null, results); // [{clubid,username,uid}]
+					}
+					)
+			} else {
+				console.log("TODO!!!!!!!!!!!!!!!!!!")
+				process.exit(1);
+			}
+		break;
+	}
+}
+
 /*
 	get permissions for the user
 
