@@ -135,7 +135,7 @@ exports.tags = {
 
   "img":function(content, attr) {
     if (self.validURL(content.trim())) {
-      return '<img style="max-width:800px;max-height:500px" src="' + content.trim() + '" />'
+      return '<img style="max-width:600px;max-height:500px" src="' + content.trim() + '" />'
     } else {
       return false;
     }

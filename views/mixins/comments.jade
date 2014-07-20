@@ -60,7 +60,11 @@ mixin replyForm(master, parent, hidden)
 		br
 		input(type="hidden", name="master", value="#{master}")
 		input(type="hidden", name="parent", value="#{parent}")
+		- if (parent == 0) {
+		input.fancy.green(type="submit", value="Post Comment")
+		- } else {
 		input.fancy.green(type="submit", value="Post Reply")
+		- }
 		- if (hidden) {
 		input.fancy(type="button", value="Cancel", onclick="sub('comment_cancelReply', this);")
 		- }

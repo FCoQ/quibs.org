@@ -104,6 +104,11 @@ app.post('/grants', util.prepareLayout, routes.grants.submitgrant);
 
 // club system
 app.get('/clubs', util.prepareLayout, routes.clubs.list);
+app.get('/club/:id', auth.build, util.prepareLayout, routes.clubs.view)
+app.post('/club/:id/join', util.prepareLayout, auth.require, routes.clubs.join)
+app.post('/club/:id/edit', util.prepareLayout, auth.require, routes.clubs.edit)
+app.get('/club/:id/discussion', util.prepareLayout, auth.require, routes.clubs.discussion)
+app.post('/club/:id/ban', util.prepareLayout, auth.require, routes.clubs.ban)
 
 // blog system
 app.post('/blog/:id/submitpost', auth.require, routes.blog.submitpost);

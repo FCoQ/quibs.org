@@ -1,0 +1,78 @@
+extends main
+
+block content
+	div#main.round_8.clearfix
+		div.green.page_title.round_6
+			if !iammember
+				form(method="POST", action="/club/#{club.id}/join")
+					input.fancy(type="submit", value="Join Club", style="float:right")
+			if iammember
+				input.fancy.green(type="button", value="Club Discussion", style="float:right", onclick="getPage('/club/#{_slug(club.id, club.name)}/discussion')")
+			if iamleader
+				input.fancy#editbutton(type="submit", value="Edit Club Information", style="float:right", onclick="sub('edit')")
+			a(href="/club/#{_slug(club.id, club.name)}")
+				h1.replace= club.name
+		div#postdiv(style="float:right;margin-right:20px;width:200px")
+			h2.replace Club Leaders
+			p
+				if leaders.length
+					| Led by 
+					- first = true
+					each leader in leaders
+						if first
+							- first = false
+							= leader.username
+						else
+							| , 
+							= leader.username
+				else
+					| None.
+			h2.replace Club Members
+			p
+				if members.length
+					- first = true
+					each member in members
+						if first
+							- first = false
+							if iamleader
+								= member.username
+								|  (
+								a(href="#", do="banuser", quib-id=member.uid)
+									| ban
+								| )
+						else
+							| , 
+							if iamleader
+								= member.username
+								|  (
+								a(href="#", do="banuser", quib-id=member.uid)
+									| ban
+								| )
+						| &nbsp;&nbsp;
+				else
+					| None.
+
+		div#content.left
+			p#bbcode!= bbcode
+			form#editor(method="POST", action="/club/#{club.id}/edit", style="display:none")
+				textarea(name="content", style="width:100%", cols=100, rows=20)= club.information
+				input.green.fancy(type="submit", value="Update Information")
+				input.fancy(type="button", value="Cancel", onclick="sub('cancel', this);")
+
+block subs
+	+state('clubid', club.id)
+	+sub('banuser', function(obj) {
+		var uid = parseInt($(obj).attr('quib-id'));
+		var clubid = state('clubid');
+
+		getPage("/club/" + clubid + "/ban", {uid: uid})
+	})
+	+sub('cancel', function() {
+		$("#bbcode, #editbutton").attr('style', 'display:block');
+		$("#editor").attr("style", 'display:none');
+	})
+	+sub('edit', function() {
+		$("#bbcode, #editbutton").attr('style', 'display:none');
+		$("#editor").attr("style", 'display:block');
+		$("#editor textarea").qeditor().init();
+	})

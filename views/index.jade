@@ -14,7 +14,7 @@ block content
 				ul.overview
 					each club in clubs
 						li
-							a.menu-box.round_4(href='/club/#{club.id}')
+							a.menu-box.round_4(href='/club/#{_slug(club.id, club.name)}')
 								span.title= club.name
 								br
 								span.arrow

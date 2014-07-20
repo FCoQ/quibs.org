@@ -1,0 +1,11 @@
+extends main
+include mixins/comments
+
+block content
+	div#main.round_8.clearfix
+		div.green.page_title.round_6
+			a(href="/club/#{_slug(club.id, club.name)}")
+				h2.replace Club Discussion
+				h1.replace= club.name
+		div#content.left
+			+comments(tree, "club_" + club.id, true, false)

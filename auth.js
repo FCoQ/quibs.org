@@ -90,27 +90,72 @@ exports.require = function(req, res, next) {
 	});
 }
 
+exports.set = function(auth, next) {
+	var attribute = auth[0];
+	var uid = auth[1];
+	var object = auth[2];
+
+	var upsert = function(uid, type, obj, level) {
+		db.query("INSERT INTO userpermissions (uid, type, obj, level) VALUES (?, ?, ?, ?)",
+			[uid, type, object, level],
+			function() {
+				db.query("UPDATE userpermissions SET level=? WHERE uid=? AND obj=? AND type=?",
+					[level, uid, obj, type],
+					next);
+			});
+	}
+
+	switch (attribute) {
+		case "club member":
+			upsert(uid, 2, object, 1);
+		break;
+		case "club leader":
+			upsert(uid, 2, object, 2);
+		break;
+		case "club banned":
+			upsert(uid, 2, object, 0);
+		break;
+	}
+}
+
 // finds all users with certain permissions
 exports.find = function(auth, next) {
 	var selector = auth[0];
 	var object = auth[1];
 
+	var getClubUsers = function(level) {
+		if (object == undefined) {
+			db.query(
+				"select p.obj as clubid, u.username, u.id as uid from clubs c left join userpermissions p on p.obj=c.id left join users u on u.id=p.uid where p.type=2 and p.level=?",
+				[level],
+				function(err, results) {
+					if (err) return next(err);
+
+					next(null, results); // [{clubid,username,uid}]
+				}
+				)
+		} else {
+			db.query(
+				"select p.obj as clubid, u.username, u.id as uid from clubs c left join userpermissions p on p.obj=c.id left join users u on u.id=p.uid where p.type=2 and p.obj=? and p.level=?",
+				[object, level],
+				function(err, results) {
+					if (err) return next(err);
+
+					next(null, results); // [{clubid,username,uid}]
+				}
+				)
+		}
+	}
+
 	switch (selector) {
 		case "club leaders":
-			if (object == undefined) {
-				db.query(
-					"select p.obj as clubid, u.username, u.id as uid from clubs c left join userpermissions p on p.obj=c.id left join users u on u.id=p.uid where p.type=2",
-					[],
-					function(err, results) {
-						if (err) return next(err);
-
-						next(null, results); // [{clubid,username,uid}]
-					}
-					)
-			} else {
-				console.log("TODO!!!!!!!!!!!!!!!!!!")
-				process.exit(1);
-			}
+			getClubUsers(2);
+		break;
+		case "club members":
+			getClubUsers(1);
+		break;
+		case "club banned":
+			getClubUsers(0);
 		break;
 	}
 }
@@ -133,6 +178,27 @@ exports.permission = function(req, res, auth, next) {
 	//  2 = club
 
 	switch (action) {
+		case "view club discussion":
+			if (res.locals.__AUTH_PERMISSIONS[2][object] >= 1) {
+				next(null, true)
+			} else {
+				next(null, false)
+			}
+		break;
+		case "edit club":
+			if (res.locals.__AUTH_PERMISSIONS[2][object] == 2) {
+				next(null, true)
+			} else {
+				next(null, false)
+			}
+		break;
+		case "join club":
+			if (res.locals.__AUTH_PERMISSIONS[2][object] == 0) {
+				next(null, false)
+			} else {
+				next(null, true)
+			}
+		break;
 		case "edit blog":
 			if (res.locals.__AUTH_USERDATA.grp == 3) {
 				next(null, true);
@@ -183,6 +249,11 @@ exports.permission = function(req, res, auth, next) {
 					var iid = parseInt(master[1]);
 
 					next(null, true);
+				break;
+				case "club":
+					var clubid = parseInt(master[1]);
+
+					self.permission(req, res, ["view club discussion", clubid], next)
 				break;
 			}
 		break;
