@@ -7,6 +7,13 @@ block content
 		div#sidebar.right
 			div.sidebar-widget.shadow-light
 				div.minimal
+					h4.replace Legend
+					ul.reg-item
+						li(style="list-style: disc outside url('/img/legend-1.png')")
+							| BTC
+						li(style="list-style: disc outside url('/img/legend-2.png')")
+							| USD Value
+					br
 					h4.replace Assets
 					ul.reg-item
 						li
@@ -89,6 +96,8 @@ block subs
 			if (!day.btcusd)
 				day.btcusd = 0;
 
+			lastbtcusd = day.btcusd;
+
 			day.usdval = day.btcusd * balance;
 			if (day.usdval > alltimehigh) {
 				alltimehigh = day.usdval;
@@ -99,7 +108,9 @@ block subs
 			}
 		})
 
-		$("#fundamt").html((balance / Math.pow(10, 8)).toFixed(2) + " BTC")
+		$("#fundamt").html((balance / Math.pow(10, 8)).toFixed(2) + " BTC ($" + (
+			(balance / Math.pow(10, 8)) * (lastbtcusd / Math.pow(10, 8))
+		).toFixed(2) + " USD)")
 		$("#athamt").html((alltimehigh / Math.pow(10, 16)).toFixed(2) + " USD")
 
 		var LABELS = [];
@@ -143,5 +154,6 @@ block subs
 		};
 
 		Chart.defaults.global.animation = false;
+		Chart.defaults.global.showTooltips = false;
 		var fund = new Chart(ctx).Line(data, { bezierCurve : false, scaleLabel: "<%=value%> BTC" });
 	})
