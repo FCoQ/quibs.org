@@ -39,6 +39,14 @@ exports.fund = function(req, res) {
 	})
 };
 
+exports.quotes = function(req, res) {
+	db.query("SELECT q.*, u.username as username FROM quotes q LEFT JOIN users u ON u.id=q.uid", [], function(err, results) {
+		if (err) return util.error(err, req, res, "Couldn't get quotes.");
+
+		res.render("quotes", {title:'What they say', quotes:results});
+	})
+}
+
 exports.grants = require('./grants')
 exports.blog = require('./blog') // todo: might as well merge this with blogpost anyway
 exports.blogpost = require('./blogpost')

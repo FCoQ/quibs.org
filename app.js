@@ -95,6 +95,9 @@ app.get('/', util.prepareLayout, routes.index);
 // church fund
 app.get('/fund', util.prepareLayout, routes.fund);
 
+// testimonials / quotes
+app.get('/quotes', util.prepareLayout, routes.quotes);
+
 // grants page
 app.get('/grants/:type?/:page?', util.prepareLayout, auth.build, routes.grants.show);
 app.post('/grants', util.prepareLayout, routes.grants.submitgrant);

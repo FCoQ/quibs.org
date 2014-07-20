@@ -1,0 +1,12 @@
+extends main
+
+block content
+	div#main.round_8.clearfix
+		div.green.page_title.round_6
+			h1.replace Quotes
+		div#content.left
+			each quote in quotes
+				div.quote-post
+					blockquote
+						= quote.text
+					p.quote-author= quote.username
