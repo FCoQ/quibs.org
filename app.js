@@ -246,7 +246,6 @@ http.createServer(app).listen(HTTP_PORT, function(){
 
   	socket.on('disconnect', function() {
   		active = false;
-  		console.log("fuck you " + ip + "! haha")
   	})
   })
   
