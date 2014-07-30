@@ -31,6 +31,7 @@ exports.show = function(req, res) {
 			comments.getnum('image_' + v.id, req, res, function(err, res) {
 				if (err) return ret(err);
 
+				v.url = decodeURIComponent(v.url);
 				v.numcomments = res;
 				ret(null, v);
 			});
