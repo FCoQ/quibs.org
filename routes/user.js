@@ -165,6 +165,16 @@ exports.forgot_submit = function(req, res) {
 
 		db.query("UPDATE users SET name_register=? WHERE id=?", [confirm_code, u.id], function(err, results) {
 			// TODO: send email
+
+			var mail = require('../mail');
+
+			mail.sendMail({
+				from: 'noreply@quibs.org',
+				to: req.body.email,
+				subject: 'Forgot Password?',
+				html: "A password reset request was recently made on quibs.org for your account with this email address.<br /><br />If you received this in error, just ignore it.<br /><br />If you'd like to reset your password, <a href=\"http://quibs.org/reset/" + confirm_code + "\">click here.</a><br /><br />Thank you!"
+			});
+
 			res.locals.msg = "Check your email to reset your password."
 			util.redirect(req, res, "/")
 		})
@@ -269,7 +279,16 @@ exports.register_submit = function(req, res) {
 		res.cookie('email', email, {maxAge: 94636000000})
 		res.cookie('pass', hashed_password, {maxAge: 94636000000})
 		
-		// TODO: email verification
-		util.redirect(req, res, "/verify/" + confirm_code, true)
+		var mail = require('../mail');
+
+		mail.sendMail({
+			from: 'noreply@quibs.org',
+			to: req.body.email,
+			subject: 'Forgot Password?',
+			html: "Welcome to the The First Church of Quibs!<br /><br /><a href=\"http://quibs.org/verify/" + confirm_code + "\">Please verify your email here.</a><br /><br />Thank you!"
+		});
+
+		res.locals.msg = "Thanks for registering! Check your email to verify your account.";
+		util.redirect(req, res, "/");
 	})
 }

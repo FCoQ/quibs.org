@@ -17,6 +17,8 @@
     "validator":"*",
     "socket.io":"*",
     "bitcoin":"*",
-    "request":"*"
+    "request":"*",
+    "nodemailer":"*",
+    "nodemailer-smtp-transport":"*"
   }
 }
