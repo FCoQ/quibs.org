@@ -173,10 +173,14 @@ exports.forgot_submit = function(req, res) {
 				to: req.body.email,
 				subject: 'Forgot Password?',
 				html: "A password reset request was recently made on quibs.org for your account with this email address.<br /><br />If you received this in error, just ignore it.<br /><br />If you'd like to reset your password, <a href=\"http://quibs.org/reset/" + confirm_code + "\">click here.</a><br /><br />Thank you!"
+			}, function(err, info) {
+				if (err) {
+					util.error(err, req, res, "Couldn't send a password reset email. Try again later.")
+				} else {
+					res.locals.msg = "Check your email to reset your password."
+					util.redirect(req, res, "/")
+				}
 			});
-
-			res.locals.msg = "Check your email to reset your password."
-			util.redirect(req, res, "/")
 		})
 	})
 }
@@ -286,9 +290,14 @@ exports.register_submit = function(req, res) {
 			to: req.body.email,
 			subject: 'Forgot Password?',
 			html: "Welcome to the The First Church of Quibs!<br /><br /><a href=\"http://quibs.org/verify/" + confirm_code + "\">Please verify your email here.</a><br /><br />Thank you!"
+		}, function(err, info) {
+			if (err) {
+				res.locals.msg = "Not sure why, but we couldn't send a verification email. Oh well, you're registered for now.";
+				util.redirect(req, res, "/")
+			} else {
+				res.locals.msg = "Check your email to verify your account."
+				util.redirect(req, res, "/")
+			}
 		});
-
-		res.locals.msg = "Thanks for registering! Check your email to verify your account.";
-		util.redirect(req, res, "/");
 	})
 }
