@@ -172,7 +172,7 @@ exports.forgot_submit = function(req, res) {
 				from: 'noreply@quibs.org',
 				to: req.body.email,
 				subject: 'Forgot Password?',
-				html: "A password reset request was recently made on quibs.org for your account with this email address.<br /><br />If you received this in error, just ignore it.<br /><br />If you'd like to reset your password, <a href=\"http://quibs.org/reset/" + confirm_code + "\">click here.</a><br /><br />Thank you!"
+				html: "Hi " + u.username + ",<br /><br />A password reset request was recently made on quibs.org for your account with this email address.<br /><br />If you received this in error, just ignore it.<br /><br />If you'd like to reset your password, <a href=\"http://quibs.org/reset/" + confirm_code + "\">click here.</a><br /><br />Thank you!"
 			}, function(err, info) {
 				if (err) {
 					util.error(err, req, res, "Couldn't send a password reset email. Try again later.")
