@@ -78,6 +78,37 @@ exports.changepass = function(req, res) {
 	})
 }
 
+exports.submit_verify_form = function(req, res) {
+	var fear = String(req.body.fear);
+
+	var confirm_code = util.token();
+
+	db.query("UPDATE users SET name_register=?, fear=? WHERE id=?", [confirm_code, fear, res.locals.__AUTH_USERDATA.id], function(err) {
+		if (err) return util.error(error, req, res, "Couldn't process the request.");
+
+		var mail = require('../mail');
+
+		mail.sendMail({
+			from: 'noreply@quibs.org',
+			to: res.locals.__AUTH_USERDATA.email,
+			subject: 'Verify Email',
+			html: "Hello!<br /><br /><a href=\"http://quibs.org/verify/" + confirm_code + "\">Please verify your email here.</a><br /><br />Thank you!"
+		}, function(err, info) {
+			if (err) {
+				res.locals.msg = "Not sure why, but we couldn't send a verification email.";
+				util.redirect(req, res, "/")
+			} else {
+				res.locals.msg = "Check your email to verify your account."
+				util.redirect(req, res, "/")
+			}
+		});
+	})
+}
+
+exports.verify_form = function(req, res) {
+	res.render("verify_form", {title:'Verify Email'})
+}
+
 exports.panel = function(req, res) {
 	res.render("panel", {title:'User Panel'})
 }
@@ -164,8 +195,6 @@ exports.forgot_submit = function(req, res) {
 		var u = results[0];
 
 		db.query("UPDATE users SET name_register=? WHERE id=?", [confirm_code, u.id], function(err, results) {
-			// TODO: send email
-
 			var mail = require('../mail');
 
 			mail.sendMail({
@@ -240,6 +269,7 @@ exports.register_submit = function(req, res) {
 	var username = String(req.body.username)
 	var password = String(req.body.password)
 	var email = String(req.body.email)
+	var fear = String(req.body.fear)
 
 	if (password.length < 6) {
 		res.locals.msg = "Your password needs to be at least six characters long, try again."
@@ -272,8 +302,8 @@ exports.register_submit = function(req, res) {
 	var hashed_password = sha1.digest('hex');
 
 	// TODO: stealing the name_register field to use as confirm_code
-	db.query("INSERT INTO users (username, pass, email, grp, ip_register, name_register) VALUES (?, ?, ?, ?, ?, ?)",
-	[username, hashed_password, email, 1, req.connection.remoteAddress, confirm_code], function(err, result) {
+	db.query("INSERT INTO users (username, pass, email, grp, ip_register, name_register, fear) VALUES (?, ?, ?, ?, ?, ?, ?)",
+	[username, hashed_password, email, 1, req.connection.remoteAddress, confirm_code, fear], function(err, result) {
 		if (err) {
 			res.locals.msg = "You may have you already used that email or username before, try again."
 			util.redirect(req, res, "/register")

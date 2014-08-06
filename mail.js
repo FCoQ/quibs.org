@@ -1,4 +1,5 @@
 var mail = require('nodemailer').createTransport(require('nodemailer-smtp-transport')({
+	host: 'mail.quibs.org',
 	port: 587,
 	auth: {
 		user: 'noreply',

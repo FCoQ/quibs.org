@@ -117,6 +117,16 @@ html
           p#notice-content(style='margin-bottom: 10px')
         - }
 
+        - if (_isset(alt_msg)) {
+        div#alt-notice-box.round_8.clearfix(style='display:block')
+          p(style='margin-bottom: 10px')
+            span#dialog-icon.ui-icon.ui-icon-close.ui-icon.ui-icon-notice(style="float:left; margin: 3px;")
+            span#alt-notice-content!= alt_msg
+        - } else {
+        div#alt-notice-box.round_8.clearfix(style='display:none')
+          p#alt-notice-content(style='margin-bottom: 10px')
+        - }
+
         div#pagecontent
           block content
 
@@ -201,6 +211,16 @@ script.
   } else {
     redirecting = false;
   }
+- }
+
+- if (_isset(alt_msg)) {
+script.
+  $('#alt-notice-content').html(!{JSON.stringify(alt_msg)});
+  $('#alt-notice-box').css('display', 'block');
+- } else {
+script.
+    $('#alt-notice-content').html("");
+    $('#alt-notice-box').css('display', 'none');
 - }
 
 != "<script>clearSubs(); clearTriggers(); clearStates(); resetSemaphores(); "

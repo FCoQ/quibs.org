@@ -1,0 +1,24 @@
+extends main
+
+block content
+	div#main.round_8.clearfix
+		div.green.page_title.round_6
+			h1.replace Verify Email
+		div#content.left
+			p
+				| The email on your account is 
+				b= __AUTH_USERDATA['email']
+				|. If this is not correct, please 
+				a(href="/panel") change it
+				|.
+
+			form#contact_form(action='/verify', method="post")
+				table
+					if !__AUTH_USERDATA['fear']
+						tr
+							td(style="text-align:right") What's your biggest fear?
+							td(style="text-align:left")
+								input#name.text.round_6(size="20", name="fear", maxlength="100")
+					tr
+						td(colspan="2")
+							input#submit.fancy(name="submit",type="submit",value="Send Verification Email")

@@ -45,6 +45,10 @@ exports.build = function (req, res, next) {
 					res.locals.__AUTH_PERMISSIONS[perm.type][perm.obj] = perm.level;
 				})
 
+				if (results.userdata.grp == 1) {
+					res.locals.alt_msg = "Please <a href=\"/verify\">verify</a> your email address.";
+				}
+
 				// are we on a new ip now
 				if (res.locals.__AUTH_USERDATA.ip_lastlog != util.ip(req)) {
 					db.query("UPDATE users SET ip_lastlog=? WHERE id=?", [util.ip(req), res.locals.__AUTH_USERDATA.id], function() {

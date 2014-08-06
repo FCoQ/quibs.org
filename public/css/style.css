@@ -217,10 +217,11 @@ Structure
 #container						{ width:960px; margin: 0 auto; padding: 0; }
 #main 							{ background: #FFF; margin-bottom: 20px; padding: 20px 15px 35px; }
 #notice-box 					{ background: #FFF; margin-bottom: 20px; padding: 10px 10px 0px 15px; }
+#alt-notice-box 					{ background: #FFCCCC; margin-bottom: 20px; padding: 10px 10px 0px 15px; }
 #home-content, #content 		{ width: 645px; margin: 0 10px; }
 #content-clear 					{ width: 665px ; margin: 0;  }
 #sidebar-home, #sidebar			{ margin: 0 10px; width:245px; }
-#main, #notice-box, #footer, #slide-container { box-shadow:1px 1px 6px rgba(102, 102, 102, 0.4); -moz-box-shadow:1px 1px 6px rgba(102, 102, 102, 0.4); -webkit-box-shadow:1px 1px 6px rgba(102, 102, 102, 0.4); }
+#main, #notice-box, #alt-notice-box, #footer, #slide-container { box-shadow:1px 1px 6px rgba(102, 102, 102, 0.4); -moz-box-shadow:1px 1px 6px rgba(102, 102, 102, 0.4); -webkit-box-shadow:1px 1px 6px rgba(102, 102, 102, 0.4); }
 .col_212, .col_290, .col_445,
 .col_146, .col_201, .col_312,
 .col_240 						{ /*display: inline;*/ float: left; padding: 0 !important; vertical-align:top; }

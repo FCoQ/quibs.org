@@ -139,6 +139,8 @@ app.get('/logout', util.prepareLayout, routes.user.logout);
 app.get('/login', util.prepareLayout, routes.user.login);
 app.post('/login', util.prepareLayout, routes.user.login_submit)
 app.get('/verify/:code', util.prepareLayout, routes.user.verify)
+app.get('/verify', auth.require, util.prepareLayout, routes.user.verify_form)
+app.post('/verify', auth.require, util.prepareLayout, routes.user.submit_verify_form)
 app.get('/forgotpassword', util.prepareLayout, routes.user.forgot);
 app.post('/forgotpassword', util.prepareLayout, routes.user.forgot_submit);
 app.get('/reset/:code', util.prepareLayout, routes.user.reset);
