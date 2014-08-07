@@ -19,6 +19,7 @@ app.configure(function(){
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
 
+	app.disable('x-powered-by');
 	app.use(express.cookieParser());
 	app.use(express.logger('dev'));
 	app.use(express.bodyParser({
@@ -71,7 +72,10 @@ app.configure(function(){
 
 		next();
 	});
-	app.use(express.static(path.join(__dirname, 'public')));
+	
+	app.use(express.static(path.join(__dirname, 'public'), {
+		maxAge: 86400000
+	}));
 	app.use(app.router);
 
 	app.use(function(err, req, res, next) {
@@ -206,7 +210,7 @@ app.get("*", util.prepareLayout, function(req, res) {
 http.createServer(app).listen(HTTP_PORT, "localhost", function(){
   console.log('Express server listening on port ' + HTTP_PORT + '...');
 
-  var io = require('socket.io').listen(WS_PORT, "localhost");
+  var io = require('socket.io').listen(http.createServer().listen(WS_PORT, 'localhost'))
 
   var users = [];
 
