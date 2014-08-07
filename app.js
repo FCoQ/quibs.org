@@ -203,10 +203,10 @@ app.get("*", util.prepareLayout, function(req, res) {
 })
 
 // TODO: refactor so that much of this logic is in separate components
-http.createServer(app).listen(HTTP_PORT, function(){
+http.createServer(app).listen(HTTP_PORT, "localhost", function(){
   console.log('Express server listening on port ' + HTTP_PORT + '...');
 
-  var io = require('socket.io').listen(WS_PORT);
+  var io = require('socket.io').listen(WS_PORT, "localhost");
 
   var users = [];
 
