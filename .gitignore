@@ -7,3 +7,4 @@ npm-debug.log
 
 # file uploads
 public/uploads/*
+tmp/*
