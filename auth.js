@@ -181,7 +181,18 @@ exports.permission = function(req, res, auth, next) {
 	//  1 = blog
 	//  2 = club
 
+	if (!res.locals.__AUTH_LOGGED_IN) {
+		return next(null, false);
+	}
+
 	switch (action) {
+		case "upload gallery image":
+			if (res.locals.__AUTH_USERDATA.grp < 2) {
+				next(null, false); // you need verified email
+			} else {
+				next(null, true);
+			}
+		break;
 		case "view club discussion":
 			if (res.locals.__AUTH_PERMISSIONS[2][object] >= 1) {
 				next(null, true)

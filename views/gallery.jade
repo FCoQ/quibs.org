@@ -15,6 +15,8 @@ mixin gallery_image(img)
 block content
 	div#main.round_8.clearfix
 		div.green.page_title.round_6
+			if canupload
+				input.fancy.green(type="button", value="Upload Image", style="float:right", onclick="sub('upload')")
 			h1.replace Gallery
 		div#col1.col_290(style="overflow:hidden; width: 283px; margin-bottom: 5px;")
 			- var c = 0
@@ -67,4 +69,52 @@ block subs
 				// sem.release();
 			})
 		}
+	})
+	+sub('upload', function(obj) {
+		var uploader = new qdragdrop("/uploadimage");
+		var dialog = new qdialog("Upload Image", "Drop a new gallery image anywhere on this page.", [{
+								text: "Cancel",
+								click: function() {
+									dialog.close();
+								}
+							}], uploader.end);
+		uploader.on("uploading", function() {
+			dialog.info("Uploading...", "ui-icon ui-icon-arrowreturn-1-n");
+		});
+		uploader.on("success", function(data) {
+			dialog.info(false);
+			dialog.img(data.thumb140);
+			dialog.buttons([{
+				text: "Cancel",
+				class: 'cancelButton',
+				click: function() {
+					dialog.close();
+				}
+			},{
+				text: "Save Changes",
+				click: function() {
+					dialog.close();
+
+					$.ajax({
+						url: "/gallery/upload",
+						data: {
+							attachment: data.id,
+							csrf: getCSRF()
+						},
+						type: "POST",
+						success: function() {
+							getPage('/gallery/');
+						},
+						error: function() {
+							noticebox("Error! Image wasn't uploaded.");
+						}
+					})
+				}
+			}]);
+		});
+		uploader.on("error", function(error) {
+			dialog.info(error, 'ui-icon ui-icon-close');
+		});
+
+		return false;
 	})

@@ -197,8 +197,9 @@ app.post('/comment/submit', auth.require, routes.comments.submit);
 app.post('/comment/:id/delete', auth.require, routes.comments.delete);
 
 // gallery system
-app.get(/^\/gallery(\/([0-9]+)?)?$/, util.prepareLayout, routes.gallery.show);
-app.get('/viewimage/:id', util.prepareLayout, auth.build, routes.gallery.viewimage);
+app.get(/^\/gallery(\/([0-9]+)?)?$/, auth.build, util.prepareLayout, routes.gallery.show);
+app.get('/viewimage/:id', auth.build, util.prepareLayout, routes.gallery.viewimage);
+app.post('/gallery/upload', auth.require, util.prepareLayout, routes.gallery.upload);
 
 // inbox system
 app.get('/inbox/:type', util.prepareLayout, auth.require, routes.notifications.inbox);

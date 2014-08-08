@@ -7,6 +7,28 @@ var db = require('../db'),
 
 var self = exports;
 
+// ajax only
+exports.upload = function(req, res) {
+	var err = function() {
+		res.statusCode = 400;
+		res.send("");
+	}
+
+	auth.permission(req, res, ["upload gallery image"], function(error, canupload) {
+		if (error) return err();
+		if (!canupload) return err();
+		if (!util.isset(req.body.attachment)) return err();
+
+		var attachment = parseInt(req.body.attachment);
+
+		db.query("INSERT INTO images (url, time, uid, tags) VALUES (?, ?, ?, ?)", [attachment, util.timeNow(), res.locals.__AUTH_USERDATA.id, "[]"], function(err) {
+			if (err) return err();
+
+			res.send("");
+		})
+	})
+}
+
 exports.show = function(req, res) {
 	var page = parseInt(req.params[1]);
 	if (!page)
@@ -14,7 +36,7 @@ exports.show = function(req, res) {
 
 	var start = (page - 1) * 9;
 
-	db.query("SELECT g.*, u.username as username FROM images g LEFT JOIN users u ON u.id=g.uid ORDER BY g.time DESC LIMIT ?,9", [start], function(err, results) {
+	db.query("SELECT g.*, u.username as username,i.orig as url FROM images g LEFT JOIN users u ON u.id=g.uid LEFT JOIN imageuploads i ON i.id=g.url ORDER BY g.time DESC LIMIT ?,9", [start], function(err, results) {
 		results = results.map(function(v) {
 			if (!v.username) {
 				v.username = "Dobby";
@@ -38,7 +60,11 @@ exports.show = function(req, res) {
 		}, function(err, results) {
 			if (err) return util.error(err, req, res, "Couldn't process gallery images.");
 
-			res.render("gallery", {page: page, title:'Gallery', images:results});
+			auth.permission(req, res, ["upload gallery image"], function(err, canupload) {
+				if (err) return util.error(err, req, res, "Couldn't process permissions.");
+
+				res.render("gallery", {page: page, title:'Gallery', images:results, canupload:canupload});
+			})
 		})
 	})
 }
@@ -47,7 +73,7 @@ exports.viewimage = function(req, res) {
 	var id = parseInt(req.params.id);
 	if (!id) return util.error(null, req, res, "Invalid image ID.");
 
-	db.query("SELECT * FROM images WHERE id=?", [id], function(err, results) {
+	db.query("SELECT g.*,i.orig as url FROM images g LEFT JOIN imageuploads i ON i.id=g.url WHERE g.id=?", [id], function(err, results) {
 		if (err) return util.error(err, req, res, "Couldn't get image ID.");
 		if (results.length != 1) return util.error(null, req, res, "That image doesn't exist or was deleted.");
 
