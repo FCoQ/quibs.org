@@ -2,7 +2,7 @@ extends main
 
 mixin gallery_image(img)
 	div.gallery_module(style="width:290px;")
-		a.cboxElement(href="#{img.url}")
+		a.cboxElement.noajax(href="#{img.url}")
 			img(src="#{img.url}",style="max-width:260px;max-height:204px;")
 	p
 		i.
@@ -83,7 +83,7 @@ block subs
 		});
 		uploader.on("success", function(data) {
 			dialog.info(false);
-			dialog.img(data.thumb140);
+			dialog.img(data.orig);
 			dialog.buttons([{
 				text: "Cancel",
 				class: 'cancelButton',

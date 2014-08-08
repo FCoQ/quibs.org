@@ -490,7 +490,7 @@ function onPageLoad(ajax, anchor) {
 
 // ajax frontend:
 $('a').live('click', function(e) {
-	//if (!$(this).hasClass('noajax')) {
+	if (!$(this).hasClass('noajax')) {
 		// we need to replace this link with an ajax page request
 		if ($(this).attr('href').substring(0, ($('#ajax-current-page').attr('quib-curpage') + '#').length) == $('#ajax-current-page').attr('quib-curpage') + '#') {
 			e.preventDefault();
@@ -512,7 +512,7 @@ $('a').live('click', function(e) {
 				hookChange($(this).attr('href'), this);
 			}
 		}
-	//}
+	}
 });
 
 $('form').live('submit', function(e) {
