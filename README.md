@@ -15,7 +15,7 @@ publicly and made it available on Github.
 * supersized
 * mysql
 * SCEditor
-* node-canvas
+* graphicsmagick
 * recaptcha
 
 ## Where's the DB schema? (Pronounced, "skee-ma", not "shem-ah")

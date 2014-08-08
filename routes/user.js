@@ -16,10 +16,7 @@ exports.setavatar = function(req, res) {
 	if (!util.isset(req.body.attachment))
 		return err();
 
-	var attachment = req.body.attachment;
-
-	if (!attachment.match(/^[a-fA-F0-9]{32}$/))
-		return err();
+	var attachment = parseInt(req.body.attachment);
 
 	db.query("UPDATE users SET avatar=? WHERE id=?", [attachment, res.locals.__AUTH_USERDATA.id], function(err) {
 		if (err) return err();

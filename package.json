@@ -19,6 +19,7 @@
     "bitcoin":"*",
     "request":"*",
     "nodemailer":"*",
-    "nodemailer-smtp-transport":"*"
+    "nodemailer-smtp-transport":"*",
+    "gm":"*"
   }
 }

@@ -89,7 +89,7 @@ exports.show = function(req, res) {
 
 		async.series({
 			blogdata: function(callback) {
-				db.query("SELECT * FROM blogs WHERE id=?", [post.bid], callback);
+				db.query("SELECT b.*,i.thumb140 as 140x140 FROM blogs b LEFT JOIN imageuploads i ON i.id=b.140x140 WHERE b.id=?", [post.bid], callback);
 			},
 			canedit: function(callback) {
 				auth.permission(req, res, ["edit blog", post.bid], callback);

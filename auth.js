@@ -24,7 +24,7 @@ exports.build = function (req, res, next) {
 
 	async.series({
 		userdata: function(callback) {
-			db.query("SELECT * FROM users WHERE email=?", [req.cookies.email], callback);
+			db.query("SELECT u.*,i.thumb64 as avatar FROM users u LEFT JOIN imageuploads i ON i.id=u.avatar WHERE email=?", [req.cookies.email], callback);
 		},
 		permissions: function(callback) {
 			db.query("SELECT p.uid as `uid`, p.type as `type`, p.obj as `obj`, p.level as `level` FROM userpermissions p LEFT JOIN users u ON p.uid=u.id WHERE u.email=?", [req.cookies.email], callback);

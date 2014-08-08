@@ -10,7 +10,7 @@ var self = exports;
 exports.list = function(req, res) {
 	async.series({
 		blogs: function(callback) {
-			db.query("SELECT * FROM blogs ORDER BY priority DESC", [], callback);
+			db.query("SELECT b.*,i.thumb140 as 140x140 FROM blogs b LEFT JOIN imageuploads i ON i.id=b.140x140 ORDER BY b.priority DESC", [], callback);
 		}
 	}, function(err, results) {
 		if (err) return util.error(err, req, res, "Couldn't fetch blog list.");
@@ -29,10 +29,7 @@ exports.setimage = function(req, res) {
 	if (!util.isset(req.body.attachment))
 		return err();
 
-	var attachment = req.body.attachment;
-
-	if (!attachment.match(/^[a-fA-F0-9]{32}$/))
-		return err();
+	var attachment = parseInt(req.body.attachment);
 
 	var id = parseInt(req.params.id);
 	if (!id)
@@ -139,7 +136,7 @@ exports.show = function(req, res) {
 
 	async.series({
 		blogdata: function(callback) {
-			db.query("SELECT * FROM blogs WHERE id=?", [id], callback);
+			db.query("SELECT b.*,i.thumb140 as 140x140 FROM blogs b LEFT JOIN imageuploads i ON b.140x140=i.id WHERE b.id=?", [id], callback);
 		},
 		posts: function(callback) {
 			util.pagination("SELECT bp.*,u.username as username FROM blogposts bp LEFT JOIN users u ON u.id=bp.uid WHERE bp.bid=? ORDER BY bp.date DESC",

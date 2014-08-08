@@ -5,9 +5,10 @@ var express = require('express')
   , db = require('./db')
   , auth = require('./auth')
   , util = require('./util')
-  , resize = require('./resize')
   , async = require('async')
   , fundmanager = require('./fundmanager')
+  , fs = require('fs')
+  , resize = require('./resize')
 
 var app = express();
 
@@ -23,8 +24,79 @@ app.configure(function(){
 	app.use(express.cookieParser());
 	app.use(express.logger('dev'));
 	app.use(express.bodyParser({
-		uploadDir: './public/uploads'
+		uploadDir: './tmp'
 	}));
+	app.use(function(req, res, next) {
+		var discardOriginalFile = function() {
+			if (!req.files) return;
+
+			for (name in req.files) {
+				fs.unlinkSync(req.files[name].path);
+			}
+		}
+
+		if (req.url.match(/^\/uploadimage/)) {
+			if (!req.files.file) {
+				discardOriginalFile();
+				res.statusCode = 500;
+				res.send("500 Internal Server Error: No file submitted.");
+				return;
+			}
+
+			var path = "/" + req.files.file.path;
+			var newname = util.token();
+
+			async.series({
+				orig: function(cb) {
+					resize(path, "/public/uploads/" + newname + "_orig", false, false, cb)
+				},
+				thumb32: function(cb) {
+					resize(path, "/public/uploads/" + newname + "_32", 32, 32, cb)
+				},
+				thumb55: function(cb) {
+					resize(path, "/public/uploads/" + newname + "_55", 55, 55, cb)
+				},
+				thumb64: function(cb) {
+					resize(path, "/public/uploads/" + newname + "_64", 64, 64, cb)
+				},
+				thumb140: function(cb) {
+					resize(path, "/public/uploads/" + newname + "_140", 140, 140, cb)
+				}
+			}, function(err, results) {
+				if (err) {
+					console.log(err);
+					discardOriginalFile();
+					res.statusCode = 500;
+					res.send("500 Internal Server Error: Invalid file format.");
+					return;
+				}
+
+				for (name in results) {
+					results[name] = results[name].replace("/public", "")
+				}
+
+				db.query("INSERT INTO imageuploads (orig, thumb32, thumb55, thumb64, thumb140, ip) values (?, ?, ?, ?, ?, ?)",
+					[results.orig, results.thumb32, results.thumb55, results.thumb64, results.thumb140, util.ip(req)],
+					function(err, r) {
+						if (err) {
+							discardOriginalFile();
+							res.statusCode = 500;
+							res.send("500 Internal Server Error: Couldn't save attachment.");
+							return;
+						}
+
+						results.id = r.insertId;
+
+						discardOriginalFile();
+						res.send(JSON.stringify(results));
+					}
+				);
+			})
+		} else {
+			discardOriginalFile();
+			next();
+		}
+	})
 	app.use(express.methodOverride());
 	app.use(function(req, res, next) {
 		var method = req.method;
@@ -63,11 +135,6 @@ app.configure(function(){
 		} else {
 			res.locals.__REQUEST_TYPE = 'normal';
 			res.locals.__REQUEST_URL = req.url;
-		}
-
-		if (req.url.substring(0, "/uploads/".length) == "/uploads/") {
-			req.url = req.url.replace(".png", "")
-			res.contentType("image/png");
 		}
 
 		next();
@@ -154,52 +221,6 @@ app.get('/panel', util.prepareLayout, auth.require, routes.user.panel);
 app.post('/panel/setavatar', auth.require, routes.user.setavatar);
 app.post('/panel/changeemail', auth.require, routes.user.changeemail);
 app.post('/panel/changepass', auth.require, routes.user.changepass);
-
-// TODO: make this safer, more agile
-app.post('/uploadimage', auth.require, function(req, res) {
-	if (!req.files.file)
-		return util.error("File was not submitted.", req, res, "File was not submitted.");
-
-	var path = "/" + req.files.file.path;
-
-	async.series({
-		orig: function(cb) {
-			cb(null, path);
-		},
-		thumb32: function(cb) {
-			resize(path, path + "_32", 32, 32, cb)
-		},
-		thumb55: function(cb) {
-			resize(path, path + "_55", 55, 70, cb)
-		},
-		thumb64: function(cb) {
-			resize(path, path + "_64", 64, 64, cb)
-		},
-		thumb140: function(cb) {
-			resize(path, path + "_140", 140, 140, cb)
-		}
-	}, function(err, results) {
-		if (err) return util.error(err, req, res, "Not a valid image.");
-
-		for (e in results) {
-			results[e] = results[e].replace("/public", "")
-		}
-
-		results.id = path.replace("/public/uploads/", "");
-
-		res.send(JSON.stringify(results));
-	})
-});
-
-app.get(/\.(gif|jpg|png|css|js)$/, function(req, res) {
-	res.statusCode = 404;
-	res.send("404 Not Found");
-})
-
-app.get(/^\/uploads\//, function(req, res) {
-	res.statusCode = 404;
-	res.send("404 Not Found");
-})
 
 app.get("*", util.prepareLayout, function(req, res) {
 	res.statusCode = 404;

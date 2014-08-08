@@ -43,14 +43,7 @@ exports.attachment = function(url, size) {
 		return "/img/placeholder_bg.jpg";
 	}
 
-	if (url.match(/^[a-fA-F0-9]{32}$/)) {
-		if (size)
-			return "/uploads/" + url + "_" + size + ".png";
-		else
-			return "/uploads/" + url + ".png";
-	} else {
-		return url
-	}
+	return url;
 }
 
 exports.ip = function(req) {

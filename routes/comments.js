@@ -160,9 +160,9 @@ exports.fetchTree = function(req, res, master, callback, just) {
 		},
 		comments: function(cb) {
 			if (just)
-				db.query("SELECT c.*,u.username as username,u.avatar as avatar FROM comments c LEFT JOIN users u ON u.id=c.uid WHERE c.id=? ORDER BY c.date ASC", [just], cb);
+				db.query("SELECT c.*,u.username as username,i.thumb64 as avatar FROM comments c LEFT JOIN users u ON u.id=c.uid LEFT JOIN imageuploads i ON i.id=u.avatar WHERE c.id=? ORDER BY c.date ASC", [just], cb);
 			else
-				db.query("SELECT c.*,u.username as username,u.avatar as avatar FROM comments c LEFT JOIN users u ON u.id=c.uid WHERE c.master=? ORDER BY c.date ASC", [master], cb);
+				db.query("SELECT c.*,u.username as username,i.thumb64 as avatar FROM comments c LEFT JOIN users u ON u.id=c.uid LEFT JOIN imageuploads i ON i.id=u.avatar WHERE c.master=? ORDER BY c.date ASC", [master], cb);
 		}
 	}, function(err, results) {
 		if (err) return callback(err, []);
