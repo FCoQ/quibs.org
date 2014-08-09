@@ -315,7 +315,7 @@ exports.register_submit = function(req, res) {
 		mail.sendMail({
 			from: 'noreply@quibs.org',
 			to: req.body.email,
-			subject: 'Forgot Password?',
+			subject: 'Welcome to our Church!',
 			html: "Welcome to the The First Church of Quibs!<br /><br /><a href=\"http://quibs.org/verify/" + confirm_code + "\">Please verify your email here.</a><br /><br />Thank you!"
 		}, function(err, info) {
 			if (err) {
