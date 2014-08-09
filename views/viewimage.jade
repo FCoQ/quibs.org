@@ -5,7 +5,11 @@ block content
 	div#main.round_8.clearfix
 		div.content
 			center: div.gallery_module(style="width:900px;height:400px")
-				a.cboxElement(href="#{_attachment(image.url)}",rel="example1")
-					img(style="max-width:900px;max-height:400px",src="#{_attachment(image.url)}")
+				if String(image.url) != "null"
+					a.cboxElement(href="#{image.url}",rel="example1")
+						img(style="max-width:900px;max-height:400px",src="#{image.url}")
+				else
+					a.cboxElement(href="#{image.oldurl}",rel="example1")
+						img(style="max-width:900px;max-height:400px",src="#{image.oldurl}")
 			hr
 			+comments(comments, 'image_'+image.id, cancomment)

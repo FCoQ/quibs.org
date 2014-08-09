@@ -36,7 +36,7 @@ exports.show = function(req, res) {
 
 	var start = (page - 1) * 9;
 
-	db.query("SELECT g.*, u.username as username,i.orig as url FROM images g LEFT JOIN users u ON u.id=g.uid LEFT JOIN imageuploads i ON i.id=g.url ORDER BY g.time DESC LIMIT ?,9", [start], function(err, results) {
+	db.query("SELECT g.*, u.username as username,i.orig as url,g.url as oldurl FROM images g LEFT JOIN users u ON u.id=g.uid LEFT JOIN imageuploads i ON i.id=g.url ORDER BY g.time DESC LIMIT ?,9", [start], function(err, results) {
 		results = results.map(function(v) {
 			if (!v.username) {
 				v.username = "Dobby";
@@ -73,7 +73,7 @@ exports.viewimage = function(req, res) {
 	var id = parseInt(req.params.id);
 	if (!id) return util.error(null, req, res, "Invalid image ID.");
 
-	db.query("SELECT g.*,i.orig as url FROM images g LEFT JOIN imageuploads i ON i.id=g.url WHERE g.id=?", [id], function(err, results) {
+	db.query("SELECT g.*,i.orig as url,g.url as oldurl FROM images g LEFT JOIN imageuploads i ON i.id=g.url WHERE g.id=?", [id], function(err, results) {
 		if (err) return util.error(err, req, res, "Couldn't get image ID.");
 		if (results.length != 1) return util.error(null, req, res, "That image doesn't exist or was deleted.");
 

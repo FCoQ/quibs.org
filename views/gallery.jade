@@ -2,8 +2,12 @@ extends main
 
 mixin gallery_image(img)
 	div.gallery_module(style="width:290px;")
-		a.cboxElement.noajax(href="#{img.url}")
-			img(src="#{img.url}",style="max-width:260px;max-height:204px;")
+		if String(img.url) != "null"
+			a.cboxElement.noajax(href="#{img.url}")
+				img(src="#{img.url}",style="max-width:260px;max-height:204px;")
+		else
+			a.cboxElement.noajax(href="#{img.oldurl}")
+				img(src="#{img.oldurl}",style="max-width:260px;max-height:204px;")
 	p
 		i.
 			by #{img.username}&nbsp;&nbsp;
