@@ -2,4 +2,6 @@ extends main
 
 block content
 	div#main.round_8.clearfix
-		center: img(src="/img/404_1.png",width="486px",height="378px")
+		- image = ["/img/404_1.png", "/img/404_2.png"];
+		- image = image[Math.floor(Math.random() * image.length)]
+		center: img(src="#{image}",width="486px",height="378px")
