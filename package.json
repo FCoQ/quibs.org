@@ -13,7 +13,6 @@
     "crypto":"*",
     "recaptcha":"*",
     "pegjs":"*",
-    "canvas":"*",
     "validator":"*",
     "socket.io":"*",
     "bitcoin":"*",

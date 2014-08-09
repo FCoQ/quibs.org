@@ -46,7 +46,7 @@ app.configure(function(){
 			var path = "/" + req.files.file.path;
 			var newname = util.token();
 
-			async.series({
+			async.parallel({
 				orig: function(cb) {
 					resize(path, "/public/uploads/" + newname + "_orig", false, false, cb)
 				},
