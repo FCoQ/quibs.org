@@ -2,7 +2,7 @@ var fs = require('fs'),
     gm = require('gm')
 
 module.exports = function(from, to, width, height, cb) {
-	var cmd = "convert " + __dirname + from + " -coalesce ";
+	var cmd = "nice -n 18 convert " + __dirname + from + " -coalesce ";
 
 	if (width && height) {
 		cmd += "-resize " + width + "x" + height + " ";
