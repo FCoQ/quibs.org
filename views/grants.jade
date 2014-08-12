@@ -108,6 +108,8 @@ block subs
 
 			})
 		})
+
+		return false;
 	})
 	+sub('approve', function(obj) {
 		var id = $(obj).attr('quib-id');
@@ -117,6 +119,8 @@ block subs
 		}).error(function() {
 
 		})
+
+		return false;
 	})
 	+sub('reject', function(obj) {
 		var id = $(obj).attr('quib-id');
@@ -126,4 +130,6 @@ block subs
 		}).error(function() {
 
 		})
+
+		return false;
 	})
