@@ -62,20 +62,30 @@ block content
 				p
 					ul
 						each grant in grants
-							li #{grant.name} wrote:
+							li(id="grant_#{grant.id}") #{grant.name} wrote:
 
-							if grant.status == 0
-								div(style='float:right')
-									b PENDING
-							else if grant.status == 2
-								div(style='float:right')
-									b(style='color:green') ACCEPTED
-							else
-								div(style='float:right')
-									b(style='color:red') REJECTED
-							br
-							code
-								!= _nl2br_escape(grant.msg)
+								if grant.status == 0
+									div(style='float:right; display:inline; margin-bottom: 5px')
+										if __AUTH_USERDATA['grp'] == 3
+											form(do="delete", method="post",style="display:inline",quib-id=grant.id)
+												input.fancy.small.red(type="submit",name="submit",value="Delete",style="display:inline")
+											|&nbsp;&nbsp;
+											form(do="approve", method="post",style="display:inline",quib-id=grant.id)
+												input.fancy.small.green(type="submit",name="submit",value="Approve",style="display:inline")
+											|&nbsp;&nbsp;
+											form(do="reject", method="post",style="display:inline",quib-id=grant.id)
+												input.fancy.small.orange(type="submit",name="submit",value="Reject",style="display:inline")
+											|&nbsp;&nbsp;&nbsp;&nbsp;
+										b PENDING
+								else if grant.status == 2
+									div(style='float:right')
+										b(style='color:green') ACCEPTED
+								else
+									div(style='float:right')
+										b(style='color:red') REJECTED
+								div.clearfix
+								code
+									!= _nl2br_escape(grant.msg)
 
 				if show != 'processed'
 					+pagebar(curpage, lastpage, '/grants/pending/%#viewgrants')
@@ -87,4 +97,33 @@ block subs
 	$("#button-applygrant").parent().html("Apply for a Grant");
 	$("#contact_form").css("display", "block");
 	return true;
+	})
+	+sub('delete', function(obj) {
+		var id = $(obj).attr('quib-id');
+
+		qconfirm("Are you sure you want to delete this grant?", function() {
+			$.post("/grants/delete", {id: id}).success(function() {
+				$("#grant_" + id).hide('slow', function() { $("grant_" + id).remove() });
+			}).error(function() {
+
+			})
+		})
+	})
+	+sub('approve', function(obj) {
+		var id = $(obj).attr('quib-id');
+
+		$.post("/grants/approve", {id: id}).success(function() {
+			$("#grant_" + id + ">div:first").html("<b style='color:green'>APPROVED</b>");
+		}).error(function() {
+
+		})
+	})
+	+sub('reject', function(obj) {
+		var id = $(obj).attr('quib-id');
+
+		$.post("/grants/reject", {id: id}).success(function() {
+			$("#grant_" + id + ">div:first").html("<b style='color:red'>REJECTED</b>");
+		}).error(function() {
+
+		})
 	})

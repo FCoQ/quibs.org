@@ -5,6 +5,48 @@ var db = require('../db'),
 
 var self = exports;
 
+exports.delete = function(req, res) {
+	if (res.locals.__AUTH_USERDATA['grp'] != 3) {
+		return util.ajax.error(req, res);
+	}
+
+	var id = parseInt(req.body.id);
+
+	db.query("DELETE FROM grants WHERE id=?", [id], function(err) {
+		if (err) return util.ajax.error(req, res);
+
+		util.ajax.success(req, res);
+	})
+}
+
+exports.approve = function(req, res) {
+	if (res.locals.__AUTH_USERDATA['grp'] != 3) {
+		return util.ajax.error(req, res);
+	}
+
+	var id = parseInt(req.body.id);
+
+	db.query("UPDATE grants SET status=? WHERE id=?", [2, id], function(err) {
+		if (err) return util.ajax.error(req, res);
+
+		util.ajax.success(req, res);
+	})
+}
+
+exports.reject = function(req, res) {
+	if (res.locals.__AUTH_USERDATA['grp'] != 3) {
+		return util.ajax.error(req, res);
+	}
+
+	var id = parseInt(req.body.id);
+
+	db.query("UPDATE grants SET status=? WHERE id=?", [1, id], function(err) {
+		if (err) return util.ajax.error(req, res);
+
+		util.ajax.success(req, res);
+	})
+}
+
 exports.submitgrant = function(req, res) {
 	if (!res.locals.__RECAPTCHA) {
 		res.locals.msg = 'Error: the CAPTCHA you provided was wrong. Try again.';

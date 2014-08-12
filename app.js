@@ -172,6 +172,10 @@ app.get('/quotes', util.prepareLayout, routes.quotes);
 // grants page
 app.get('/grants/:type?/:page?', util.prepareLayout, auth.build, routes.grants.show);
 app.post('/grants', util.prepareLayout, routes.grants.submitgrant);
+app.post('/grants/delete', auth.require, routes.grants.delete);
+app.post('/grants/approve', auth.require, routes.grants.approve);
+app.post('/grants/reject', auth.require, routes.grants.reject);
+
 
 // club system
 app.get('/clubs', util.prepareLayout, routes.clubs.list);

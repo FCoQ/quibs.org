@@ -219,3 +219,13 @@ exports.prepareLayout = function(req, res, next) {
 exports.randomElement = function(array) {
 	return array[Math.floor(Math.random()*array.length)]
 }
+
+exports.ajax = {
+	error: function(req, res) {
+		res.statusCode = 400;
+		res.send("");
+	},
+	success: function(req, res) {
+		res.send("");
+	}
+}
