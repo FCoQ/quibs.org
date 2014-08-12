@@ -4,7 +4,7 @@ block content
 	- image = ["/img/404_1.png", "/img/404_2.png", "/img/404_3.png", "/img/404_4.png", {width:900,height:630,url:"/img/404_5.png"}];
 	- image = image[Math.floor(Math.random() * image.length)]
 	if !image.url
-		center: img(src="#{image}",width="486px",height="378px",style="border-radius:10px")
+		center: img(src="#{image}",width="486px",height="378px",style="border-radius:10px; border: 10px solid #fff;")
 	else
-		center: img(src="#{image.url}",width="#{image.width}px",height="#{image.height}px",style="border-radius:10px")
+		center: img(src="#{image.url}",width="#{image.width}px",height="#{image.height}px",style="border-radius:10px; border: 10px solid #fff;")
 	br
