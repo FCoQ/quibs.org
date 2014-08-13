@@ -618,15 +618,21 @@ $(document).ready(function() {
 						title = "Comment reply";
 						msg = num + " new replies to your comments.";
 					break;
+					case "link_teamspeak":
+						title = "Link Teamspeak";
+						msg = "Link your teamspeak account with your quibs.org account.";
+					break;
 				}
 
-				$.gritter.add({
-					title: title,
-					text: msg,
-					sticky: true,
-					time:'',
-					class_name:'qnotification qnotification-' + e.type
-				})
+				if (title && msg) {
+					$.gritter.add({
+						title: title,
+						text: msg,
+						sticky: true,
+						time:'',
+						class_name:'qnotification qnotification-' + e.type
+					})
+				}
 			})
 		}
 
@@ -652,5 +658,9 @@ $(document).ready(function() {
 
 	$('.qnotification-comment_reply').live('click', function() {
 		getPage('/inbox/comment_reply');
+	})
+
+	$('.qnotification-link_teamspeak').live('click', function() {
+		getPage('/link-teamspeak');
 	})
 });

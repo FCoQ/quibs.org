@@ -263,7 +263,19 @@ http.createServer(app).listen(HTTP_PORT, "localhost", function(){
 			routes.notifications.getNum(userdata.id, function(err, result) {
 				if (err) return; // TODO: ?
 
-				socket.emit('newNotifications', result)
+				db.query("SELECT u.teamspeak_uid,t.uid FROM teamspeak_users t LEFT JOIN users u on 1 WHERE t.ip=? AND u.id=?", [ip, userdata.id], function(err, _results) {
+					if (err) return; // TODO: ?
+
+					if (_results.length > 0) {
+						match = _results[0];
+
+						if (match.uid != match.teamspeak_uid) {
+							result.push({type:"link_teamspeak"});
+						}
+					}
+
+					socket.emit('newNotifications', result)
+				})
 			})
 
 			if (repeat)
