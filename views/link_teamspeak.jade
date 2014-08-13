@@ -1,0 +1,23 @@
+extends main
+
+block content
+	div#main.round_8.clearfix
+		div.green.page_title.round_6
+			h1.replace Link Teamspeak
+		div#content.left
+			p.
+				Linking your teamspeak account with your quibs.org account gives you access to additional
+				features on Teamspeak as well as notifications via pokes from Dobby the Assistant.
+			if !ts3
+				p: b.
+					It doesn't appear that you're on the TeamSpeak right now. Join, wait a few moments and
+					reload the page.
+			else if ts3.uid == ts3.teamspeak_uid
+				p: b(style="color:green").
+					It appears that you're already linked with TeamSpeak. Nice!
+			else
+				p.
+					We've detected you on TeamSpeak at this IP.
+				center
+					form#contact_form(action='/link-teamspeak', method="post")
+						input#submit.fancy(name="submit",type="submit",value="Link my Account")
