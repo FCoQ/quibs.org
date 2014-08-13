@@ -6,7 +6,29 @@ block content
 			h1.replace Quotes
 		div#content.left
 			each quote in quotes
-				div.quote-post
+				div.quote-post(id="quote_#{quote.id}")
 					blockquote
 						= quote.text
-					p.quote-author= quote.username
+					p.quote-author(style="display:inline;float:right")= quote.username
+					br
+					br
+					if __AUTH_USERDATA['grp'] == 3
+						form(method="post", do="delete", quib-id=quote.id, style="display:inline")
+							input.fancy.red.small(type="submit", value="Delete", style="display:inline")
+						br
+						br
+
+block subs
+	+sub('delete', function(obj) {
+		var id = parseInt($(obj).attr('quib-id'));
+
+		qconfirm("Are you sure you want to delete this post?", function() {
+			$.post('/quotes/delete', {id: id}).success(function() {
+				$("#quote_" + id).hide('slow', function() { $("quote_" + id).remove() });
+			}).error(function() {
+
+			})
+		})
+
+		return false;
+	})

@@ -167,11 +167,12 @@ app.get('/', util.prepareLayout, routes.index);
 app.get('/fund', util.prepareLayout, routes.fund);
 
 // testimonials / quotes
-app.get('/quotes', util.prepareLayout, routes.quotes);
+app.get('/quotes', auth.build, util.prepareLayout, routes.quotes.show);
+app.post('/quotes/delete', auth.require, util.prepareLayout, routes.quotes.delete);
 
 // grants page
-app.get('/grants/:type?/:page?', util.prepareLayout, auth.build, routes.grants.show);
-app.post('/grants', util.prepareLayout, routes.grants.submitgrant);
+app.get('/grants/:type?/:page?', auth.build, util.prepareLayout, routes.grants.show);
+app.post('/grants', auth.build, util.prepareLayout, routes.grants.submitgrant);
 app.post('/grants/delete', auth.require, routes.grants.delete);
 app.post('/grants/approve', auth.require, routes.grants.approve);
 app.post('/grants/reject', auth.require, routes.grants.reject);
