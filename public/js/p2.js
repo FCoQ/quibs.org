@@ -327,7 +327,7 @@ var hookChange = function(newAnchor, obj) {
 };
 
 var currentRequest = 0;
-var hassuper = false;
+var hassuper = true;
 
 function noticebox(msg) {
 	if (msg == false) {
