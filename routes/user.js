@@ -214,7 +214,7 @@ exports.forgot_submit = function(req, res) {
 exports.submit_link_teamspeak = function(req, res) {
 	db.query("SELECT u.teamspeak_uid,t.uid FROM teamspeak_users t LEFT JOIN users u on 1 WHERE t.ip=? AND u.id=?", [util.ip(req), res.locals.__AUTH_USERDATA.id],
 	function(err, results) {
-		if (err) return util.error(err, req, res, "Couldn't get teamspeak information! Try again later.")
+		if (err) return util.error(err, req, res, "Couldn't get teamspeak information! Try again later.");
 
 		if (results.length > 0)
 			results = results[0];
@@ -224,7 +224,7 @@ exports.submit_link_teamspeak = function(req, res) {
 		if (!results)
 			return util.error(null, req, res, "Couldn't link accounts. Try again later.");
 
-		db.query("UPDATE users SET teamspeak_uid=?", [results.uid], function(err, results) {
+		db.query("UPDATE users SET teamspeak_uid=? WHERE id=?", [results.uid, res.locals.__AUTH_USERDATA.id], function(err, results) {
 			if (err) return util.error(err, req, res, "Couldn't update teamspeak information. Try again later.");
 
 			res.locals.msg = "Thanks for linking your account! It should update shortly.";
