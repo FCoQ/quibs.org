@@ -166,6 +166,9 @@ app.get('/', util.prepareLayout, routes.index);
 // church fund
 app.get('/fund', util.prepareLayout, routes.fund);
 
+// mail authentication HMAC
+app.post('/mail', auth.build, util.prepareLayout, routes.mail);
+
 // testimonials / quotes
 app.get('/quotes', auth.build, util.prepareLayout, routes.quotes.show);
 app.post('/quotes/delete', auth.require, util.prepareLayout, routes.quotes.delete);

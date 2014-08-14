@@ -1,6 +1,7 @@
 var db = require('../db'),
 	util = require('../util'),
-	async = require('async')
+	async = require('async'),
+	crypto = require('crypto')
 /*
  * GET home page.
  */
@@ -38,6 +39,23 @@ exports.fund = function(req, res) {
 		})
 	})
 };
+
+exports.mail = function(req, res) {
+	if (res.locals.__AUTH_LOGGED_IN) {
+		if (res.locals.__AUTH_USERDATA['webmail']) {
+			var sha1 = crypto.createHash('sha1');
+			sha1.update(process.env.DBPASS + ":" + res.locals.__AUTH_USERDATA['webmail']);
+			var hmac = sha1.digest('hex');
+
+			//util.redirect(req, res, "https://mail.quibs.org/?u=" + res.locals.__AUTH_USERDATA['webmail'] + "&hmac=" + hmac, true);
+			res.send("https://mail.quibs.org/?u=" + res.locals.__AUTH_USERDATA['webmail'] + "&hmac=" + hmac);
+		} else {
+			res.send("you don't have a webmail");
+		}
+	} else {
+		res.send("you're not logged in");
+	}
+}
 
 exports.quotes = require('./quotes')
 exports.grants = require('./grants')
