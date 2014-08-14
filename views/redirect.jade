@@ -4,7 +4,7 @@ block content
 	if !force
 		script.
 			redirecting = true;
-			getPage('!{path}')
+			getPage(!{JSON.stringify(path)})
 	else
 		script.
-			window.location = '!{path}';
+			window.location = !{JSON.stringify(path)};
