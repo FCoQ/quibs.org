@@ -167,7 +167,7 @@ app.get('/', util.prepareLayout, routes.index);
 app.get('/fund', util.prepareLayout, routes.fund);
 
 // mail authentication HMAC
-app.post('/mail', auth.build, util.prepareLayout, routes.mail);
+app.get('/mail', auth.build, util.prepareLayout, routes.mail);
 
 // testimonials / quotes
 app.get('/quotes', auth.build, util.prepareLayout, routes.quotes.show);

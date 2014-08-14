@@ -44,11 +44,12 @@ exports.mail = function(req, res) {
 	if (res.locals.__AUTH_LOGGED_IN) {
 		if (res.locals.__AUTH_USERDATA['webmail']) {
 			var sha1 = crypto.createHash('sha1');
-			sha1.update(process.env.DBPASS + ":" + res.locals.__AUTH_USERDATA['webmail']);
+			var t = util.timeNow();
+			sha1.update(process.env.DBPASS + ":" + res.locals.__AUTH_USERDATA['webmail'] + ":" + t);
 			var hmac = sha1.digest('hex');
 
 			//util.redirect(req, res, "https://mail.quibs.org/?u=" + res.locals.__AUTH_USERDATA['webmail'] + "&hmac=" + hmac, true);
-			res.send("https://mail.quibs.org/?u=" + res.locals.__AUTH_USERDATA['webmail'] + "&hmac=" + hmac);
+			res.send("https://mail.quibs.org/?u=" + res.locals.__AUTH_USERDATA['webmail'] + "&hmac=" + hmac + "&t=" + t);
 		} else {
 			res.send("you don't have a webmail");
 		}
