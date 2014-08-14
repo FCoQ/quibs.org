@@ -48,8 +48,8 @@ exports.mail = function(req, res) {
 			sha1.update(process.env.DBPASS + ":" + res.locals.__AUTH_USERDATA['webmail'] + ":" + t);
 			var hmac = sha1.digest('hex');
 
-			//util.redirect(req, res, "https://mail.quibs.org/?u=" + res.locals.__AUTH_USERDATA['webmail'] + "&hmac=" + hmac, true);
-			res.send("https://mail.quibs.org/?u=" + res.locals.__AUTH_USERDATA['webmail'] + "&hmac=" + hmac + "&t=" + t);
+			util.redirect(req, res, "https://mail.quibs.org/?u=" + res.locals.__AUTH_USERDATA['webmail'] + "&hmac=" + hmac, true);
+			//res.send("https://mail.quibs.org/?u=" + res.locals.__AUTH_USERDATA['webmail'] + "&hmac=" + hmac + "&t=" + t);
 		} else {
 			res.send("you don't have a webmail");
 		}
