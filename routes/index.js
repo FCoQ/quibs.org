@@ -49,12 +49,13 @@ exports.mail = function(req, res) {
 			var hmac = sha1.digest('hex');
 
 			util.redirect(req, res, "https://mail.quibs.org/?u=" + res.locals.__AUTH_USERDATA['webmail'] + "&hmac=" + hmac + "&t=" + t, true);
-			//res.send("https://mail.quibs.org/?u=" + res.locals.__AUTH_USERDATA['webmail'] + "&hmac=" + hmac + "&t=" + t);
 		} else {
-			res.send("you don't have a webmail");
+			res.locals.msg = "Ask quibs for an email account.";
+			util.redirect(req, res, "/");
 		}
 	} else {
-		res.send("you're not logged in");
+		res.locals.msg = "You must be logged in to use the webmail.";
+		util.redirect(req, res, "/login");
 	}
 }
 
