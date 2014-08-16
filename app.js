@@ -234,6 +234,11 @@ app.post('/panel/changepass', auth.require, routes.user.changepass);
 app.get('/link-teamspeak', auth.require, util.prepareLayout, routes.user.link_teamspeak);
 app.post('/link-teamspeak', auth.require, util.prepareLayout, routes.user.submit_link_teamspeak);
 
+app.get(/\.(gif|jpg|jpeg|png|css|js)$/, function(req, res) {
+	res.statusCode = 404;
+	res.send("404 Not Found");
+})
+
 app.get("*", util.prepareLayout, function(req, res) {
 	res.statusCode = 404;
 	res.render("404", {title:"404"});
