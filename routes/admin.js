@@ -17,7 +17,7 @@ exports.womp = function(req, res) {
 		return util.redirect(req, res, "/");
 	}
 
-	db.query("SELECT * FROM ipbans WHERE expires>? ORDER BY expires ASC", [util.timeNow()], function(err, result) {
+	db.query("SELECT * FROM ipbans WHERE expires>? ORDER BY added ASC", [util.timeNow()], function(err, result) {
 		if (err) return util.error(err, req, res, "Couldn't get a list of ipbans.");
 
 		res.render("admin_womp", {title: 'Admin', adminpage: 'womp', ipbans: result});
@@ -49,7 +49,7 @@ exports.wompadd = function(req, res) {
 	var newip = String(req.body.ip);
 	var note = String(req.body.note);
 
-	db.query("INSERT INTO ipbans (ip, note, expires) VALUES (?, ?, ?)", [newip, note, util.timeNow() + (31556940 * 8)], function(err) {
+	db.query("INSERT INTO ipbans (ip, note, expires, added) VALUES (?, ?, ?, ?)", [newip, note, util.timeNow() + (31556940 * 8), util.timeNow()], function(err) {
 		if (err) return util.error(err, req, res, "Couldn't add that IP to the womp list.");
 
 		res.locals.msg = "IP address " + newip + " was added to the womp list.";
