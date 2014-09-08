@@ -1,0 +1,33 @@
+extends common/admin
+
+block pagecontent
+	form(action="/admin/womp/add",method="POST")
+		p Add an IP to the womp list:
+		input(name="ip",type="text", placeholder="IP address", style="width: 100px")
+		| &nbsp;&nbsp;&nbsp;
+		input(name="note",type="text", placeholder="Optional note")
+		| &nbsp;&nbsp;&nbsp;
+		input.fancy.red(type="submit",value="Ban IP")
+	br
+	hr
+	p The following IPs are currently womped:
+	table
+		tr
+			td IP Address
+			td Note
+			td Expires
+			td Action
+		for ipban in ipbans
+			tr
+				td= ipban.ip
+				td= ipban.note
+				td= _timeUntil(ipban.expires)
+				td
+					form(do="delete",quib-ip="#{ipban.ip}")
+						input.fancy.red(type="submit",value="Unwomp",quib-ip="#{ipban.ip}")
+
+block append subs
+	+sub('delete', function(obj) {
+		getPage("/admin/womp/delete", {ip: $(obj).attr('quib-ip')});
+		return false;
+	})

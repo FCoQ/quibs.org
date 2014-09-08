@@ -124,6 +124,7 @@ app.configure(function(){
 		res.locals._quote = util.quote;
 		res.locals._isset = util.isset;
 		res.locals._timeSince = util.timeSince;
+		res.locals._timeUntil = util.timeUntil;
 		res.locals._attachment = util.attachment;
 		res.locals._slug = util.slug;
 		res.locals._repeat = util.repeat;
@@ -162,6 +163,11 @@ app.configure(function(){
 
 // index
 app.get('/', util.prepareLayout, routes.index);
+
+app.get('/admin', auth.require, util.prepareLayout, routes.admin.front);
+app.get('/admin/womp', auth.require, util.prepareLayout, routes.admin.womp);
+app.post('/admin/womp/delete', auth.require, util.prepareLayout, routes.admin.wompdelete);
+app.post('/admin/womp/add', auth.require, util.prepareLayout, routes.admin.wompadd);
 
 // church fund
 app.get('/fund', util.prepareLayout, routes.fund);

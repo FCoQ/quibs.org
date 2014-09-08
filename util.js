@@ -74,6 +74,47 @@ exports.timeNow = function() {
 	return Math.floor(new Date().getTime()/1000);
 }
 
+// todo: integrate this with timeSince?
+exports.timeUntil = function(timestamp) {
+	var seconds = Math.floor((timestamp - (new Date().getTime()/1000)));
+	var interval = Math.floor(seconds / 31536000);
+
+	if (interval > 1) {
+        return interval + " years from now";
+    } else if (interval == 1) {
+    	return interval + " year from now";
+    }
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) {
+        return interval + " months from now";
+    } else if (interval == 1) {
+    	return interval + " month from now";
+    }
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) {
+        return interval + " days from now";
+    } else if (interval == 1) {
+    	return interval + " day from now";
+    }
+    interval = Math.floor(seconds / 3600);
+    if (interval > 1) {
+        return interval + " hours from now";
+    } else if (interval == 1) {
+    	return interval + " hour from now";
+    }
+    interval = Math.floor(seconds / 60);
+    if (interval > 1) {
+        return interval + " minutes from now";
+    } else if (interval == 1) {
+    	return interval + " minute from now";
+    }
+    if (Math.floor(seconds) == 1) {
+    	return Math.floor(seconds) + " second from now";
+    } else {
+    	return Math.floor(seconds) + " seconds from now";
+    }
+}
+
 exports.timeSince = function(timestamp) {
     var seconds = Math.floor(((new Date().getTime()/1000) - timestamp));
 
