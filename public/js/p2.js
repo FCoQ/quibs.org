@@ -484,8 +484,18 @@ function onPageLoad(ajax, anchor) {
 		duration: 500
 	});
 
-	if ($('#webcam').length != 0 && !hassuper)
-		$('#webcam').html('<img border="0" style="width: 245px;height:162px;" src="http://50.34.240.178:8008">');
+	function renderWebcamWhenReady() {
+		if ($('#webcam').length == 0)
+			return;
+
+		if ($("#supersized-loader").is(":visible")) {
+			setTimeout(renderWebcamWhenReady, 100);
+		} else {
+			$('#webcam').html('<img border="0" style="width: 245px;height:162px;" src="http://50.34.240.178:8008">');
+		}
+	}
+
+	setTimeout(renderWebcamWhenReady, 100);
 };
 
 // ajax frontend:
