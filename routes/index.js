@@ -24,7 +24,7 @@ exports.index = function(req, res) {
 };
 
 exports.map = function(req, res) {
-	db.query("SELECT country,count(ip) as num FROM teamspeak_ips GROUP BY country", [], function(err, results) {
+	db.query("SELECT country,count(ip) as num FROM teamspeak_ips GROUP BY country ORDER BY num DESC", [], function(err, results) {
 		if (err) return util.error(err, req, res, "Couldn't get teamspeak statistics.");
 	
 		var r = {};

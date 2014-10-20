@@ -10,12 +10,16 @@ block content
 					th Country
 					th Users
 				tr
-					td US
+					td
+						| US
+						img(src="/img/flags/us.png")
 					td=results["US"]
 				each users,country in results
 					if country != "US"
 						tr
-							td=country
+							td
+								= country
+								img(src="/img/flags/"+country.toLowerCase()+".png")
 							td=users
 		div#content.left
 			div#tsmap(style="width: 600px; height: 400px")
