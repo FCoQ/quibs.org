@@ -11,7 +11,7 @@ block content
 					th Users
 				tr
 					td
-						| US
+						| US 
 						img(src="/img/flags/us.png")
 					td=results["US"]
 				each users,country in results
@@ -19,6 +19,7 @@ block content
 						tr
 							td
 								= country
+								|  
 								img(src="/img/flags/"+country.toLowerCase()+".png")
 							td=users
 		div#content.left
