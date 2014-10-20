@@ -23,6 +23,20 @@ exports.index = function(req, res) {
 	});
 };
 
+exports.map = function(req, res) {
+	db.query("SELECT country,count(ip) as num FROM teamspeak_ips GROUP BY country", [], function(err, results) {
+		if (err) return util.error(err, req, res, "Couldn't get teamspeak statistics.");
+	
+		var r = {};
+
+		results.forEach(function(val) {
+			r[val['country']] = val['num'];
+		})
+
+		res.render('tsmap', {'title':'Teamspeak Map', results: r});
+	})
+}
+
 exports.fund = function(req, res) {
 	db.query("SELECT * FROM fund", [], function(err, results) {
 		if (err) return util.error(err, req, res, "Couldn't get church fund balance sheet.");

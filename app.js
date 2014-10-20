@@ -169,6 +169,9 @@ app.get('/admin/womp', auth.require, util.prepareLayout, routes.admin.womp);
 app.post('/admin/womp/delete', auth.require, util.prepareLayout, routes.admin.wompdelete);
 app.post('/admin/womp/add', auth.require, util.prepareLayout, routes.admin.wompadd);
 
+// map of teamspeak usage by country
+app.get('/map', util.prepareLayout, routes.map);
+
 // church fund
 app.get('/fund', util.prepareLayout, routes.fund);
 

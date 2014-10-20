@@ -1,0 +1,44 @@
+extends main
+
+block content
+	div#main.round_8.clearfix
+		div.green.page_title.round_6
+			h1.replace Teamspeak Users Around the World
+		div#postdiv(style="float:right;margin-right:20px")
+			table
+				tr
+					th Country
+					th Users
+				tr
+					td US
+					td=results["US"]
+				each users,country in results
+					if country != "US"
+						tr
+							td=country
+							td=users
+		div#content.left
+			div#tsmap(style="width: 600px; height: 400px")
+			
+block append subs
+	+state('worldmap', JSON.stringify(results))
+	+sub('onPageLoad', function() {
+		var gdpData = state('worldmap');
+		$("#tsmap").vectorMap({
+			map: 'world_mill_en',
+			series: {
+				regions: [{
+					values: gdpData,
+					scale: ['#C8EEFF','#0071A4'],
+					normalizeFunction: 'polynomial'
+				}]
+			},
+			onRegionLabelShow: function(e, el, code) {
+			if (gdpData[code]) {
+				el.html(el.html()+' (' + gdpData[code] + ' Users)');
+			} else {
+
+			}
+			}
+		});
+	})
