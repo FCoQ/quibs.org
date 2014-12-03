@@ -22,6 +22,7 @@ html
     link(rel="stylesheet", type="text/css", href="/css/colorbox.css")
     link(rel="stylesheet", type="text/css", href="/css/default.min.css", media="all")
     link(rel="stylesheet", type="text/css", href="/css/jquery-jvectormap.css", media="all")
+    link(rel="stylesheet", type="text/css", href="/css/snowflakes.css", media="screen")
 
     // TODO: move this around or something
     link(rel="stylesheet", type="text/css", href="/js/jquery-ui-1.11.0.custom/jquery-ui.min.css")
@@ -46,6 +47,8 @@ html
     script(type="text/javascript", src="/js/jquery.sceditor.bbcode.min.js")
     script(type="text/javascript", src="/js/socket.io-1.0.6.js")
     script(type="text/javascript", src="/js/chart.min.js")
+
+    script(type="text/javascript", src="/js/snowflakes.js")
 
     script(type="text/javascript", src="/js/p2.js?rrr")
 
@@ -76,6 +79,7 @@ html
     link(rel="shortcut icon", href="/img/pug.gif")
   body
     div#content-wrapper
+      div#snowflakes
       if __AUTH_LOGGED_IN
         div#sun(onclick="getPage('/panel')")
       if __AUTH_USERDATA.grp == 3
