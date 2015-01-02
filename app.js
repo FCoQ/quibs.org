@@ -193,9 +193,6 @@ app.post('/grants/delete', auth.require, routes.grants.delete);
 app.post('/grants/approve', auth.require, routes.grants.approve);
 app.post('/grants/reject', auth.require, routes.grants.reject);
 
-// teamspeak music bot
-app.get('/dj', auth.require, routes.dj.player);
-
 // club system
 app.get('/clubs', util.prepareLayout, routes.clubs.list);
 app.get('/club/:id', auth.build, util.prepareLayout, routes.clubs.view)
