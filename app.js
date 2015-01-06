@@ -162,7 +162,7 @@ app.configure(function(){
 //////////////////////////////////////////////////////////////////////////////////////
 
 app.get('/health', util.prepareLayout, function(req, res) {
-	util.redirect(req, res, "http://www.reddit.com/r/gonewild+nsfw+RealGirls+ass+BustyPetite+girlsinyogapants+rule34+dirtysmall+celebnsfw+AsianHotties+asstastic+60fpsporn+datgap+WtSSTaDaMiT+AmateurArchives+IndianBabes+assinthong+buttplug+nsfwCelebArchive+latinas+Exxxtras+KateeOwen+Pegging+Anjelica_Ebbi+tight_shorts+celebsnaked+TheUnderbun+Ohlympics+leggingsgonewild+Sashagrey+tightsqueeze+CelebrityButts+SexyGirlsInBoots+nsfwcelebgifs+nsfwasmr+HighResASS+HungryButts+kpopfap+WoahPoon+twerking+MalenaMorgan+LatinasGW+GirlsInMessyRooms+AssOnTheGlass+asianbabes+StomachDownFeetUp+CarlottaChampagne+Maria_Ozawa+CarolSeleme+wacrover+girlsfinishingthejob", true);
+	util.redirect(req, res, "http://www.reddit.com/r/gonewild+nsfw+RealGirls+ass+BustyPetite+girlsinyogapants+rule34+dirtysmall+celebnsfw+AsianHotties+asstastic+60fpsporn+datgap+WtSSTaDaMiT+AmateurArchives+IndianBabes+assinthong+buttplug+nsfwCelebArchive+latinas+Exxxtras+KateeOwen+Anjelica_Ebbi+tight_shorts+celebsnaked+TheUnderbun+Ohlympics+leggingsgonewild+Sashagrey+tightsqueeze+CelebrityButts+SexyGirlsInBoots+nsfwcelebgifs+nsfwasmr+HighResASS+HungryButts+kpopfap+WoahPoon+twerking+MalenaMorgan+LatinasGW+GirlsInMessyRooms+AssOnTheGlass+asianbabes+StomachDownFeetUp+CarlottaChampagne+Maria_Ozawa+CarolSeleme+wacrover+girlsfinishingthejob", true);
 });
 
 // index
