@@ -180,6 +180,7 @@ app.get('/map', util.prepareLayout, routes.map);
 app.get('/fund', util.prepareLayout, routes.fund);
 
 // mail authentication HMAC
+app.get('/hmac', auth.build, routes.hmac); // raw hmac for QPS
 app.get('/mail', auth.build, util.prepareLayout, routes.mail);
 
 // testimonials / quotes

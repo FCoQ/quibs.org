@@ -54,6 +54,24 @@ exports.fund = function(req, res) {
 	})
 };
 
+exports.hmac = function(req, res) {
+	if (res.locals.__AUTH_LOGGED_IN) {
+		var sha1 = crypto.createHash('sha1');
+                var t = util.timeNow();
+                sha1.update(process.env.DBPASS + ":" + res.locals.__AUTH_USERDATA['username'] + ":" + t);
+                var hmac = sha1.digest('hex');
+		
+		res.send(JSON.stringify({
+			username: res.locals.__AUTH_USERDATA['username'],
+			t: t,
+			hmac: hmac
+		}));
+	} else {
+		res.locals.msg = "You must be logged in to obtain an auth token.";
+                util.redirect(req, res, "/login");
+	}
+}
+
 exports.mail = function(req, res) {
 	if (res.locals.__AUTH_LOGGED_IN) {
 		if (res.locals.__AUTH_USERDATA['webmail']) {
