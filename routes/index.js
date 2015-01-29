@@ -54,22 +54,28 @@ exports.fund = function(req, res) {
 	})
 };
 
-exports.hmac = function(req, res) {
-	if (res.locals.__AUTH_LOGGED_IN) {
-		var sha1 = crypto.createHash('sha1');
-                var t = util.timeNow();
-                sha1.update(process.env.DBPASS + ":" + res.locals.__AUTH_USERDATA['username'] + ":" + t);
-                var hmac = sha1.digest('hex');
+exports.qps = function(req, res) {
+	var username = String(req.body.username)
+        var password = String(req.body.password)
+
+        var sha1 = crypto.createHash('sha1');
+        sha1.update(password);
+        var hashed_password = sha1.digest('hex');
+
+        db.query("SELECT * FROM users WHERE username=? AND pass=?", [username, hashed_password], function(err, results) {
+                if (err || (results.length != 1)) {
+			res.status(403);
+			return;
+                }
+
+                var userdata = results[0];
+		res.status(200);
 		
-		res.send(JSON.stringify({
-			username: res.locals.__AUTH_USERDATA['username'],
-			t: t,
-			hmac: hmac
-		}));
-	} else {
-		res.locals.msg = "You must be logged in to obtain an auth token.";
-                util.redirect(req, res, "/login");
-	}
+		var sha1 = crypto.createHash('sha1');
+		sha1.update(process.env.DBPASS + ":" + userdata['username']);
+		var hmac = sha1.digest('hex');
+		res.send(userdata['username'] + ":" + hmac);
+        });
 }
 
 exports.mail = function(req, res) {

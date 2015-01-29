@@ -179,8 +179,10 @@ app.get('/map', util.prepareLayout, routes.map);
 // church fund
 app.get('/fund', util.prepareLayout, routes.fund);
 
+// QPS
+app.post('/qps_login', routes.qps);
+
 // mail authentication HMAC
-app.get('/hmac', auth.build, routes.hmac); // raw hmac for QPS
 app.get('/mail', auth.build, util.prepareLayout, routes.mail);
 
 // testimonials / quotes
