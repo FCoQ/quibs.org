@@ -101,7 +101,7 @@ app.configure(function(){
 	app.use(function(req, res, next) {
 		var method = req.method;
 
-		if (method == "POST") {
+		if (method == "POST" && req.path != "/qps_login") {
 			if ((!util.isValidToken(req.body.csrf)) || (req.body.csrf != req.cookies.csrf)) {
 				res.statusCode = 403;
 				res.send("403 Forbidden: CSRF validation failure.");
