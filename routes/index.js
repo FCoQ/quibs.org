@@ -65,6 +65,7 @@ exports.qps = function(req, res) {
         db.query("SELECT * FROM users WHERE username=? AND pass=?", [username, hashed_password], function(err, results) {
                 if (err || (results.length != 1)) {
 			res.status(403);
+			res.send("");
 			return;
                 }
 
