@@ -23,7 +23,10 @@ block content
 								img(src="/img/flags/"+country.toLowerCase()+".png")
 							td=users
 		div#content.left
-			div#tsmap(style="width: 640px; height: 400px")
+			div#tsmap(style="width: 740px; height: 400px")
+			div.clearfix
+			p
+				| This map displays teamspeak users around the world since April 2012.
 			
 block append subs
 	+state('worldmap', JSON.stringify(results))

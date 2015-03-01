@@ -48,7 +48,7 @@ html
     script(type="text/javascript", src="/js/socket.io-1.0.6.js")
     script(type="text/javascript", src="/js/chart.min.js")
 
-    script(type="text/javascript", src="/js/snowflakes.js")
+    // script(type="text/javascript", src="/js/snowflakes.js")
 
     script(type="text/javascript", src="/js/p2.js?rrr")
 
@@ -94,13 +94,14 @@ html
             li: a(href='/grants') Grants
             // li: a(href='/events') Events
             li: a(href='/blogs') Blogs
-            li: a(href='http://irc.quibs.org:7778/') WebIRC
             li
               a(href='#') Other
               ul
                 li: a(href='/clubs') Club Hub
                 li: a(href='/gallery') Gallery
-                li: a(href='/quotes') Testimonials
+                li: a(href='/quotes') Quotes
+                li: a(href='/map') Map
+                li: a(href='http://irc.quibs.org:7778/') WebIRC
 
         center
           div#loadingcontent.loader(style='display:none')
@@ -171,7 +172,7 @@ html
             div#toTop.left Back to Top
             div#footer-note.right
               small
-                | &copy;2014 <strong>First Church of Quibs</strong>, building a better community for our children.
+                | &copy;2015 <strong>First Church of Quibs</strong>, building a better community for our children.
     div#preloadedImages
     script.
       $(document).ready(function() {
