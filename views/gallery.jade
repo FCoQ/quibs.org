@@ -82,7 +82,7 @@ block subs
 	+sub('delete', function(obj) {
 		var id = parseInt($(obj).attr('quib-id'));
 
-		qconfirm("Are you sure you want to delete this gaklery image?", function() {
+		qconfirm("Are you sure you want to delete this gallery image?", function() {
 			$.post('/gallery/delete', {id: id}).success(function() {
 				$("#gallery_img_" + id).hide('slow', function() { $("gallery_img_" + id).remove() });
 			}).error(function() {
