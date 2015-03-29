@@ -1,20 +1,25 @@
 extends main
 
 mixin gallery_image(img)
-	div.gallery_module(style="width:290px;")
-		if String(img.url) != "null"
-			a.cboxElement.noajax(href="#{img.url}")
-				img(src="#{img.url}",style="max-width:260px;max-height:204px;")
-		else
-			a.cboxElement.noajax(href="#{img.oldurl}")
-				img(src="#{img.oldurl}",style="max-width:260px;max-height:204px;")
-	p
-		i.
-			by #{img.username}&nbsp;&nbsp;
-		a(href="/viewimage/#{img.id}").
-			#{img.numcomments} comments
-		| &nbsp;&nbsp;
-	div(style="margin-bottom:40px")
+	div(id="gallery_img_#{img.id}")
+		div.gallery_module(style="width:290px;")
+			if String(img.url) != "null"
+				a.cboxElement.noajax(href="#{img.url}")
+					img(src="#{img.url}",style="max-width:260px;max-height:204px;")
+			else
+				a.cboxElement.noajax(href="#{img.oldurl}")
+					img(src="#{img.oldurl}",style="max-width:260px;max-height:204px;")
+		p
+			i.
+				by #{img.username}&nbsp;&nbsp;
+			a(href="/viewimage/#{img.id}").
+				#{img.numcomments} comments
+			| &nbsp;&nbsp;
+			if __AUTH_USERDATA['grp'] == 3
+				form(method="post", do="delete", quib-id=img.id, style="display:inline")
+					input.fancy.red.small(type="submit", value="Delete", style="display:inline")
+				br
+		div(style="margin-bottom:40px")
 
 block content
 	div#main.round_8.clearfix
@@ -73,6 +78,19 @@ block subs
 				// sem.release();
 			})
 		}
+	})
+	+sub('delete', function(obj) {
+		var id = parseInt($(obj).attr('quib-id'));
+
+		qconfirm("Are you sure you want to delete this gaklery image?", function() {
+			$.post('/gallery/delete', {id: id}).success(function() {
+				$("#gallery_img_" + id).hide('slow', function() { $("gallery_img_" + id).remove() });
+			}).error(function() {
+				$("#gallery_img_" + id).hide('slow', function() { $("gallery_img_" + id).remove() });
+			})
+		})
+
+		return false;
 	})
 	+sub('upload', function(obj) {
 		var uploader = new qdragdrop("/uploadimage");

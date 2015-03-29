@@ -29,6 +29,20 @@ exports.upload = function(req, res) {
 	})
 }
 
+exports.delete = function(req, res) {
+	if (res.locals.__AUTH_USERDATA['grp'] != 3) {
+		return util.ajax.error(req, res);
+	}
+
+	var id = parseInt(req.body.id);
+
+	db.query("UPDATE images SET visible=0 WHERE id=?", [id], function(err, results) {
+		if (err) return util.ajax.error(req, res);
+
+		util.ajax.success(req, res);
+	})
+}
+
 exports.show = function(req, res) {
 	var page = parseInt(req.params[1]);
 	if (!page)
@@ -36,7 +50,7 @@ exports.show = function(req, res) {
 
 	var start = (page - 1) * 9;
 
-	db.query("SELECT g.*, u.username as username,i.orig as url,g.url as oldurl FROM images g LEFT JOIN users u ON u.id=g.uid LEFT JOIN imageuploads i ON i.id=g.url ORDER BY g.time DESC LIMIT ?,9", [start], function(err, results) {
+	db.query("SELECT g.*, u.username as username,i.orig as url,g.url as oldurl FROM images g LEFT JOIN users u ON u.id=g.uid LEFT JOIN imageuploads i ON i.id=g.url WHERE g.visible=1 ORDER BY g.time DESC LIMIT ?,9", [start], function(err, results) {
 		results = results.map(function(v) {
 			if (!v.username) {
 				v.username = "Dobby";

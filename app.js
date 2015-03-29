@@ -223,6 +223,7 @@ app.post('/comment/:id/delete', auth.require, routes.comments.delete);
 app.get(/^\/gallery(\/([0-9]+)?)?$/, auth.build, util.prepareLayout, routes.gallery.show);
 app.get('/viewimage/:id', auth.build, util.prepareLayout, routes.gallery.viewimage);
 app.post('/gallery/upload', auth.require, util.prepareLayout, routes.gallery.upload);
+app.post('/gallery/delete', auth.require, util.prepareLayout, routes.gallery.delete);
 
 // inbox system
 app.get('/inbox/:type', util.prepareLayout, auth.require, routes.notifications.inbox);
