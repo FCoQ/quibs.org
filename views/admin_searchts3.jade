@@ -1,0 +1,10 @@
+extends common/admin
+
+block pagecontent
+	form(action="/admin/searchts3",method="POST")
+		p Search Teamspeak Logs
+		input(value="#{search}",name="search",type="text", placeholder="Query", style="width: 200px")
+	br
+	br
+	code
+		!= _nl2br_escape(content)

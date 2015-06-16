@@ -41,6 +41,10 @@ block content
 						li.active: a(href="/admin/womp") Womp
 					else
 						li: a(href="/admin/womp") Womp
+					if adminpage == "searchts3"
+						li.active: a(href="/admin/searchts3") Search TS3 Logs
+					else
+						li: a(href="/admin/searchts3") Search TS3 Logs
 				div.clearfix
 			br
 			block pagecontent

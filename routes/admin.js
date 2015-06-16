@@ -11,6 +11,29 @@ exports.front = function(req, res) {
 	res.render("admin_front", {title: 'Admin', adminpage: 'front'});
 }
 
+exports.searchts3 = function(req, res) {
+	if (res.locals.__AUTH_USERDATA['grp'] != 3) {
+		res.locals.msg = "Admin panel is restrict to... well, admins.";
+		return util.redirect(req, res, "/");
+	}
+
+	var search = "";
+	if (req.body.search != undefined) {
+		search = String(req.body.search);
+	}
+	if (search != "") {
+		var escapeShell = function(cmd) {
+		  return '"'+cmd.replace(/(["\s'$`\\])/g,'\\$1')+'"';
+		};
+
+		var exec = require('child_process').exec;
+		exec('grep ' + escapeShell(search) + ' /home/q/ts3/logs/ -R -i', function(e, stdout) {
+			res.render("admin_searchts3", {title: 'Admin', adminpage: 'searchts3', content: stdout, search: search});
+		})
+	} else {
+		res.render("admin_searchts3", {title: 'Admin', adminpage: 'searchts3', content: "", search: search});
+	}
+}
 exports.womp = function(req, res) {
 	if (res.locals.__AUTH_USERDATA['grp'] != 3) {
 		res.locals.msg = "Admin panel is restrict to... well, admins.";
