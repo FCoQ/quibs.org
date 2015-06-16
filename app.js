@@ -172,6 +172,8 @@ app.get('/admin', auth.require, util.prepareLayout, routes.admin.front);
 app.get('/admin/womp', auth.require, util.prepareLayout, routes.admin.womp);
 app.post('/admin/womp/delete', auth.require, util.prepareLayout, routes.admin.wompdelete);
 app.post('/admin/womp/add', auth.require, util.prepareLayout, routes.admin.wompadd);
+app.get('/admin/searchts3', auth.require, util.prepareLayout, routes.admin.searchts3);
+app.post('/admin/searchts3', auth.require, util.prepareLayout, routes.admin.searchts3);
 
 // map of teamspeak usage by country
 app.get('/map', util.prepareLayout, routes.map);
