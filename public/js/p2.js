@@ -551,8 +551,8 @@ $.post = function(url, q) {
 }
 
 $(document).ready(function() {
-	//var snowflakes = new Snowflakes('content-wrapper', 'snowflakes');
-	//snowflakes.create(40);
+	var snowflakes = new Snowflakes('content-wrapper', 'snowflakes');
+	snowflakes.create(40);
 
 	$("#content-wrapper").on('scroll', function() {
 		checkScroll();
